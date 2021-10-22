@@ -1,8 +1,9 @@
 package ca.mikegabelmann.db;
 
-import ca.mgabelmann.db.antlr.sqlite.SQLiteLexer;
-import ca.mgabelmann.db.antlr.sqlite.SQLiteParser;
-import ca.mgabelmann.db.antlr.sqlite.SQLiteParserListener;
+
+import ca.mikegabelmann.db.antlr.sqlite.SQLiteLexer;
+import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
+import ca.mikegabelmann.db.antlr.sqlite.SQLiteParserListener;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
