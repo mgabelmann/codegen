@@ -184,8 +184,6 @@ public class SQLiteFactory {
 
                 LOG.debug("columnName={}, typeName={}", ctx.column_name().getText(), ctx.type_name().getText());
 
-
-
                 for (SQLiteParser.Column_constraintContext constraint : ctx.column_constraint()) {
                     LOG.debug("\tconstraint={}", constraint.getText());
                 }

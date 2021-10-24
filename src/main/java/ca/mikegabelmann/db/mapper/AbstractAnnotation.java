@@ -36,7 +36,10 @@ public abstract class AbstractAnnotation {
      * @param values values
      */
     void addProperty(@NotNull final String key, @NotNull final List<Object> values) {
-        this.properties.put(key, values);
+        ArrayList<Object> tmp = new ArrayList<>();
+        tmp.addAll(values);
+
+        this.properties.put(key, tmp);
     }
 
     /**

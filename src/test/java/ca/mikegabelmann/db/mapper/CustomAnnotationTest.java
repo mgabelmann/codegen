@@ -57,6 +57,18 @@ class CustomAnnotationTest {
     }
 
     @Test
+    @DisplayName("add a List and a single property")
+    void test2_addPropertyList() {
+        ann.addProperty("key", List.of("A", "B"));
+        ann.addProperty("key", "C");
+
+        List<Object> results = ann.getValues("key");
+
+        Assertions.assertNotNull(results);
+        Assertions.assertEquals(3, results.size());
+    }
+
+    @Test
     @DisplayName("toString without value")
     void test1_toString() {
         Assertions.assertEquals("@Custom", ann.toString());
