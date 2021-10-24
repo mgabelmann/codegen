@@ -5,11 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 
 public class AnnotationUtilTest {
@@ -24,7 +20,7 @@ public class AnnotationUtilTest {
 	
 	/**
 	 * <pre>
-	 * @TEST
+	 * @Annotation
 	 * </pre>
 	 */
 	@Test
@@ -34,7 +30,7 @@ public class AnnotationUtilTest {
 	
 	/**
 	 * <pre>
-	 * @TEST("a")
+	 * @Annotation("a")
 	 * </pre>
 	 */
 	@Test
@@ -46,7 +42,7 @@ public class AnnotationUtilTest {
 
 	/**
 	 * <pre>
-	 * @TEST({"a", "b"})
+	 * @Annotation({"a", "b"})
 	 * </pre>
 	 */
 	@Test
@@ -59,7 +55,7 @@ public class AnnotationUtilTest {
 	
 	/**
 	 * <pre>
-	 * @TEST(@A)
+	 * @Annotation(@A)
 	 * </pre>
 	 */
 	@Test
@@ -71,7 +67,7 @@ public class AnnotationUtilTest {
 	
 	/**
 	 * <pre>
-	 * @TEST({@A, @A})
+	 * @Annotation({@A, @A})
 	 * </pre>
 	 */
 	@Test
@@ -84,7 +80,7 @@ public class AnnotationUtilTest {
 	
 	/**
 	 * <pre>
-	 * @TEST
+	 * @Annotation
 	 * </pre>
 	 */
 	@Test
@@ -94,31 +90,31 @@ public class AnnotationUtilTest {
 	
 	/**
 	 * <pre>
-	 * @TEST(a="a")
+	 * @Annotation(a="a")
 	 * </pre>
 	 */
 	@Test
 	public void getStringSortedMap2() {
 		map.put("a", Arrays.asList(new Object[] {"a"}));
 		
-		Assertions.assertEquals("a=\"a\"", AnnotationUtil.getString(map));
+		Assertions.assertEquals("a = \"a\"", AnnotationUtil.getString(map));
 	}
 	
 	/**
 	 * <pre>
-	 * @TEST(a={"a","b","c"})
+	 * @Annotation(a={"a","b","c"})
 	 * </pre>
 	 */
 	@Test
 	public void getStringSortedMap3() {
 		map.put("a", Arrays.asList(new Object[] {"a", "b", "c"}));
 		
-		Assertions.assertEquals("a={\"a\", \"b\", \"c\"}", AnnotationUtil.getString(map));
+		Assertions.assertEquals("a = {\"a\", \"b\", \"c\"}", AnnotationUtil.getString(map));
 	}
 	
 	/**
 	 * <pre>
-	 * @TEST(a="a", b="b")
+	 * @Annotation(a="a", b="b")
 	 * </pre>
 	 */
 	@Test
@@ -126,12 +122,12 @@ public class AnnotationUtilTest {
 		map.put("a", Arrays.asList(new Object[] {"a"}));
 		map.put("b", Arrays.asList(new Object[] {"b"}));
 		
-		Assertions.assertEquals("a=\"a\", b=\"b\"", AnnotationUtil.getString(map));
+		Assertions.assertEquals("a = \"a\", b = \"b\"", AnnotationUtil.getString(map));
 	}
 	
 	/**
 	 * <pre>6
-	 * @TEST(a="a", b={"b", "c", "d"})
+	 * @Annotation(a="a", b={"b", "c", "d"})
 	 * </pre>
 	 */
 	@Test
@@ -139,7 +135,7 @@ public class AnnotationUtilTest {
 		map.put("a", Arrays.asList(new Object[] {"a"}));
 		map.put("b", Arrays.asList(new Object[] {"b", "c", "d"}));
 		
-		Assertions.assertEquals("a=\"a\", b={\"b\", \"c\", \"d\"}", AnnotationUtil.getString(map));
+		Assertions.assertEquals("a = \"a\", b = {\"b\", \"c\", \"d\"}", AnnotationUtil.getString(map));
 		
 	}
 	
@@ -147,7 +143,7 @@ public class AnnotationUtilTest {
 	public void getStringSortedMap6() {
 		map.put("a", Arrays.asList(new Object[] {new SimpleAnnotation()}));
 		
-		String expected = "a=" + SimpleAnnotation.EXPECTED;
+		String expected = "a = " + SimpleAnnotation.EXPECTED;
 		Assertions.assertEquals(expected, AnnotationUtil.getString(map));
 	}
 	
@@ -155,35 +151,48 @@ public class AnnotationUtilTest {
 	public void getStringSortedMap7() {
 		map.put("a", Arrays.asList(new Object[] {new SimpleAnnotation(), new SimpleAnnotation()}));
 		
-		String expected = "a={" + SimpleAnnotation.EXPECTED + ", " + SimpleAnnotation.EXPECTED + "}";
+		String expected = "a = {" + SimpleAnnotation.EXPECTED + ", " + SimpleAnnotation.EXPECTED + "}";
 		Assertions.assertEquals(expected, AnnotationUtil.getString(map));
 	}
 
-	/*
 	@Test
 	public void escapeValue() {
 		Assertions.assertEquals("", AnnotationUtil.escapeValue(null));
-		
+
 		Assertions.assertEquals("true", AnnotationUtil.escapeValue(Boolean.TRUE));
 		Assertions.assertEquals("1", AnnotationUtil.escapeValue(Integer.valueOf(1)));
 		Assertions.assertEquals("\"a\"", AnnotationUtil.escapeValue("a"));
 		Assertions.assertEquals("", AnnotationUtil.escapeValue(""));
-		
+
 		Assertions.assertEquals("", AnnotationUtil.escapeValue(list));
-		
+
 		list.add("a");
 		Assertions.assertEquals("\"a\"", AnnotationUtil.escapeValue(list));
-		
+
 		list.add("b");
 		Assertions.assertEquals("{\"a\", \"b\"}", AnnotationUtil.escapeValue(list));
-		
+
 		Assertions.assertEquals("", AnnotationUtil.escapeValue((String[]) null));
-		Assertions.assertEquals("{\"a\"}", AnnotationUtil.escapeValue(new String[] {"a"}));
-		Assertions.assertEquals("{\"a\", \"b\"}", AnnotationUtil.escapeValue(new String[] {"a", "b"}));
-		
-		Assertions.assertEquals("CascadeType.PERSIST", AnnotationUtil.escapeValue(CascadeType.PERSIST));
-		Assertions.assertEquals("FetchType.EAGER", AnnotationUtil.escapeValue(FetchType.EAGER));
-		
+		Assertions.assertEquals("{\"a\"}", AnnotationUtil.escapeValue(new String[]{"a"}));
+		Assertions.assertEquals("{\"a\", \"b\"}", AnnotationUtil.escapeValue(new String[]{"a", "b"}));
+
+		//Assertions.assertEquals("CascadeType.PERSIST", AnnotationUtil.escapeValue(CascadeType.PERSIST));
+		//Assertions.assertEquals("FetchType.EAGER", AnnotationUtil.escapeValue(FetchType.EAGER));
 	}
-	 */
+
+	@Test
+	void test1_getAnnotation() {
+		map.put("a", Arrays.asList(new Object[] {"a"}));
+
+		Assertions.assertEquals("@Test(a = \"a\")", AnnotationUtil.getAnnotation("Test", map));
+	}
+
+	@Test
+	void test2_getAnnotation() {
+		map.put("a", Arrays.asList(new Object[] {"a", "b"}));
+		map.put("c", Arrays.asList(new Object[] {true}));
+
+		Assertions.assertEquals("@Test(a = {\"a\", \"b\"}, c = true)", AnnotationUtil.getAnnotation("Test", map));
+	}
+
 }

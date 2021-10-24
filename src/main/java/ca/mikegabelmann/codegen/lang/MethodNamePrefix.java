@@ -22,7 +22,7 @@ public enum MethodNamePrefix {
     }
 
     /** Prefix name. */
-    private String prefix;
+    private final String prefix;
 
     @Override
     public String toString() {

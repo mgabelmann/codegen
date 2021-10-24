@@ -42,6 +42,7 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>22.0.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -49,6 +50,14 @@
             <artifactId>log4j-core</artifactId>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+            <version>2.2</version>
+            <scope>compile</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

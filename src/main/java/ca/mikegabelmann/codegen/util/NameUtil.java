@@ -10,6 +10,7 @@ import ca.mikegabelmann.codegen.lang.JavaTokens;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -22,12 +23,13 @@ public final class NameUtil {
 	
 	/** No not instantiate this class. */
 	private NameUtil() {}
-	
+
+
 	/**
-	 * 
-	 * @param namingMethodType
-	 * @param value
-	 * @return
+	 * Get class name.
+	 * @param namingMethodType naming scheme
+	 * @param value value to proces
+	 * @return field
 	 */
 	public static String getClassName(
 		final JavaNamingType namingMethodType,
@@ -60,10 +62,10 @@ public final class NameUtil {
 	}
 	
 	/**
-	 * 
-	 * @param namingMethodType
-	 * @param value
-	 * @return
+	 * Get field name.
+	 * @param namingMethodType naming scheme
+	 * @param value value to process
+	 * @return field
 	 */
 	public static String getFieldName(
 		final JavaNamingType namingMethodType, 
@@ -98,25 +100,16 @@ public final class NameUtil {
 		}
 	}
 	
-
-	
 	/**
-	 * 
-	 * @param values
-	 * @param key
-	 * @param o
+	 * Add key/value to collection.
+	 * @param values collection
+	 * @param key key to add
+	 * @param o value to add
 	 */
 	public static void addKeyAndValue(
-		final SortedMap<String, List<Object>> values, 
-		final String key, 
+		@NotNull final SortedMap<String, List<Object>> values,
+		@NotNull final String key,
 		final Object o) {
-		
-		if (values == null) {
-			throw new IllegalArgumentException("values cannot be null");
-			
-		} else if (key == null) {
-			throw new IllegalArgumentException("key cannot be null");
-		}
 		
 		if (o != null) {
 			values.put(key, Arrays.asList(o));
@@ -127,11 +120,12 @@ public final class NameUtil {
 	}
 	
 	/**
+	 * Get quoted string.
 	 * <pre>
 	 * "A"
 	 * </pre>
-	 * @param value
-	 * @return
+	 * @param value value to quote
+	 * @return quoted string
 	 */
 	public static String quoteString(final String value) {
 		if (value != null) {
@@ -143,14 +137,17 @@ public final class NameUtil {
 	}
 	
 	/**
+	 * Get delimited string.
 	 * <pre>
 	 * A,B,C
 	 * "A","B","C"
 	 * {A,B,C}
 	 * {"A","B","C"}
 	 * </pre>
-	 * @param values
-	 * @return
+	 * @param values values to delimit
+	 * @param quoted quote values
+	 * @param braces add braces
+	 * @return delimited string
 	 */
 	public static String getDelimitedString(final List<String> values, final boolean quoted, final boolean braces) {
 		StringBuilder sb = new StringBuilder();
@@ -172,4 +169,5 @@ public final class NameUtil {
 		
 		return sb.toString();
 	}
+
 }

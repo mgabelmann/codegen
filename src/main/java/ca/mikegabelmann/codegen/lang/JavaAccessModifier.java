@@ -16,7 +16,7 @@ public enum JavaAccessModifier {
         this.modifier = modifier;
     }
 
-    private String modifier;
+    private final String modifier;
 
     @Override
     public String toString() {

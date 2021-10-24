@@ -33,12 +33,12 @@ public class SQLiteFactory {
         parser.addParseListener(new SQLiteParserListener() {
             @Override
             public void enterParse(SQLiteParser.ParseContext ctx) {
-                System.out.println("starting parse");
+                LOG.debug("parse - start");
             }
 
             @Override
             public void exitParse(SQLiteParser.ParseContext ctx) {
-                System.out.println("exiting parse");
+                LOG.debug("parse - end");
             }
 
             @Override
@@ -184,6 +184,8 @@ public class SQLiteFactory {
 
                 LOG.debug("columnName={}, typeName={}", ctx.column_name().getText(), ctx.type_name().getText());
 
+
+
                 for (SQLiteParser.Column_constraintContext constraint : ctx.column_constraint()) {
                     LOG.debug("\tconstraint={}", constraint.getText());
                 }
@@ -227,15 +229,6 @@ public class SQLiteFactory {
             @Override
             public void exitTable_constraint(SQLiteParser.Table_constraintContext ctx) {
                 //LOG.trace("Table_constraintContext, text={}", ctx.getText());
-
-                /*
-                PRIMARY KEY (contact_id, group_id),
-
-                FOREIGN KEY (local_id)
-                  REFERENCES contacts (remote_id)
-                    ON DELETE CASCADE
-                    ON UPDATE NO ACTION,
-                */
 
                 //primary key columns
                 if (ctx.indexed_column().size() > 0) {

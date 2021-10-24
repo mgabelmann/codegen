@@ -16,7 +16,7 @@ public class App {
      */
     public static void main(String[] args) throws Exception {
         SQLiteFactory factory = new SQLiteFactory();
-        factory.parseFile(App.class.getResourceAsStream("/example2.sqlite"));
+        factory.parseFile(App.class.getResourceAsStream("/example.sqlite"));
     }
 
 }

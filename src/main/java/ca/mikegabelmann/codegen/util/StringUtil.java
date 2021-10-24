@@ -26,9 +26,9 @@ public class StringUtil {
     }
 
     /**
-     *
-     * @param value
-     * @return
+     * Capitalize first character of a string and lowercase remaining.
+     * @param value value to process
+     * @return value
      */
     public static String initCap(final String value) {
         if (value == null) {
@@ -43,9 +43,9 @@ public class StringUtil {
     }
 
     /**
-     *
-     * @param value
-     * @return
+     * Lowercase first character of a string, leaving remaining characters alone.
+     * @param value value to process
+     * @return value
      */
     public static String initLower(final String value) {
         if (value == null) {
@@ -58,4 +58,5 @@ public class StringUtil {
             return value.substring(0, 1).toLowerCase() + value.substring(1);
         }
     }
+
 }

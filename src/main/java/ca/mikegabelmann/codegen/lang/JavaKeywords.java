@@ -2,9 +2,9 @@ package ca.mikegabelmann.codegen.lang;
 
 /**
  * Java constants and keywords.
- * 
+ * https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html
+ *
  * @author mgabelmann
- * @see https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html
  */
 public final class JavaKeywords {
 

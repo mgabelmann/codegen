@@ -17,6 +17,12 @@ public final class ObjectUtil {
 	private ObjectUtil() {}
 
 
+	/**
+	 * Get 'getter' method.
+	 * @param returnType return type
+	 * @param methodName method name
+	 * @return getter
+	 */
 	public static String getMethod(
 		@NotNull JavaReturnType returnType,
 		@NotNull String methodName) {
@@ -29,6 +35,15 @@ public final class ObjectUtil {
 			new String[0]);
 	}
 
+	/**
+	 * Get 'getter' method.
+	 * @param methodModifiers method modifiers
+	 * @param returnType return type
+	 * @param methodNamePrefix method name prefix
+	 * @param methodName method name
+	 * @param methodExceptions exceptions
+	 * @return getter
+	 */
 	public static String getMethod(
 		@NotNull JavaMethodModifier[] methodModifiers,
 		@NotNull JavaReturnType returnType,
@@ -70,7 +85,12 @@ public final class ObjectUtil {
 		return sb.toString();
 	}
 
-
+	/**
+	 * Get 'setter' method.
+	 * @param methodName method name
+	 * @param arguments method arguments
+	 * @return setter
+	 */
 	public static String setMethod(
 		@NotNull String methodName,
 		@NotNull JavaArgument[] arguments) {
@@ -83,6 +103,15 @@ public final class ObjectUtil {
 			new String[0]);
 	}
 
+	/**
+	 * Get 'setter' method.
+	 * @param methodModifiers method modifiers
+	 * @param methodNamePrefix method name prefix
+	 * @param methodName method name
+	 * @param arguments method arguments
+	 * @param methodExceptions exceptions
+	 * @return setter
+	 */
 	public static String setMethod(
 		@NotNull JavaMethodModifier[] methodModifiers,
 		@NotNull MethodNamePrefix methodNamePrefix,
@@ -107,7 +136,6 @@ public final class ObjectUtil {
 		sb.append(JavaTokens.BRACKET_RIGHT);
 		sb.append(JavaTokens.SPACE);
 
-
 		if (methodExceptions.length > 0) {
 			sb.append(JavaKeywords.THROWS);
 			String exceptions = Arrays.stream(methodExceptions).map(Object::toString).collect(Collectors.joining(JavaTokens.DELIMITER));
@@ -130,6 +158,13 @@ public final class ObjectUtil {
 		return sb.toString();
 	}
 
+	/**
+	 * Get constructor.
+	 * @param constructorModifiers constructor modifiers
+	 * @param constructorName constructor name
+	 * @param constructorExceptions exceptions
+	 * @return constructor
+	 */
 	public static String constructorNoArgsMethod(
 		@NotNull JavaConstructorModifier[] constructorModifiers,
 		@NotNull String constructorName,
@@ -142,6 +177,14 @@ public final class ObjectUtil {
 			constructorExceptions);
 	}
 
+	/**
+	 * Get constructor.
+	 * @param constructorModifiers constructor modifiers
+	 * @param constructorName constructor name
+	 * @param arguments constructor arguments
+	 * @param constructorExceptions exceptions
+	 * @return constructor
+	 */
 	public static String constructorMethod(
 		@NotNull JavaConstructorModifier[] constructorModifiers,
 		@NotNull String constructorName,

@@ -26,13 +26,13 @@ public final class AnnotationUtil {
 
 	
 	/**
-	 *
+	 * Get Java annotation.
 	 * <pre>
 	 * 
 	 * </pre>
-	 * @param name
-	 * @param values
-	 * @return
+	 * @param name annotation name
+	 * @param values annotation key/value pairs
+	 * @return annotation
 	 */
 	public static String getAnnotation(final String name, final SortedMap<String, List<Object>> values) {
 		StringBuilder sb = new StringBuilder();
@@ -49,15 +49,15 @@ public final class AnnotationUtil {
 	}
 	
 	/**
-	 * 
+	 * Get key/value pairs for use in annotations.
 	 * <pre>
 	 * a="a"
 	 * a="a", b="b"
 	 * a="a", b={"b", "c", "d"}
 	 * a="a", b={@B, @C, @D}
 	 * </pre>
-	 * @param values
-	 * @return
+	 * @param values key/value pairs
+	 * @return string
 	 */
 	public static String getString(final SortedMap<String, List<Object>> values) {
 		StringBuilder sb = new StringBuilder();
@@ -70,7 +70,7 @@ public final class AnnotationUtil {
 			
 			if (StringUtil.isNotBlankOrNull(key)) {
 				sb.append(key);
-				sb.append(JavaTokens.EQUALS);
+				sb.append(JavaTokens.EQUALS_WITH_SPACES);
 			}
 			sb.append(AnnotationUtil.getString(rec.getValue()));
 			
@@ -83,15 +83,15 @@ public final class AnnotationUtil {
 	}
 	
 	/**
-	 * 
+	 * Get delimited string.
 	 * <pre>
 	 * "a"
 	 * {"a", "b"}
 	 * @A
 	 * {@A, @A}
 	 * </pre>
-	 * @param values
-	 * @return
+	 * @param values values to delimit
+	 * @return delimited string
 	 */
 	public static String getString(final List<Object> values) {
 		StringBuilder sb = new StringBuilder();
@@ -118,9 +118,9 @@ public final class AnnotationUtil {
 	}
 	
 	/**
-	 * 
-	 * @param o
-	 * @return
+	 * Escape given value based on type given.
+	 * @param o value to escape
+	 * @return escaped value
 	 */
 	public static String escapeValue(final Object o) {
 		String value;
