@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Hibernate Reverse Engineering DTD.
+    
+    <!DOCTYPE hibernate-reverse-engineering PUBLIC 
+        "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
+    
+    An instance of this XML document may contain misc. overrides used
+    when hibernate tools perform reverse engineering.
+    
+    TODO: document the tags in the DTD
+    
+-->
+<!-- The document root. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jxb="http://java.sun.com/xml/ns/jaxb" jxb:version="2.1">
+    <xs:element name="hibernate-reverse-engineering">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="schema-selection"/>
+                <xs:element minOccurs="0" ref="type-mapping"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="table-filter"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="table"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="type-mapping">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="sql-type"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!-- Defines a sql-type mapping. Will match on any combination of jdbc-type, length, precision and/or scale - first match will win. -->
+    <xs:element name="sql-type">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="hibernate-type"/>
+            </xs:sequence>
+            <xs:attribute name="name"/>
+            <xs:attribute name="jdbc-type"/>
+            <xs:attribute name="length"/>
+            <xs:attribute name="precision"/>
+            <xs:attribute name="scale"/>
+            <xs:attribute name="not-null">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true"/>
+                        <xs:enumeration value="false"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+
+            <!--<xs:attribute name="hibernate-type"/>-->
+            <xs:attribute name="hibernate-type">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <jxb:property name="nameAttribute"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:attribute>
+
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="hibernate-type">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <!--
+        Used to target the selection from the database schema. 
+        Each schema-selection can be viewed as a "call" to DatabaseMetaData.getTables().
+    -->
+    <xs:element name="schema-selection">
+        <xs:complexType>
+            <xs:attribute name="match-catalog"/>
+            <xs:attribute name="match-schema"/>
+            <xs:attribute name="match-table"/>
+        </xs:complexType>
+    </xs:element>
+    <!-- Catalog pattern for the selection -->
+    <!-- Schema for the for the selection -->
+    <!-- Table pattern for the selection -->
+    <xs:element name="table">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="meta"/>
+                <xs:element minOccurs="0" ref="primary-key"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="column"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="foreign-key"/>
+            </xs:sequence>
+            <xs:attribute name="catalog"/>
+            <xs:attribute name="schema"/>
+            <xs:attribute name="name" use="required"/>
+            <xs:attribute name="class"/>
+        </xs:complexType>
+    </xs:element>
+    <!-- Catalog for the table -->
+    <!-- Schema for the table -->
+    <!-- Name of the table -->
+    <!-- The class name to use for the table -->
+    <xs:element name="column">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="meta"/>
+            </xs:sequence>
+            <xs:attribute name="name" use="required"/>
+            <xs:attribute name="jdbc-type"/>
+            <xs:attribute name="type"/>
+            <xs:attribute name="property"/>
+            <xs:attribute name="exclude" default="false">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true"/>
+                        <xs:enumeration value="false"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="key-column">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"/>
+            <xs:attribute name="jdbc-type"/>
+            <xs:attribute name="type"/>
+            <xs:attribute name="property"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="primary-key">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="generator"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="key-column"/>
+            </xs:sequence>
+            <xs:attribute name="property"/>
+            <xs:attribute name="id-class"/>
+        </xs:complexType>
+    </xs:element>
+    <!-- Property name to use for this primary key -->
+    <!-- Class to use for representing the id -->
+    <xs:element name="generator">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="param"/>
+            </xs:sequence>
+            <xs:attribute name="class" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="param">
+        <xs:complexType mixed="true">
+            <xs:attribute name="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <!-- A foreign-key has to have at least a constraint-name AND/OR foreign-table+column-ref's -->
+    <xs:element name="foreign-key">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="column-ref"/>
+                <xs:element minOccurs="0" ref="many-to-one"/>
+                <xs:element minOccurs="0" ref="set"/>
+                <xs:element minOccurs="0" ref="one-to-one"/>
+                <xs:element minOccurs="0" ref="inverse-one-to-one"/>
+            </xs:sequence>
+            <xs:attribute name="constraint-name"/>
+            <xs:attribute name="foreign-catalog"/>
+            <xs:attribute name="foreign-schema"/>
+            <xs:attribute name="foreign-table"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="column-ref">
+        <xs:complexType>
+            <xs:attribute name="local-column" use="required"/>
+            <xs:attribute name="foreign-column"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="many-to-one">
+        <xs:complexType>
+            <xs:attribute name="property"/>
+            <xs:attribute name="exclude">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true"/>
+                        <xs:enumeration value="false"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="cascade"/>
+            <xs:attribute name="fetch">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="join"/>
+                        <xs:enumeration value="select"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="update" default="true">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true"/>
+                        <xs:enumeration value="false"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="insert" default="true">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true"/>
+                        <xs:enumeration value="false"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <!-- pure one to one (shared pk) are managed) -->
+    <xs:element name="one-to-one">
+        <xs:complexType>
+            <xs:attribute name="property"/>
+            <xs:attribute name="exclude">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true"/>
+                        <xs:enumeration value="false"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="cascade"/>
+            <xs:attribute name="fetch">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="join"/>
+                        <xs:enumeration value="select"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="inverse-one-to-one">
+        <xs:complexType>
+            <xs:attribute name="property"/>
+            <xs:attribute name="exclude">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true"/>
+                        <xs:enumeration value="false"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="cascade"/>
+            <xs:attribute name="fetch">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="join"/>
+                        <xs:enumeration value="select"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="set">
+        <xs:complexType>
+            <xs:attribute name="property"/>
+            <xs:attribute name="exclude">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true"/>
+                        <xs:enumeration value="false"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="cascade"/>
+        </xs:complexType>
+    </xs:element>
+    <!--
+        <!ELEMENT bag EMPTY >
+        <!ATTLIST bag property CDATA #REQUIRED>
+    -->
+    <!-- a table-filter allows to explicitly exclude or include tables or complete catalog/schemas into the reverse engineering -->
+    <xs:element name="table-filter">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="meta"/>
+            </xs:sequence>
+            <xs:attribute name="match-catalog" default=".*"/>
+            <xs:attribute name="match-schema" default=".*"/>
+            <xs:attribute name="match-name" use="required"/>
+            <xs:attribute name="exclude" default="false">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true"/>
+                        <xs:enumeration value="false"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="package"/>
+        </xs:complexType>
+    </xs:element>
+    <!-- META element definition; used to assign meta-level attributes. -->
+    <xs:element name="meta">
+        <xs:complexType mixed="true">
+            <xs:attribute name="attribute" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
