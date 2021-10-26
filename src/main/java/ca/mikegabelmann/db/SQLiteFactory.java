@@ -24,8 +24,8 @@ public class SQLiteFactory {
 
     private TableType table;
 
-    public void parseFile(InputStream is) throws IOException {
-        SQLiteLexer lexer = new SQLiteLexer(new ANTLRInputStream(is));
+    public void parseFile(CharStream cs) throws IOException {
+        SQLiteLexer lexer = new SQLiteLexer(cs);
         SQLiteParser parser = new SQLiteParser(new CommonTokenStream(lexer));
 
         parser.addErrorListener(new BaseErrorListener() {
@@ -179,6 +179,9 @@ public class SQLiteFactory {
 
                 table.setName(tableName);
                 table.setJavaName(NameUtil.getClassName(JavaNamingType.CAMELCASE, tableName));
+                table.setDescription("");
+                table.setBaseClass("");
+                table.setAbstract(Boolean.FALSE);
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("table={}", tableName);
@@ -202,6 +205,7 @@ public class SQLiteFactory {
                 column.setPrimaryKey(false);
                 column.setRequired(false);
                 column.setAutoIncrement(Boolean.FALSE);
+                //column.setJavaType(JavaReturnType.OBJECT);
 
                 //TODO: column.setSize();
 
@@ -212,21 +216,28 @@ public class SQLiteFactory {
                     LOG.debug("columnName={}, typeName={}", columnName, typeName);
                 }
 
-                //FIXME: we need a mapper to/from for each DB/Java
+                //1s----------------------------------
+                //FIXME: we need a mapper to/from for each DB/Java type
+
+                //SQLite does not have a VARCHAR type
                 if ("TEXT".equals(typeName)) {
+                    typeName = "VARCHAR";
+                }
+
+                column.setType(SqlDataType.valueOf(typeName));
+
+                if (SqlDataType.VARCHAR.name().equals(typeName)
+                    || SqlDataType.REAL.name().equals(typeName)
+                    || SqlDataType.INTEGER.name().equals(typeName)) {
+
                     if (columnName.endsWith("_dt")) {
                         column.setType(SqlDataType.DATE);
 
                     } else if (columnName.endsWith("_dtm")) {
                         column.setType(SqlDataType.TIMESTAMP);
-
-                    } else {
-                        column.setType(SqlDataType.VARCHAR);
                     }
-
-                } else {
-                    column.setType(SqlDataType.valueOf(typeName));
                 }
+                //1e----------------------------------
 
                 for (SQLiteParser.Column_constraintContext constraint : ctx.column_constraint()) {
                     String key = constraint.getText();
@@ -247,6 +258,8 @@ public class SQLiteFactory {
 
                         UniqueType ut = new UniqueType();
                         ut.getUniqueColumn().add(uct);
+                        //NOTE: the default constraint name is tableName.columnName if not set explicitly
+                        //ut.setName("");
                         table.getForeignKeyOrIndexOrUnique().add(ut);
 
                     } else if ("NOTNULL".equals(key)) {
@@ -320,15 +333,48 @@ public class SQLiteFactory {
                 }
 
                 if (ctx.foreign_key_clause() != null) {
-                    LOG.debug("foreign key, table={}", ctx.foreign_key_clause().foreign_table().getText());
 
-                    for (SQLiteParser.Column_nameContext record : ctx.foreign_key_clause().column_name()) {
-                        LOG.debug("\tforeign column={}", record.getText());
+/* examples
+    <foreign-key foreignTable="INCIDENT_CAUSE_STATUS_CODE" name="ICSCD_INCC_FK">
+        <reference local="INCIDENT_CAUSE_STATUS_CODE" foreign="INCIDENT_CAUSE_STATUS_CODE"/>
+    </foreign-key>
+
+    <foreign-key foreignTable="MOBILE_SUPPORT_RSRC_PRODUCT" name="MSDT_MSRPC_FK">
+        <reference local="MS_PRODUCT_TYPE_CODE" foreign="MS_PRODUCT_TYPE_CODE"/>
+        <reference local="MOBILE_SUPPORT_RSRC_TYPE_CODE" foreign="MOBILE_SUPPORT_RSRC_TYPE_CODE"/>
+    </foreign-key>
+*/
+
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("foreign key, table={}", ctx.foreign_key_clause().foreign_table().getText());
                     }
 
-                    for (SQLiteParser.Column_nameContext record : ctx.column_name()) {
-                        LOG.debug("\tlocal column={}", record.getText());
+                    ForeignKeyType fkt = new ForeignKeyType();
+                    fkt.setForeignTable(ctx.foreign_key_clause().foreign_table().getText());
+                    //fkt.setName(""); //not sure what it uses for the name
+
+                    if (ctx.foreign_key_clause().DELETE_().size() > 0) {
+                        //TODO: there is a delete clause, but how to get it?
+                        //fkt.setOnDelete(CascadeType.);
                     }
+
+                    if (ctx.foreign_key_clause().UPDATE_().size() > 0) {
+                        //TODO: there is an update clause, but how to get it?
+                        //fkt.setOnUpdate(CascadeType.);
+                    }
+
+                    for (int i=0; i < ctx.column_name().size(); i++) {
+                        SQLiteParser.Column_nameContext local = ctx.column_name(i);
+                        SQLiteParser.Column_nameContext foreign = ctx.foreign_key_clause().column_name(i);
+
+                        ReferenceType rt = new ReferenceType();
+                        rt.setLocal(local.getText());
+                        rt.setForeign(foreign.getText());
+
+                        fkt.getReference().add(rt);
+                    }
+
+                    table.getForeignKeyOrIndexOrUnique().add(fkt);
                 }
             }
 
