@@ -1,6 +1,9 @@
 package ca.mikegabelmann.db;
 
 
+import ca.mikegabelmann.codegen.lang.JavaNamingType;
+import ca.mikegabelmann.codegen.util.NameUtil;
+import ca.mikegabelmann.codegen.util.StringUtil;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteLexer;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParserListener;
@@ -9,6 +12,7 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.torque.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +22,7 @@ public class SQLiteFactory {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(SQLiteFactory.class);
 
+    private TableType table;
 
     public void parseFile(InputStream is) throws IOException {
         SQLiteLexer lexer = new SQLiteLexer(new ANTLRInputStream(is));
@@ -34,6 +39,8 @@ public class SQLiteFactory {
             @Override
             public void enterParse(SQLiteParser.ParseContext ctx) {
                 LOG.debug("parse - start");
+
+                table = new TableType();
             }
 
             @Override
@@ -168,9 +175,14 @@ public class SQLiteFactory {
 
             @Override
             public void exitCreate_table_stmt(SQLiteParser.Create_table_stmtContext ctx) {
-                LOG.debug("table={}", ctx.table_name().getText());
+                String tableName = ctx.table_name().getText();
 
+                table.setName(tableName);
+                table.setJavaName(NameUtil.getClassName(JavaNamingType.CAMELCASE, tableName));
 
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("table={}", tableName);
+                }
             }
 
             @Override
@@ -182,11 +194,81 @@ public class SQLiteFactory {
             public void exitColumn_def(SQLiteParser.Column_defContext ctx) {
                 //LOG.trace("Column_defContext, text={}", ctx.getText());
 
-                LOG.debug("columnName={}, typeName={}", ctx.column_name().getText(), ctx.type_name().getText());
+                String columnName = ctx.column_name().getText();
+                String typeName = ctx.type_name().getText();
+
+                ColumnType column = new ColumnType();
+                column.setName(columnName);
+                column.setPrimaryKey(false);
+                column.setRequired(false);
+                column.setAutoIncrement(Boolean.FALSE);
+
+                //TODO: column.setSize();
+
+                column.setJavaName(NameUtil.getFieldName(JavaNamingType.CAMELCASE, columnName));
+                column.setDescription("");
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("columnName={}, typeName={}", columnName, typeName);
+                }
+
+                //FIXME: we need a mapper to/from for each DB/Java
+                if ("TEXT".equals(typeName)) {
+                    if (columnName.endsWith("_dt")) {
+                        column.setType(SqlDataType.DATE);
+
+                    } else if (columnName.endsWith("_dtm")) {
+                        column.setType(SqlDataType.TIMESTAMP);
+
+                    } else {
+                        column.setType(SqlDataType.VARCHAR);
+                    }
+
+                } else {
+                    column.setType(SqlDataType.valueOf(typeName));
+                }
 
                 for (SQLiteParser.Column_constraintContext constraint : ctx.column_constraint()) {
-                    LOG.debug("\tconstraint={}", constraint.getText());
+                    String key = constraint.getText();
+
+                    LOG.debug("\tconstraint={}", key);
+
+                    if ("PRIMARYKEY".equals(key)) {
+                        column.setPrimaryKey(Boolean.TRUE);
+                        column.setRequired(Boolean.TRUE);
+                        column.setAutoIncrement(Boolean.FALSE);
+
+                    } else if ("REQUIRED".equals(key)) {
+                        column.setRequired(true);
+
+                    } else if ("UNIQUE".equals(key)) {
+                        UniqueColumnType uct = new UniqueColumnType();
+                        uct.setName(columnName);
+
+                        UniqueType ut = new UniqueType();
+                        ut.getUniqueColumn().add(uct);
+                        table.getForeignKeyOrIndexOrUnique().add(ut);
+
+                    } else if ("NOTNULL".equals(key)) {
+                        column.setRequired(Boolean.TRUE);
+
+                    } else if (constraint.DEFAULT_() != null) {
+                        if (constraint.signed_number() != null) {
+                            column.setDefault(constraint.signed_number().getText());
+
+                        } else if (constraint.literal_value() != null) {
+                            column.setDefault(constraint.literal_value().getText());
+
+                        } else if (constraint.expr().getText() != null) {
+                            column.setDefault(constraint.expr().getText());
+                        }
+
+                    } else {
+                        LOG.warn("unable to parse {}", key);
+                    }
                 }
+
+                table.getColumn().add(column);
             }
 
             @Override
@@ -1192,6 +1274,9 @@ public class SQLiteFactory {
         });
 
         parser.parse();
+    }
 
+    public TableType getTable() {
+        return table;
     }
 }
