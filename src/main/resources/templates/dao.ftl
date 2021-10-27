@@ -24,6 +24,6 @@ import ${basePackagePath}.model.${table.javaName};
 )
 @Repository
 @Transactional
-public interface ${table.javaName}Repository extends JpaRepository<${table.javaName}, Integer> {
+public interface ${table.javaName}Repository extends JpaRepository<${table.javaName}, SqlDataType_2_JavaType> {
 
 }

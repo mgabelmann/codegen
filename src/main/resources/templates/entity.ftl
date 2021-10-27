@@ -19,18 +19,22 @@ package ${basePackagePath}.model;
 public class ${table.javaName} {
 
     //TODO: properties with annotations
+
     //TODO: collections
 
     /** Default constructor. */
-    public ${table.javaName}() {
-        super();
-    }
+    ${tableEntity.getConstructorNoArgs()}
 
     //TODO: minimum args constructor
+    ${tableEntity.getConstructorRequiredArgs()}
+
     //TODO: all args constructor
+    ${tableEntity.getConstructorAllArgs()}
 
     //TODO: getters/setters
 
     //TODO: toString
+
     //TODO: hashCode
+
 }
