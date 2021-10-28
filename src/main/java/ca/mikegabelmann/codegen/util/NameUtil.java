@@ -20,10 +20,10 @@ import org.jetbrains.annotations.NotNull;
 public final class NameUtil {
 	/** Logger. */
 	private static final Logger logger = LogManager.getLogger(NameUtil.class);
-	
+
+
 	/** No not instantiate this class. */
 	private NameUtil() {}
-
 
 	/**
 	 * Get class name.

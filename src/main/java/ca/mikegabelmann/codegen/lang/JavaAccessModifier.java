@@ -1,7 +1,7 @@
 package ca.mikegabelmann.codegen.lang;
 
 /**
- *
+ * Class, Method and Variable accessibility.
  * @author mgabelmann
  */
 public enum JavaAccessModifier {

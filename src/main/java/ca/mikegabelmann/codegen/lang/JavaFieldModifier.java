@@ -2,9 +2,9 @@ package ca.mikegabelmann.codegen.lang;
 
 /**
  *
- * @author mgabe
+ * @author mgabelmann
  */
-public enum JavaClassModifiers {
+public enum JavaFieldModifier {
     //accessability
     PUBLIC(JavaKeywords.PUBLIC),
     PROTECTED(JavaKeywords.PROTECTED),
@@ -12,14 +12,13 @@ public enum JavaClassModifiers {
     PRIVATE(JavaKeywords.PRIVATE),
 
     //modifiers
-    ABSTRACT(JavaKeywords.ABSTRACT),
     STATIC(JavaKeywords.STATIC),
-    //SEALED(JavaKeywords.SEALED),
-    //NON_SEALED(JavaKeywords.NON_SEALED),
-    STRICTFP(JavaKeywords.STRICTFP),
+    FINAL(JavaKeywords.FINAL),
+    TRANSIENT(JavaKeywords.TRANSIENT),
+    VOLATILE(JavaKeywords.VOLATILE),
     ;
 
-    JavaClassModifiers(final String modifier) {
+    JavaFieldModifier(final String modifier) {
         this.modifier = modifier;
     }
 
@@ -29,5 +28,4 @@ public enum JavaClassModifiers {
     public String toString() {
         return modifier;
     }
-
 }

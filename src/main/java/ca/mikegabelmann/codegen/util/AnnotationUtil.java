@@ -10,6 +10,7 @@ import java.util.SortedMap;
 import ca.mikegabelmann.codegen.lang.JavaTokens;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 
@@ -18,13 +19,13 @@ import org.apache.logging.log4j.Logger;
 public final class AnnotationUtil {
 	/** Logger. */
 	private static final Logger logger = LogManager.getLogger(AnnotationUtil.class);
-	
+
+
 	/** Do not instantiate this class. */
 	private AnnotationUtil() {
 
 	}
 
-	
 	/**
 	 * Get Java annotation.
 	 * <pre>
@@ -34,7 +35,10 @@ public final class AnnotationUtil {
 	 * @param values annotation key/value pairs
 	 * @return annotation
 	 */
-	public static String getAnnotation(final String name, final SortedMap<String, List<Object>> values) {
+	public static String getAnnotation(
+			@NotNull final String name,
+			final SortedMap<String, List<Object>> values) {
+
 		StringBuilder sb = new StringBuilder();
 		sb.append(JavaTokens.ANNOTATION);
 		sb.append(name);
@@ -59,9 +63,9 @@ public final class AnnotationUtil {
 	 * @param values key/value pairs
 	 * @return string
 	 */
-	public static String getString(final SortedMap<String, List<Object>> values) {
+	public static String getString(@NotNull final SortedMap<String, List<Object>> values) {
+
 		StringBuilder sb = new StringBuilder();
-		
 		Iterator<Map.Entry<String, List<Object>>> it = values.entrySet().iterator();
 		
 		while (it.hasNext()) {
@@ -93,7 +97,7 @@ public final class AnnotationUtil {
 	 * @param values values to delimit
 	 * @return delimited string
 	 */
-	public static String getString(final List<Object> values) {
+	public static String getString(@NotNull final List<Object> values) {
 		StringBuilder sb = new StringBuilder();
 		int size = values.size();
 		
@@ -122,7 +126,7 @@ public final class AnnotationUtil {
 	 * @param o value to escape
 	 * @return escaped value
 	 */
-	public static String escapeValue(final Object o) {
+	public static String escapeValue(@NotNull final Object o) {
 		String value;
 		
 		if (o instanceof Boolean) {

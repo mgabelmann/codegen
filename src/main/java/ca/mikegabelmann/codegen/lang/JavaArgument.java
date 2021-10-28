@@ -18,7 +18,7 @@ public class JavaArgument {
     /**
      * Constructor.
      * @param type object/primitive type
-     * @param name type name
+     * @param name java.lang.* or object class excluding package
      */
     public JavaArgument(
         @NotNull final String type,
@@ -69,4 +69,5 @@ public class JavaArgument {
 
         return sb.toString();
     }
+
 }

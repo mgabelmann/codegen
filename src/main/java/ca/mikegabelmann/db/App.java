@@ -34,7 +34,6 @@ public class App {
      */
     public static void main(final String[] args) throws Exception {
 
-
         SQLiteFactory factory = new SQLiteFactory();
         factory.parseFile(CharStreams.fromStream(App.class.getResourceAsStream("/example.sqlite")));
 
@@ -63,17 +62,16 @@ public class App {
 
         //base set of parameters inherited by all
         Map<String, Object> input = new HashMap<>();
-        input.put("table", factory.getTable());
         input.put("basePackagePath", "ca.mikegabelmann.persistence");
         input.put("author", "codegenerator");
         input.put("version", "1.0.0");
         input.put("buildDtm", LocalDateTime.now());
         input.put("javadoc", Boolean.TRUE);
-        //input.put("sqlMappings", sqlMappings);
 
         {
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
+            inputTemplate.put("tableWrapper", new TableWrapper(factory.getTable(), sqlMappings));
 
             Template dao = cfg.getTemplate("dao.ftl");
             Writer cw = new OutputStreamWriter(System.out);
@@ -83,7 +81,7 @@ public class App {
         {
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
-            inputTemplate.put("tableEntity", new TableWrapper(factory.getTable(), sqlMappings));
+            inputTemplate.put("tableWrapper", new TableWrapper(factory.getTable(), sqlMappings));
 
             Template entity = cfg.getTemplate("entity.ftl");
             Writer cw2 = new OutputStreamWriter(System.out);
@@ -92,7 +90,7 @@ public class App {
     }
 
     /**
-     * Read property file.
+     * Read property file with SqlDataType to Java SQL types.
      * @param filename
      * @return
      * @throws IOException
@@ -108,7 +106,7 @@ public class App {
                     String[] keyvalue = line.split("=");
                     map.put(keyvalue[0].trim(), keyvalue[1].trim());
 
-                } else {
+                } else if (LOG.isTraceEnabled()) {
                     LOG.trace("skipping comment or empty line");
                 }
             }
@@ -116,4 +114,5 @@ public class App {
 
         return map;
     }
+
 }

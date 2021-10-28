@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
  * @author mgabelmann
  */
 public final class ObjectUtil {
-	
+
+
 	/** Do not instantiate this class. */
 	private ObjectUtil() {}
-
 
 	/**
 	 * Get 'getter' method.
