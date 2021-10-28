@@ -1,13 +1,14 @@
 package ca.mikegabelmann.db.mapper;
 
 
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import org.jetbrains.annotations.NotNull;
 
 /**
  *
  * @author mgabe
  */
-public class ColumnAnnotation extends AbstractAnnotation {
+public class ColumnAnnotation extends JavaAnnotation {
     public static final String NAME = "name";
     public static final String UNIQUE = "unique";
     public static final String NULLABLE = "nullable";
@@ -26,43 +27,43 @@ public class ColumnAnnotation extends AbstractAnnotation {
     }
 
     public void setName(@NotNull final String value) {
-        this.addProperty(NAME, value);
+        this.add(NAME, value);
     }
 
     public void setUnique(final boolean unique) {
-        this.addProperty(UNIQUE, unique);
+        this.add(UNIQUE, unique);
     }
 
     public void setNullable(final boolean nullable) {
-        this.addProperty(NULLABLE, nullable);
+        this.add(NULLABLE, nullable);
     }
 
     public void setInsertable(final boolean insertable) {
-        this.addProperty(INSERTABLE, insertable);
+        this.add(INSERTABLE, insertable);
     }
 
     public void setUpdatable(final boolean updatable) {
-        this.addProperty(UPDATABLE, updatable);
+        this.add(UPDATABLE, updatable);
     }
 
     public void setColumnDefinition(@NotNull final String columnDefinition) {
-        this.addProperty(COLUMN_DEFINITION, columnDefinition);
+        this.add(COLUMN_DEFINITION, columnDefinition);
     }
 
     public void setTable(@NotNull final String table) {
-        this.addProperty(TABLE, table);
+        this.add(TABLE, table);
     }
 
     public void setLength(final int length) {
-        this.addProperty(LENGTH, length);
+        this.add(LENGTH, length);
     }
 
     public void setPrecision(final int precision) {
-        this.addProperty(PRECISION, precision);
+        this.add(PRECISION, precision);
     }
 
     public void setScale(final int scale) {
-        this.addProperty(SCALE, scale);
+        this.add(SCALE, scale);
     }
 
 }

@@ -33,7 +33,7 @@ abstract class AbstractJavaType {
         return name;
     }
 
-    @Override
+    /*@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
@@ -42,6 +42,6 @@ abstract class AbstractJavaType {
         sb.append(name);
 
         return sb.toString();
-    }
+    }*/
 
 }

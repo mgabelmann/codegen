@@ -12,14 +12,32 @@ public class JavaArgument extends AbstractJavaTypeAnnotated {
 
     private boolean isFinal;
 
-
+    /**
+     *
+     * @param type
+     * @param name
+     */
     public JavaArgument(@NotNull String type, @NotNull String name) {
         this(type, name, true);
     }
 
+    /**
+     *
+     * @param type
+     * @param name
+     * @param isFinal
+     */
     public JavaArgument(@NotNull String type, @NotNull String name, boolean isFinal) {
         super(type, name);
         this.isFinal = isFinal;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isFinal() {
+        return isFinal;
     }
 
     @Override

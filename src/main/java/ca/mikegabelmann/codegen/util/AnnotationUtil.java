@@ -126,7 +126,7 @@ public final class AnnotationUtil {
 	 * @param o value to escape
 	 * @return escaped value
 	 */
-	public static String escapeValue(@NotNull final Object o) {
+	public static String escapeValue(final Object o) {
 		String value;
 		
 		if (o instanceof Boolean) {

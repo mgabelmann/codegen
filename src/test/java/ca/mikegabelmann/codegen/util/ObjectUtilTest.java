@@ -1,5 +1,6 @@
 package ca.mikegabelmann.codegen.util;
 
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethodNamePrefix;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
@@ -96,7 +97,7 @@ public class ObjectUtilTest {
 			new JavaMethodModifier[] { JavaMethodModifier.PUBLIC },
 			JavaMethodNamePrefix.SET,
 			"Name",
-			new JavaMethod[] { new JavaMethod(String.class.getSimpleName(), "name")},
+			new JavaArgument[] { new JavaArgument(String.class.getSimpleName(), "name")},
 			new String[0]);
 
 		Assertions.assertEquals(expected, result);
@@ -111,7 +112,7 @@ public class ObjectUtilTest {
 				new JavaMethodModifier[] { JavaMethodModifier.PUBLIC },
 				JavaMethodNamePrefix.SET,
 				"Name",
-				new JavaMethod[] { new JavaMethod(String.class.getSimpleName(), "name")},
+				new JavaArgument[] { new JavaArgument(String.class.getSimpleName(), "name")},
 				new String[] { IOException.class.getSimpleName() });
 
 		Assertions.assertEquals(expected, result);
@@ -124,7 +125,7 @@ public class ObjectUtilTest {
 
 		String result = ObjectUtil.setMethod(
 			"Name",
-			new JavaMethod[] { new JavaMethod(String.class.getSimpleName(), "name")});
+			new JavaArgument[] { new JavaArgument(String.class.getSimpleName(), "name")});
 
 		Assertions.assertEquals(expected, result);
 	}
@@ -138,7 +139,7 @@ public class ObjectUtilTest {
 		String result = ObjectUtil.constructorMethod(
 			new JavaConstructorModifier[] { JavaConstructorModifier.PUBLIC },
 			"Test",
-			new JavaMethod[] { new JavaMethod(String.class.getSimpleName(), "name")},
+			new JavaArgument[] { new JavaArgument(String.class.getSimpleName(), "name")},
 			new String[0]);
 
 		Assertions.assertEquals(expected, result);
@@ -152,7 +153,7 @@ public class ObjectUtilTest {
 		String result = ObjectUtil.constructorMethod(
 				new JavaConstructorModifier[] { JavaConstructorModifier.PUBLIC },
 				"Test",
-				new JavaMethod[] { new JavaMethod(String.class.getSimpleName(), "name")},
+				new JavaArgument[] { new JavaArgument(String.class.getSimpleName(), "name")},
 				new String[] { IOException.class.getSimpleName() });
 
 		Assertions.assertEquals(expected, result);

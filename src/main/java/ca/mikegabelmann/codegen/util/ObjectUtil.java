@@ -2,6 +2,7 @@ package ca.mikegabelmann.codegen.util;
 
 import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethodNamePrefix;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
@@ -98,7 +99,7 @@ public final class ObjectUtil {
 	 */
 	public static String setMethod(
 		@NotNull String methodName,
-		@NotNull JavaMethod[] arguments) {
+		@NotNull JavaArgument[] arguments) {
 
 		return ObjectUtil.setMethod(
 			new JavaMethodModifier[] { JavaMethodModifier.PUBLIC },
@@ -121,7 +122,7 @@ public final class ObjectUtil {
 		@NotNull JavaMethodModifier[] methodModifiers,
 		@NotNull JavaMethodNamePrefix javaMethodNamePrefix,
 		@NotNull String methodName,
-		@NotNull JavaMethod[] arguments,
+		@NotNull JavaArgument[] arguments,
 		@NotNull String[] methodExceptions) {
 
 		StringBuilder sb = new StringBuilder();
@@ -150,7 +151,7 @@ public final class ObjectUtil {
 
 		sb.append(JavaTokens.BRACE_LEFT);
 
-		for (JavaMethod argument : arguments) {
+		for (JavaArgument argument : arguments) {
 			sb.append(JavaKeywords.THIS_DOT);
 			sb.append(argument.getName());
 			sb.append(JavaTokens.EQUALS_WITH_SPACES);
@@ -178,7 +179,7 @@ public final class ObjectUtil {
 		return ObjectUtil.constructorMethod(
 			constructorModifiers,
 			constructorName,
-			new JavaMethod[0],
+			new JavaArgument[0],
 			constructorExceptions);
 	}
 
@@ -193,7 +194,7 @@ public final class ObjectUtil {
 	public static String constructorMethod(
 		@NotNull JavaConstructorModifier[] constructorModifiers,
 		@NotNull String constructorName,
-		@NotNull JavaMethod[] arguments,
+		@NotNull JavaArgument[] arguments,
 		@NotNull String[] constructorExceptions) {
 
 		StringBuilder sb = new StringBuilder();
@@ -220,7 +221,7 @@ public final class ObjectUtil {
 
 		sb.append(JavaTokens.BRACE_LEFT);
 
-		for (JavaMethod argument : arguments) {
+		for (JavaArgument argument : arguments) {
 			sb.append(JavaKeywords.THIS_DOT);
 			sb.append(argument.getName());
 			sb.append(JavaTokens.EQUALS_WITH_SPACES);

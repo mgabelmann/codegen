@@ -1,7 +1,6 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
-import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashSet;
@@ -13,7 +12,9 @@ import java.util.Set;
  */
 public class JavaMethod extends AbstractJavaTypeAnnotated {
     /** Method modifiers. */
-    private Set<JavaMethodModifier> modifiers;
+    private final Set<JavaMethodModifier> modifiers;
+
+    //FIXME: add arguments, throws, etc.
 
 
     /**
@@ -43,12 +44,11 @@ public class JavaMethod extends AbstractJavaTypeAnnotated {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
+        /*
         for (JavaMethodModifier modifier : modifiers) {
             sb.append(modifier.toString());
         }
-
-        sb.append(super.toString());
-        sb.append(JavaTokens.SEMICOLON);
+        */
 
         return sb.toString();
     }

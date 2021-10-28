@@ -1,6 +1,5 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
-import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,10 +10,11 @@ import java.util.Set;
  *
  * @author mgabe
  */
-public class JavaConstructor {
+public class JavaConstructor extends AbstractJavaTypeAnnotated {
     /** Constructor modifiers. */
-    private Set<JavaConstructorModifier> modifiers;
+    private final Set<JavaConstructorModifier> modifiers;
 
+    //FIXME: add arguments, throws, etc.
 
     /**
      * Constructor.
@@ -22,7 +22,7 @@ public class JavaConstructor {
      * @param name field or variable name
      */
     public JavaConstructor(@NotNull String type, @NotNull String name) {
-        //super(type, name);
+        super(type, name);
         this.modifiers = new LinkedHashSet<>();
     }
 
@@ -43,10 +43,11 @@ public class JavaConstructor {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        /*for (JavaAnnotation annotation : annotations) {
+        /*
+        for (JavaAnnotation annotation : annotations) {
             sb.append(annotation.toString());
             sb.append(JavaTokens.SPACE);
-        }*/
+        }
 
         for (JavaConstructorModifier modifier : modifiers) {
             sb.append(modifier.toString());
@@ -54,6 +55,7 @@ public class JavaConstructor {
 
         sb.append(super.toString());
         sb.append(JavaTokens.SEMICOLON);
+         */
 
         return sb.toString();
     }

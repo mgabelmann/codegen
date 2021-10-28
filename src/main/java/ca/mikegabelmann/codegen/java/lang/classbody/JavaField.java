@@ -44,7 +44,7 @@ public class JavaField extends AbstractJavaTypeAnnotated {
 
         for (JavaAnnotation annotation : annotations) {
             sb.append(annotation.toString());
-            sb.append(System.lineSeparator());
+            sb.append(JavaTokens.NEWLINE);
         }
 
         for (JavaFieldModifier modifier : modifiers) {

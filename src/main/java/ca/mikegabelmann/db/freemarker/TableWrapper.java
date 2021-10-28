@@ -1,5 +1,6 @@
 package ca.mikegabelmann.db.freemarker;
 
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import ca.mikegabelmann.codegen.java.JavaNamingType;
@@ -93,7 +94,7 @@ public class TableWrapper implements JavaClass {
     }
 
     public String getConstructorRequiredArgs() {
-        JavaMethod[] parameters = this.getJavaArguments(requiredColumns);
+        JavaArgument[] parameters = this.getJavaArguments(requiredColumns);
 
         return ObjectUtil.constructorMethod(
             new JavaConstructorModifier[] { JavaConstructorModifier.PUBLIC },
@@ -103,7 +104,7 @@ public class TableWrapper implements JavaClass {
     }
 
     public String getConstructorAllArgs() {
-        JavaMethod[] parameters = this.getJavaArguments(allColumns);
+        JavaArgument[] parameters = this.getJavaArguments(allColumns);
 
         return ObjectUtil.constructorMethod(
                 new JavaConstructorModifier[] { JavaConstructorModifier.PUBLIC },
@@ -153,12 +154,12 @@ public class TableWrapper implements JavaClass {
         return NameUtil.getFieldName(JavaNamingType.CAMELCASE, tableType.getName());
     }
 
-    private JavaMethod[] getJavaArguments(@NotNull List<ColumnWrapper> columns) {
-        JavaMethod[] parameters = new JavaMethod[columns.size()];
+    private JavaArgument[] getJavaArguments(@NotNull List<ColumnWrapper> columns) {
+        JavaArgument[] parameters = new JavaArgument[columns.size()];
 
         for (int i=0; i < columns.size(); i++) {
             ColumnWrapper column = columns.get(i);
-            parameters[i] = new JavaMethod(column.getSimpleName(), column.getVariableName());
+            parameters[i] = new JavaArgument(column.getSimpleName(), column.getVariableName());
         }
 
         return parameters;

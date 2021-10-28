@@ -1,7 +1,5 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
-import ca.mikegabelmann.codegen.java.lang.classbody.AbstractJavaType;
-import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashSet;
@@ -39,7 +37,7 @@ abstract class AbstractJavaTypeAnnotated extends AbstractJavaType {
         return this.annotations.remove(annotation);
     }
 
-    @Override
+/*    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
@@ -50,6 +48,6 @@ abstract class AbstractJavaTypeAnnotated extends AbstractJavaType {
         sb.append(super.toString());
 
         return sb.toString();
-    }
+    }*/
 
 }
