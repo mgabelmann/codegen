@@ -6,16 +6,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import ${basePackagePath}.model.${tableWrapper.tableType.javaName};
+import ${basePackagePath}.model.${tableWrapper.getSimpleName()};
 
 /**
- * <p>Data Access Object (DAO) for ${tableWrapper.tableType.javaName}.</p>
+ * <p>Data Access Object (DAO) for <em>${tableWrapper.tableType.name}</em>.</p>
  * <p><b>NOTE:</b>if this class is re-generated any changes will be lost, extend this interface if you wish to
  * add functionality</p>
  *
  * @author ${author}
  * @version ${version}
- * @see ${basePackagePath}.model.${tableWrapper.tableType.javaName}
+ * @see ${basePackagePath}.model.${tableWrapper.getSimpleName()}
  */
 @Generated(
     value = "${author}",
@@ -24,6 +24,6 @@ import ${basePackagePath}.model.${tableWrapper.tableType.javaName};
 )
 @Repository
 @Transactional
-public interface ${tableWrapper.tableType.javaName}Repository extends JpaRepository<${tableWrapper.tableType.javaName}, SqlDataType_2_JavaType> {
+public interface ${tableWrapper.getSimpleName()}Repository extends JpaRepository<${tableWrapper.getSimpleName()}, ${tableWrapper.getPrimaryKeySimpleName()}> {
 
 }

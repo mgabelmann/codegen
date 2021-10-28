@@ -22,6 +22,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
+/**
+ *
+ * @author mgabe
+ */
 public class App {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(App.class);
@@ -91,9 +95,9 @@ public class App {
 
     /**
      * Read property file with SqlDataType to Java SQL types.
-     * @param filename
-     * @return
-     * @throws IOException
+     * @param filename file to load
+     * @return key/value pairs
+     * @throws IOException error
      */
     public static Map<String, String> getMappings(final String filename) throws IOException {
         Map<String, String> map = new TreeMap<>();

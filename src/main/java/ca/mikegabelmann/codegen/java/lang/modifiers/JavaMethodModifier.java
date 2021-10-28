@@ -1,10 +1,12 @@
-package ca.mikegabelmann.codegen.lang;
+package ca.mikegabelmann.codegen.java.lang.modifiers;
+
+import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
 
 /**
  *
  * @author mgabe
  */
-public enum JavaClassModifier {
+public enum JavaMethodModifier {
     //accessability
     PUBLIC(JavaKeywords.PUBLIC),
     PROTECTED(JavaKeywords.PROTECTED),
@@ -14,12 +16,14 @@ public enum JavaClassModifier {
     //modifiers
     ABSTRACT(JavaKeywords.ABSTRACT),
     STATIC(JavaKeywords.STATIC),
-    //SEALED(JavaKeywords.SEALED),
-    //NON_SEALED(JavaKeywords.NON_SEALED),
+    FINAL(JavaKeywords.FINAL),
+    SYNCHRONIZED(JavaKeywords.SYNCHRONIZED),
+    NATIVE(JavaKeywords.NATIVE),
     STRICTFP(JavaKeywords.STRICTFP),
     ;
 
-    JavaClassModifier(final String modifier) {
+
+    JavaMethodModifier(final String modifier) {
         this.modifier = modifier;
     }
 
@@ -29,5 +33,4 @@ public enum JavaClassModifier {
     public String toString() {
         return modifier;
     }
-
 }

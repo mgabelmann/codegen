@@ -1,7 +1,9 @@
 package ca.mikegabelmann.db.freemarker;
 
-import ca.mikegabelmann.codegen.lang.JavaArgument;
-import ca.mikegabelmann.codegen.lang.JavaConstructorModifier;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
+import ca.mikegabelmann.codegen.java.JavaNamingType;
+import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.codegen.util.ObjectUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
  *
  * @author mgabe
  */
-public class TableWrapper {
+public class TableWrapper implements JavaClass {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(TableWrapper.class);
 
@@ -55,6 +57,10 @@ public class TableWrapper {
         this.primaryKeys = allColumns.stream().filter(c -> c.getColumnType().isPrimaryKey()).collect(Collectors.toList());
     }
 
+    /**
+     * Return underlying object.
+     * @return table
+     */
     public TableType getTableType() {
         return tableType;
     }
@@ -87,7 +93,7 @@ public class TableWrapper {
     }
 
     public String getConstructorRequiredArgs() {
-        JavaArgument[] parameters = this.getJavaArguments(requiredColumns);
+        JavaMethod[] parameters = this.getJavaArguments(requiredColumns);
 
         return ObjectUtil.constructorMethod(
             new JavaConstructorModifier[] { JavaConstructorModifier.PUBLIC },
@@ -97,7 +103,7 @@ public class TableWrapper {
     }
 
     public String getConstructorAllArgs() {
-        JavaArgument[] parameters = this.getJavaArguments(allColumns);
+        JavaMethod[] parameters = this.getJavaArguments(allColumns);
 
         return ObjectUtil.constructorMethod(
                 new JavaConstructorModifier[] { JavaConstructorModifier.PUBLIC },
@@ -120,11 +126,39 @@ public class TableWrapper {
         return added;
     }
 
-    private JavaArgument[] getJavaArguments(@NotNull List<ColumnWrapper> columns) {
-        JavaArgument[] parameters = new JavaArgument[columns.size()];
+
+    public String getPrimaryKeySimpleName() {
+        if (primaryKeys.size() == 1) {
+            return primaryKeys.get(0).getSimpleName();
+
+        } else {
+            //FIXME: determine class for composite key
+            return "CompositeKey";
+        }
+    }
+
+    @Override
+    public String getCanonicalName() {
+        //TODO: we don't know the package name, so just return the class name
+        return tableType.getJavaName();
+    }
+
+    @Override
+    public String getSimpleName() {
+        return tableType.getJavaName();
+    }
+
+    @Override
+    public String getVariableName() {
+        return NameUtil.getFieldName(JavaNamingType.CAMELCASE, tableType.getName());
+    }
+
+    private JavaMethod[] getJavaArguments(@NotNull List<ColumnWrapper> columns) {
+        JavaMethod[] parameters = new JavaMethod[columns.size()];
 
         for (int i=0; i < columns.size(); i++) {
-            parameters[i] = columns.get(i).getJavaArgument();
+            ColumnWrapper column = columns.get(i);
+            parameters[i] = new JavaMethod(column.getSimpleName(), column.getVariableName());
         }
 
         return parameters;

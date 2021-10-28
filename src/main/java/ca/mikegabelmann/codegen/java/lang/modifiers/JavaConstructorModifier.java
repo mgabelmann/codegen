@@ -1,18 +1,20 @@
-package ca.mikegabelmann.codegen.lang;
+package ca.mikegabelmann.codegen.java.lang.modifiers;
+
+import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
 
 /**
- * Class, Method and Variable accessibility.
+ *
  * @author mgabelmann
  */
-public enum JavaAccessModifier {
+public enum JavaConstructorModifier {
+    //accessability
     PUBLIC(JavaKeywords.PUBLIC),
     PROTECTED(JavaKeywords.PROTECTED),
     PACKAGE(""),
     PRIVATE(JavaKeywords.PRIVATE),
     ;
 
-
-    JavaAccessModifier(final String modifier) {
+    JavaConstructorModifier(final String modifier) {
         this.modifier = modifier;
     }
 
@@ -22,4 +24,5 @@ public enum JavaAccessModifier {
     public String toString() {
         return modifier;
     }
+
 }

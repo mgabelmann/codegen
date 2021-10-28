@@ -1,6 +1,6 @@
 package ca.mikegabelmann.codegen.util;
 
-import ca.mikegabelmann.codegen.lang.JavaNamingType;
+import ca.mikegabelmann.codegen.java.JavaNamingType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

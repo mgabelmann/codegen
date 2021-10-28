@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
 
-import ca.mikegabelmann.codegen.lang.JavaNamingType;
-import ca.mikegabelmann.codegen.lang.JavaTokens;
+import ca.mikegabelmann.codegen.java.JavaNamingType;
+import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,4 +1,4 @@
-package ca.mikegabelmann.codegen.lang;
+package ca.mikegabelmann.codegen.java.lang.classbody;
 
 import ca.mikegabelmann.codegen.util.AnnotationUtil;
 import org.apache.logging.log4j.LogManager;

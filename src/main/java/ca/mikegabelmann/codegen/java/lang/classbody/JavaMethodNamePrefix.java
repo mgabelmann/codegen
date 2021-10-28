@@ -1,10 +1,10 @@
-package ca.mikegabelmann.codegen.lang;
+package ca.mikegabelmann.codegen.java.lang.classbody;
 
 /**
  *
  * @author mgabe
  */
-public enum MethodNamePrefix {
+public enum JavaMethodNamePrefix {
     IS("is"),
     HAS("has"),
     GET("get"),
@@ -17,7 +17,7 @@ public enum MethodNamePrefix {
      * Constructor.
      * @param prefix method prefix
      */
-    MethodNamePrefix(final String prefix) {
+    JavaMethodNamePrefix(final String prefix) {
         this.prefix = prefix;
     }
 

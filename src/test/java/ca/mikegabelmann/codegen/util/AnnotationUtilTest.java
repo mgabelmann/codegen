@@ -1,6 +1,5 @@
 package ca.mikegabelmann.codegen.util;
 
-import ca.mikegabelmann.codegen.lang.annotation.SimpleAnnotation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

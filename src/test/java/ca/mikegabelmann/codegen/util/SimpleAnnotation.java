@@ -1,4 +1,4 @@
-package ca.mikegabelmann.codegen.lang.annotation;
+package ca.mikegabelmann.codegen.util;
 
 public final class SimpleAnnotation {
     /** Expected value when testing. */

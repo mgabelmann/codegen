@@ -1,6 +1,10 @@
 package ca.mikegabelmann.codegen.util;
 
-import ca.mikegabelmann.codegen.lang.*;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethodNamePrefix;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +38,7 @@ public class ObjectUtilTest {
 		String result = ObjectUtil.getMethod(
 				new JavaMethodModifier[] { JavaMethodModifier.PUBLIC },
 				new JavaReturnType(String.class.getSimpleName(), "name"),
-				MethodNamePrefix.GET,
+				JavaMethodNamePrefix.GET,
 				"Name",
 				new String[0]);
 
@@ -49,7 +53,7 @@ public class ObjectUtilTest {
 		String result = ObjectUtil.getMethod(
 				new JavaMethodModifier[] { JavaMethodModifier.PUBLIC },
 				new JavaReturnType(String.class.getSimpleName(), "name"),
-				MethodNamePrefix.GET,
+				JavaMethodNamePrefix.GET,
 				"Name",
 				new String[] { Exception.class.getSimpleName() });
 
@@ -64,7 +68,7 @@ public class ObjectUtilTest {
 		String result = ObjectUtil.getMethod(
 				new JavaMethodModifier[] { JavaMethodModifier.PUBLIC },
 				new JavaReturnType(String.class.getSimpleName(), "name"),
-				MethodNamePrefix.GET,
+				JavaMethodNamePrefix.GET,
 				"Name",
 				new String[] { IOException.class.getSimpleName(), IllegalArgumentException.class.getSimpleName() });
 
@@ -90,9 +94,9 @@ public class ObjectUtilTest {
 
 		String result = ObjectUtil.setMethod(
 			new JavaMethodModifier[] { JavaMethodModifier.PUBLIC },
-			MethodNamePrefix.SET,
+			JavaMethodNamePrefix.SET,
 			"Name",
-			new JavaArgument[] { new JavaArgument(String.class.getSimpleName(), "name")},
+			new JavaMethod[] { new JavaMethod(String.class.getSimpleName(), "name")},
 			new String[0]);
 
 		Assertions.assertEquals(expected, result);
@@ -105,9 +109,9 @@ public class ObjectUtilTest {
 
 		String result = ObjectUtil.setMethod(
 				new JavaMethodModifier[] { JavaMethodModifier.PUBLIC },
-				MethodNamePrefix.SET,
+				JavaMethodNamePrefix.SET,
 				"Name",
-				new JavaArgument[] { new JavaArgument(String.class.getSimpleName(), "name")},
+				new JavaMethod[] { new JavaMethod(String.class.getSimpleName(), "name")},
 				new String[] { IOException.class.getSimpleName() });
 
 		Assertions.assertEquals(expected, result);
@@ -120,7 +124,7 @@ public class ObjectUtilTest {
 
 		String result = ObjectUtil.setMethod(
 			"Name",
-			new JavaArgument[] { new JavaArgument(String.class.getSimpleName(), "name")});
+			new JavaMethod[] { new JavaMethod(String.class.getSimpleName(), "name")});
 
 		Assertions.assertEquals(expected, result);
 	}
@@ -134,7 +138,7 @@ public class ObjectUtilTest {
 		String result = ObjectUtil.constructorMethod(
 			new JavaConstructorModifier[] { JavaConstructorModifier.PUBLIC },
 			"Test",
-			new JavaArgument[] { new JavaArgument(String.class.getSimpleName(), "name")},
+			new JavaMethod[] { new JavaMethod(String.class.getSimpleName(), "name")},
 			new String[0]);
 
 		Assertions.assertEquals(expected, result);
@@ -148,7 +152,7 @@ public class ObjectUtilTest {
 		String result = ObjectUtil.constructorMethod(
 				new JavaConstructorModifier[] { JavaConstructorModifier.PUBLIC },
 				"Test",
-				new JavaArgument[] { new JavaArgument(String.class.getSimpleName(), "name")},
+				new JavaMethod[] { new JavaMethod(String.class.getSimpleName(), "name")},
 				new String[] { IOException.class.getSimpleName() });
 
 		Assertions.assertEquals(expected, result);

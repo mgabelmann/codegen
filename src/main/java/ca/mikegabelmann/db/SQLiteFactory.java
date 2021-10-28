@@ -1,9 +1,8 @@
 package ca.mikegabelmann.db;
 
 
-import ca.mikegabelmann.codegen.lang.JavaNamingType;
+import ca.mikegabelmann.codegen.java.JavaNamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
-import ca.mikegabelmann.codegen.util.StringUtil;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteLexer;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParserListener;
@@ -15,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.torque.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 
 public class SQLiteFactory {

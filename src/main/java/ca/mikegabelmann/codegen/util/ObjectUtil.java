@@ -1,10 +1,15 @@
 package ca.mikegabelmann.codegen.util;
 
-import ca.mikegabelmann.codegen.lang.*;
+import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
+import ca.mikegabelmann.codegen.java.lang.JavaTokens;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethodNamePrefix;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -30,7 +35,7 @@ public final class ObjectUtil {
 		return ObjectUtil.getMethod(
 			new JavaMethodModifier[] { JavaMethodModifier.PUBLIC },
 			returnType,
-			MethodNamePrefix.GET,
+			JavaMethodNamePrefix.GET,
 			methodName,
 			new String[0]);
 	}
@@ -39,7 +44,7 @@ public final class ObjectUtil {
 	 * Get 'getter' method.
 	 * @param methodModifiers method modifiers
 	 * @param returnType return type
-	 * @param methodNamePrefix method name prefix
+	 * @param javaMethodNamePrefix method name prefix
 	 * @param methodName method name
 	 * @param methodExceptions exceptions
 	 * @return getter
@@ -47,7 +52,7 @@ public final class ObjectUtil {
 	public static String getMethod(
 		@NotNull JavaMethodModifier[] methodModifiers,
 		@NotNull JavaReturnType returnType,
-		@NotNull MethodNamePrefix methodNamePrefix,
+		@NotNull JavaMethodNamePrefix javaMethodNamePrefix,
 		@NotNull String methodName,
 		@NotNull String[] methodExceptions) {
 		
@@ -59,7 +64,7 @@ public final class ObjectUtil {
 		sb.append(returnType.getType());
 		sb.append(JavaTokens.SPACE);
 
-		sb.append(methodNamePrefix);
+		sb.append(javaMethodNamePrefix);
 		sb.append(methodName);
 		sb.append(JavaTokens.BRACKET_LEFT);
 
@@ -93,11 +98,11 @@ public final class ObjectUtil {
 	 */
 	public static String setMethod(
 		@NotNull String methodName,
-		@NotNull JavaArgument[] arguments) {
+		@NotNull JavaMethod[] arguments) {
 
 		return ObjectUtil.setMethod(
 			new JavaMethodModifier[] { JavaMethodModifier.PUBLIC },
-			MethodNamePrefix.SET,
+			JavaMethodNamePrefix.SET,
 			methodName,
 			arguments,
 			new String[0]);
@@ -106,7 +111,7 @@ public final class ObjectUtil {
 	/**
 	 * Get 'setter' method.
 	 * @param methodModifiers method modifiers
-	 * @param methodNamePrefix method name prefix
+	 * @param javaMethodNamePrefix method name prefix
 	 * @param methodName method name
 	 * @param arguments method arguments
 	 * @param methodExceptions exceptions
@@ -114,9 +119,9 @@ public final class ObjectUtil {
 	 */
 	public static String setMethod(
 		@NotNull JavaMethodModifier[] methodModifiers,
-		@NotNull MethodNamePrefix methodNamePrefix,
+		@NotNull JavaMethodNamePrefix javaMethodNamePrefix,
 		@NotNull String methodName,
-		@NotNull JavaArgument[] arguments,
+		@NotNull JavaMethod[] arguments,
 		@NotNull String[] methodExceptions) {
 
 		StringBuilder sb = new StringBuilder();
@@ -126,7 +131,7 @@ public final class ObjectUtil {
 
 		sb.append(JavaKeywords.VOID);
 
-		sb.append(methodNamePrefix);
+		sb.append(javaMethodNamePrefix);
 		sb.append(methodName);
 		sb.append(JavaTokens.BRACKET_LEFT);
 
@@ -145,7 +150,7 @@ public final class ObjectUtil {
 
 		sb.append(JavaTokens.BRACE_LEFT);
 
-		for (JavaArgument argument : arguments) {
+		for (JavaMethod argument : arguments) {
 			sb.append(JavaKeywords.THIS_DOT);
 			sb.append(argument.getName());
 			sb.append(JavaTokens.EQUALS_WITH_SPACES);
@@ -173,7 +178,7 @@ public final class ObjectUtil {
 		return ObjectUtil.constructorMethod(
 			constructorModifiers,
 			constructorName,
-			new JavaArgument[0],
+			new JavaMethod[0],
 			constructorExceptions);
 	}
 
@@ -188,7 +193,7 @@ public final class ObjectUtil {
 	public static String constructorMethod(
 		@NotNull JavaConstructorModifier[] constructorModifiers,
 		@NotNull String constructorName,
-		@NotNull JavaArgument[] arguments,
+		@NotNull JavaMethod[] arguments,
 		@NotNull String[] constructorExceptions) {
 
 		StringBuilder sb = new StringBuilder();
@@ -215,7 +220,7 @@ public final class ObjectUtil {
 
 		sb.append(JavaTokens.BRACE_LEFT);
 
-		for (JavaArgument argument : arguments) {
+		for (JavaMethod argument : arguments) {
 			sb.append(JavaKeywords.THIS_DOT);
 			sb.append(argument.getName());
 			sb.append(JavaTokens.EQUALS_WITH_SPACES);

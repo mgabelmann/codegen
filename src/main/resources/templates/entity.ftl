@@ -1,13 +1,13 @@
 package ${basePackagePath}.model;
 
 /**
- * <p>Entity for ${tableWrapper.tableType.javaName}.</p>
+ * <p>Entity for <em>${tableWrapper.tableType.name}</em>.</p>
  * <p><b>NOTE:</b>if this class is re-generated any changes will be lost, extend this interface if you wish to
  * add functionality</p>
  *
  * @author ${author}
  * @version ${version}
- * @see ${basePackagePath}.model.${tableWrapper.tableType.javaName}
+ * @see ${basePackagePath}.model.${tableWrapper.getSimpleName()}
  */
 @Generated(
     value = "${author}",
@@ -16,25 +16,30 @@ package ${basePackagePath}.model;
 )
 @Entity
 @Table(name = "${tableWrapper.tableType.name}")
-public class ${tableWrapper.tableType.javaName} {
+public class ${tableWrapper.getSimpleName()} {
 
     //TODO: properties with annotations
+<#list tableWrapper.getAllColumns() as column>
+    /** Column ${column.columnType.name} of type ${column.columnType.type}. */
+    private ${column.getSimpleName()} ${column.getVariableName()};
 
-    //TODO: collections
+</#list>
 
     //CONSTRUCTORS
     /** Default constructor. */
     ${tableWrapper.getConstructorNoArgs()}
 
+    /** Required args constructor. */
     ${tableWrapper.getConstructorRequiredArgs()}
 
+    /** All args constructor. */
     ${tableWrapper.getConstructorAllArgs()}
 
-    //GETTERS/SETTERS
-    <#list tableWrapper.getAllColumns() as column>
-        ${column.getJavaSimpleName()} ${column.getColumnType().javaName}
-    </#list>
+    //TODO: GETTERS/SETTERS
+<#list tableWrapper.getAllColumns() as column>
 
+
+</#list>
 
     //TODO: toString
 
