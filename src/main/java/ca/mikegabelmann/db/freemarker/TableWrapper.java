@@ -1,7 +1,6 @@
 package ca.mikegabelmann.db.freemarker;
 
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
-import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import ca.mikegabelmann.codegen.java.JavaNamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
@@ -126,7 +125,6 @@ public class TableWrapper implements JavaClass {
 
         return added;
     }
-
 
     public String getPrimaryKeySimpleName() {
         if (primaryKeys.size() == 1) {

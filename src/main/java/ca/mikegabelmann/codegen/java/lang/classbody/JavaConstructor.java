@@ -15,6 +15,7 @@ public class JavaConstructor extends AbstractJavaTypeAnnotated {
     private final Set<JavaConstructorModifier> modifiers;
 
     //FIXME: add arguments, throws, etc.
+    //FIXME: move functionality from ObjectUtil here
 
     /**
      * Constructor.

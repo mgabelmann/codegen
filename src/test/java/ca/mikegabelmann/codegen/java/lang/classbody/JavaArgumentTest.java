@@ -68,4 +68,12 @@ class JavaArgumentTest {
         Assertions.assertEquals("@A final type name", argument.toString());
     }
 
+    @Test
+    void test4_toString() {
+        JavaArgument argument = new JavaArgument("type", "name", false);
+        argument.addAnnotation(new JavaAnnotation("A"));
+        argument.addAnnotation(new JavaAnnotation("B"));
+
+        Assertions.assertEquals("@A @B type name", argument.toString());
+    }
 }

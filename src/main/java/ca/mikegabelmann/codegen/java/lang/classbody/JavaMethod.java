@@ -15,6 +15,7 @@ public class JavaMethod extends AbstractJavaTypeAnnotated {
     private final Set<JavaMethodModifier> modifiers;
 
     //FIXME: add arguments, throws, etc.
+    //FIXME: move functionality from ObjectUtil here
 
 
     /**

@@ -18,10 +18,10 @@ package ${basePackagePath}.model;
 @Table(name = "${tableWrapper.tableType.name}")
 public class ${tableWrapper.getSimpleName()} {
 
-    //TODO: properties with annotations
+    //PROPERTIES
 <#list tableWrapper.getAllColumns() as column>
-    /** Column ${column.columnType.name} of type ${column.columnType.type}. */
-    private ${column.getSimpleName()} ${column.getVariableName()};
+    /** <p>Column <em>${column.columnType.name}</em> of type <em>${column.columnType.type}</em>.</p> */
+    ${Entity.field(column)}
 
 </#list>
 
@@ -35,12 +35,13 @@ public class ${tableWrapper.getSimpleName()} {
     /** All args constructor. */
     ${tableWrapper.getConstructorAllArgs()}
 
-    //TODO: GETTERS/SETTERS
+    //GETTERS & SETTERS
 <#list tableWrapper.getAllColumns() as column>
+    ${Entity.setter(column)}
 
+    ${Entity.getter(column)}
 
 </#list>
-
     //TODO: toString
 
     //TODO: hashCode

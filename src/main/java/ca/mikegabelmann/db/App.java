@@ -1,10 +1,9 @@
 package ca.mikegabelmann.db;
 
 import ca.mikegabelmann.db.freemarker.TableWrapper;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateExceptionHandler;
-import freemarker.template.Version;
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.ext.beans.BeansWrapperBuilder;
+import freemarker.template.*;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.Marshaller;
@@ -12,6 +11,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.torque.TableType;
+import org.jetbrains.annotations.NotNull;
 
 import javax.xml.namespace.QName;
 import java.io.*;
@@ -77,6 +77,7 @@ public class App {
             inputTemplate.putAll(input);
             inputTemplate.put("tableWrapper", new TableWrapper(factory.getTable(), sqlMappings));
 
+
             Template dao = cfg.getTemplate("dao.ftl");
             Writer cw = new OutputStreamWriter(System.out);
             dao.process(inputTemplate, cw);
@@ -86,6 +87,15 @@ public class App {
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
             inputTemplate.put("tableWrapper", new TableWrapper(factory.getTable(), sqlMappings));
+
+            //allow template to access static classes
+            BeansWrapperBuilder wrapper = new BeansWrapperBuilder(version);
+            TemplateHashModel staticModels = wrapper.build().getStaticModels();
+            TemplateHashModel staticObjectUtil1 = (TemplateHashModel) staticModels.get("ca.mikegabelmann.codegen.util.ObjectUtil");
+            TemplateHashModel staticObjectUtil2 = (TemplateHashModel) staticModels.get("ca.mikegabelmann.db.freemarker.Entity");
+
+            inputTemplate.put("ObjectUtil", staticObjectUtil1);
+            inputTemplate.put("Entity", staticObjectUtil2);
 
             Template entity = cfg.getTemplate("entity.ftl");
             Writer cw2 = new OutputStreamWriter(System.out);

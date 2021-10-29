@@ -130,7 +130,6 @@ public class ObjectUtilTest {
 		Assertions.assertEquals(expected, result);
 	}
 
-
 	@Test
 	@DisplayName("constructor - without throws")
 	void test1_constructorMethod() {
