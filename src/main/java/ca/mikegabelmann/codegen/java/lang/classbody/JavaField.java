@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class JavaField extends AbstractJavaTypeAnnotated {
     /** Field modifiers. */
-    private Set<JavaFieldModifier> modifiers;
+    private final Set<JavaFieldModifier> modifiers;
 
 
     /**

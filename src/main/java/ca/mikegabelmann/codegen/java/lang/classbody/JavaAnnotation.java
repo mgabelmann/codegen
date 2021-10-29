@@ -15,8 +15,8 @@ public class JavaAnnotation {
     /** Logger. */
     private static final Logger logger = LogManager.getLogger(JavaAnnotation.class);
 
-    private String name;
-    private SortedMap<String, List<Object>> properties;
+    private final String name;
+    private final SortedMap<String, List<Object>> properties;
 
 
     /**

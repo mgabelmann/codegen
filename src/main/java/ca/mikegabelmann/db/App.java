@@ -1,7 +1,6 @@
 package ca.mikegabelmann.db;
 
 import ca.mikegabelmann.db.freemarker.TableWrapper;
-import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.*;
 import jakarta.xml.bind.JAXBContext;
@@ -11,7 +10,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.torque.TableType;
-import org.jetbrains.annotations.NotNull;
 
 import javax.xml.namespace.QName;
 import java.io.*;

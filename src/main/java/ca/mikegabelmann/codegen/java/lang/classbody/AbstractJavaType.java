@@ -1,6 +1,5 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
-import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
  */
 abstract class AbstractJavaType {
     /** Class or primitive type. */
-    protected String type;
+    protected final String type;
 
     /** field or variable name. */
-    protected String name;
+    protected final String name;
 
 
     /**

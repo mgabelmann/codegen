@@ -8,7 +8,6 @@ import java.util.SortedMap;
 import ca.mikegabelmann.codegen.java.JavaNamingType;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 
-import org.antlr.v4.runtime.CharStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;

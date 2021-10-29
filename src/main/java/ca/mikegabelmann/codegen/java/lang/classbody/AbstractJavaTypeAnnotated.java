@@ -11,7 +11,7 @@ import java.util.Set;
  */
 abstract class AbstractJavaTypeAnnotated extends AbstractJavaType {
     /** Annotations. */
-    protected Set<JavaAnnotation> annotations;
+    protected final Set<JavaAnnotation> annotations;
 
 
     /**

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class JavaArgument extends AbstractJavaTypeAnnotated {
 
-    private boolean isFinal;
+    private final boolean isFinal;
 
     /**
      *
@@ -50,7 +50,7 @@ public class JavaArgument extends AbstractJavaTypeAnnotated {
         }
 
         if (isFinal) {
-            sb.append(JavaKeywords.FINAL.toString());
+            sb.append(JavaKeywords.FINAL);
         }
 
         sb.append(type);

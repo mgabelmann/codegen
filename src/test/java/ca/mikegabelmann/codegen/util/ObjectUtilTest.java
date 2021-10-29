@@ -2,7 +2,6 @@ package ca.mikegabelmann.codegen.util;
 
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethodNamePrefix;
-import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;

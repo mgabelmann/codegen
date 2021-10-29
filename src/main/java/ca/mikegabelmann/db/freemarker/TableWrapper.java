@@ -25,13 +25,13 @@ public class TableWrapper implements JavaClass {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(TableWrapper.class);
 
-    private TableType tableType;
-    private Map<String, String> sqlMappings;
-    private Set<String> imports;
+    private final TableType tableType;
+    private final Map<String, String> sqlMappings;
+    private final Set<String> imports;
 
-    private List<ColumnWrapper> allColumns;
-    private List<ColumnWrapper> requiredColumns;
-    private List<ColumnWrapper> primaryKeys;
+    private final List<ColumnWrapper> allColumns;
+    private final List<ColumnWrapper> requiredColumns;
+    private final List<ColumnWrapper> primaryKeys;
 
 
     /**

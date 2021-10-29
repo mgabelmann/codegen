@@ -11,8 +11,8 @@ import java.util.Map;
  */
 public class ColumnWrapper implements JavaClass {
 
-    private ColumnType columnType;
-    private Map<String, String> sqlMappings;
+    private final ColumnType columnType;
+    private final Map<String, String> sqlMappings;
 
     /**
      * Constructor.

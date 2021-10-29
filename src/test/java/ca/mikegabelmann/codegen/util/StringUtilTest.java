@@ -3,10 +3,6 @@ package ca.mikegabelmann.codegen.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 
 class StringUtilTest {
 
