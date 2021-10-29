@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ${basePackagePath}.model.${tableWrapper.getSimpleName()};
 
+<#if javadoc>
 /**
  * <p>Data Access Object (DAO) for <em>${tableWrapper.tableType.name}</em>.</p>
  * <p><b>NOTE:</b>if this class is re-generated any changes will be lost, extend this interface if you wish to
@@ -17,6 +18,7 @@ import ${basePackagePath}.model.${tableWrapper.getSimpleName()};
  * @version ${version}
  * @see ${basePackagePath}.model.${tableWrapper.getSimpleName()}
  */
+</#if>
 @Generated(
     value = "${author}",
     date = "${buildDtm}",

@@ -5,7 +5,8 @@ package ca.mikegabelmann.codegen.java;
  * @author mgabelmann
  */
 public enum JavaNamingType {
-	NOCHANGE,
-	CAMELCASE,
-	UNDERSCORE
+	NO_CHANGE,
+	LOWER_CAMEL_CASE, //used for variables
+	UPPER_CAMEL_CASE, //used for classes, methods, etc
+	UNDERSCORE //also referred to snakecase
 }

@@ -149,7 +149,7 @@ public class TableWrapper implements JavaClass {
 
     @Override
     public String getVariableName() {
-        return NameUtil.getFieldName(JavaNamingType.CAMELCASE, tableType.getName());
+        return NameUtil.getJavaName(JavaNamingType.LOWER_CAMEL_CASE, tableType.getName());
     }
 
     private JavaArgument[] getJavaArguments(@NotNull List<ColumnWrapper> columns) {

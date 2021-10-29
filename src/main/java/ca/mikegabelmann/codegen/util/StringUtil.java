@@ -22,6 +22,11 @@ public class StringUtil {
         return (arg == null || arg.replaceAll("\\s", "").length() == 0);
     }
 
+    /**
+     *
+     * @param arg
+     * @return
+     */
     public static boolean isNotBlankOrNull(final String arg) {
         return ! StringUtil.isBlankOrNull(arg);
     }
@@ -33,14 +38,23 @@ public class StringUtil {
      */
     public static String initCap(final String value) {
         if (value == null) {
-            return null;
-
-        } else if (value.length() == 1) {
-            return value.toUpperCase();
-
-        } else {
-            return value.substring(0, 1).toUpperCase() + value.substring(1).toLowerCase();
+            return value;
         }
+
+        StringBuilder sb = new StringBuilder();
+        String[] tokens = value.split("\s");
+
+        for (String token : tokens) {
+            if (token.length() == 1) {
+                sb.append(token.toUpperCase());
+
+            } else if (token.length() > 1) {
+                sb.append(token.substring(0,1).toUpperCase() + token.substring(1).toLowerCase());
+                sb.append(" ");
+            }
+        }
+
+        return sb.toString().trim();
     }
 
     /**

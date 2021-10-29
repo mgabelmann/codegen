@@ -1,9 +1,11 @@
 package ca.mikegabelmann.db.freemarker;
 
+import ca.mikegabelmann.codegen.java.JavaNamingType;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaField;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
+import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.codegen.util.ObjectUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +40,10 @@ public class Entity {
     public static String getter(@NotNull final ColumnWrapper column) {
         JavaReturnType returnType = new JavaReturnType(column.getSimpleName(), column.getVariableName());
 
-        return ObjectUtil.getMethod(returnType, column.getSimpleName());
+        //TODO: determine annotations to add
+
+        String methodName = NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, column.getColumnType().getName());
+        return ObjectUtil.getMethod(methodName, returnType);
     }
 
     /**
@@ -51,7 +56,8 @@ public class Entity {
 
         //TODO: determine annotations to add
 
-        return ObjectUtil.setMethod(column.getSimpleName(), new JavaArgument[] { argument });
+        String methodName = NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, column.getColumnType().getName());
+        return ObjectUtil.setMethod(methodName, new JavaArgument[] { argument });
     }
 
 }

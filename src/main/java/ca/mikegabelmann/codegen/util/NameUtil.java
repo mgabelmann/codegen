@@ -8,6 +8,7 @@ import java.util.SortedMap;
 import ca.mikegabelmann.codegen.java.JavaNamingType;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 
+import org.antlr.v4.runtime.CharStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -31,73 +32,45 @@ public final class NameUtil {
 	 * @param value value to proces
 	 * @return field
 	 */
-	public static String getClassName(
+	public static String getJavaName(
 		final JavaNamingType namingMethodType,
 		final String value) {
-		
-		if (JavaNamingType.NOCHANGE.equals(namingMethodType) || value == null) {
-			return value;
-			
-		} else if (JavaNamingType.CAMELCASE.equals(namingMethodType)) {
-			StringBuilder sb = new StringBuilder();
-			String[] tokens = value.split(JavaTokens.UNDERSCORE);
-			
-			for (String token : tokens) {
-				if (token.length() <= 1) {
-					sb.append(token.toUpperCase());
-					
-				} else {
-					sb.append(token.substring(0, 1).toUpperCase() + token.substring(1).toLowerCase());
+
+		if (value == null) return value;
+
+		StringBuilder sb = new StringBuilder();
+
+		switch (namingMethodType) {
+			case UNDERSCORE:
+				sb.append(value.replace("\s", JavaTokens.UNDERSCORE).toLowerCase());
+				break;
+
+			case NO_CHANGE:
+				sb.append(value);
+				break;
+
+			default:
+			case LOWER_CAMEL_CASE:
+			case UPPER_CAMEL_CASE:
+				String[] tokens = value.replaceAll("\s", JavaTokens.UNDERSCORE).toLowerCase().split(JavaTokens.UNDERSCORE);
+
+				for (String token : tokens) {
+					if (token.length() == 1) {
+						sb.append(token.toUpperCase());
+
+					} else if (token.length() > 1) {
+						sb.append(token.substring(0, 1).toUpperCase() + token.substring(1).toLowerCase());
+					}
 				}
-			}
-			
-			return sb.toString();
-			
-		} else if (JavaNamingType.UNDERSCORE.equals(namingMethodType)) {
-			return value.toLowerCase();
-			
-		} else {
-			throw new IllegalArgumentException("unsupported type " + namingMethodType.name());
-		}
-	}
-	
-	/**
-	 * Get field name.
-	 * @param namingMethodType naming scheme
-	 * @param value value to process
-	 * @return field
-	 */
-	public static String getFieldName(
-		final JavaNamingType namingMethodType, 
-		final String value) { 
-		
-		if (JavaNamingType.NOCHANGE.equals(namingMethodType) || value == null) {
-			return value;
-			
-		} else if (JavaNamingType.CAMELCASE.equals(namingMethodType)) {
-			StringBuilder sb = new StringBuilder();
-			String[] tokens = value.split(JavaTokens.UNDERSCORE);
-			
-			for (int i = 0; i < tokens.length; i++) {
-				if (i == 0) {
-					sb.append(tokens[i].toLowerCase());
-					
-				} else if (tokens[i].length() <= 1) {
-					sb.append(tokens[i].toUpperCase());
-					
-				} else {
-					sb.append(tokens[i].substring(0, 1).toUpperCase() + tokens[i].substring(1).toLowerCase());
+
+				if (JavaNamingType.LOWER_CAMEL_CASE.equals(namingMethodType) && sb.length() > 0) {
+					sb.replace(0, 1, sb.substring(0, 1).toLowerCase());
 				}
-			}
-			
-			return sb.toString();
-			
-		} else if (JavaNamingType.UNDERSCORE.equals(namingMethodType)) {
-			return value.toLowerCase();
-			
-		} else {
-			throw new IllegalArgumentException("unsupported type " + namingMethodType.name());
+
+				break;
 		}
+
+		return sb.toString();
 	}
 	
 	/**

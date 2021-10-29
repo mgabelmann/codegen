@@ -26,6 +26,16 @@ class StringUtilTest {
     }
 
     @Test
+    public void test4_initCap() {
+        Assertions.assertEquals("Good Vs Evil", StringUtil.initCap("good vs evil"));
+    }
+
+    @Test
+    public void test5_initCap() {
+        Assertions.assertEquals("Good_vs_evil", StringUtil.initCap("good_VS_evil"));
+    }
+
+    @Test
     public void test1_initLower() {
         Assertions.assertNull(StringUtil.initLower(null));
         Assertions.assertEquals("", StringUtil.initLower(""));

@@ -176,7 +176,7 @@ public class SQLiteFactory {
                 String tableName = ctx.table_name().getText();
 
                 table.setName(tableName);
-                table.setJavaName(NameUtil.getClassName(JavaNamingType.CAMELCASE, tableName));
+                table.setJavaName(NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, tableName));
                 table.setDescription("");
                 table.setBaseClass("");
                 table.setAbstract(Boolean.FALSE);
@@ -207,7 +207,7 @@ public class SQLiteFactory {
 
                 //TODO: column.setSize();
 
-                column.setJavaName(NameUtil.getFieldName(JavaNamingType.CAMELCASE, columnName));
+                column.setJavaName(NameUtil.getJavaName(JavaNamingType.LOWER_CAMEL_CASE, columnName));
                 column.setDescription("");
 
                 if (LOG.isDebugEnabled()) {

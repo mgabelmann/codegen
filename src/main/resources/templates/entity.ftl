@@ -1,5 +1,6 @@
 package ${basePackagePath}.model;
 
+<#if javadoc>
 /**
  * <p>Entity for <em>${tableWrapper.tableType.name}</em>.</p>
  * <p><b>NOTE:</b>if this class is re-generated any changes will be lost, extend this interface if you wish to
@@ -9,6 +10,7 @@ package ${basePackagePath}.model;
  * @version ${version}
  * @see ${basePackagePath}.model.${tableWrapper.getSimpleName()}
  */
+</#if>
 @Generated(
     value = "${author}",
     date = "${buildDtm}",
@@ -20,19 +22,27 @@ public class ${tableWrapper.getSimpleName()} {
 
     //PROPERTIES
 <#list tableWrapper.getAllColumns() as column>
-    /** <p>Column <em>${column.columnType.name}</em> of type <em>${column.columnType.type}</em>.</p> */
+    <#if javadoc>
+        /** <p>Column <em>${column.columnType.name}</em> of type <em>${column.columnType.type}</em>.</p> */
+    </#if>
     ${Entity.field(column)}
 
 </#list>
 
     //CONSTRUCTORS
-    /** Default constructor. */
+    <#if javadoc>
+        /** Default constructor. */
+    </#if>
     ${tableWrapper.getConstructorNoArgs()}
 
-    /** Required args constructor. */
+    <#if javadoc>
+        /** Required args constructor. */
+    </#if>
     ${tableWrapper.getConstructorRequiredArgs()}
 
-    /** All args constructor. */
+    <#if javadoc>
+        /** All args constructor. */
+    </#if>
     ${tableWrapper.getConstructorAllArgs()}
 
     //GETTERS & SETTERS

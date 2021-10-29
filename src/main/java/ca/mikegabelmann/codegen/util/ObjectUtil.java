@@ -28,13 +28,13 @@ public final class ObjectUtil {
 
 	/**
 	 * Get 'getter' method.
-	 * @param returnType return type
 	 * @param methodName method name
+	 * @param returnType return type
 	 * @return getter
 	 */
 	public static String getMethod(
-		@NotNull JavaReturnType returnType,
-		@NotNull String methodName) {
+		@NotNull String methodName,
+		@NotNull JavaReturnType returnType) {
 
 		return ObjectUtil.getMethod(
 			new JavaMethodModifier[] { JavaMethodModifier.PUBLIC },

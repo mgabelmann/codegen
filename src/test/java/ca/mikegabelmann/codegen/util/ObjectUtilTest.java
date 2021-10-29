@@ -81,9 +81,8 @@ public class ObjectUtilTest {
 	void test4_getMethod() {
 		String expected = "public String getName() {return this.name;}";
 
-		String result = ObjectUtil.getMethod(
-				new JavaReturnType(String.class.getSimpleName(), "name"),
-				"Name");
+		String result = ObjectUtil.getMethod("Name",
+				new JavaReturnType(String.class.getSimpleName(), "name"));
 
 		Assertions.assertEquals(expected, result);
 	}

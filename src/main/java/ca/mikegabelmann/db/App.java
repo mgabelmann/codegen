@@ -56,9 +56,9 @@ public class App {
         Map<String, String> sqlMappings = App.getMappings("/sqldatatype.properties");
 
         //FreeMarker - process templates
-        Configuration cfg = new Configuration();
-        cfg.setClassForTemplateLoading(App.class, "/templates");
         Version version = new Version(2, 3, 20);
+        Configuration cfg = new Configuration(version);
+        cfg.setClassForTemplateLoading(App.class, "/templates");
         cfg.setIncompatibleImprovements(version);
         cfg.setDefaultEncoding("UTF-8");
         cfg.setLocale(Locale.US);
@@ -70,13 +70,12 @@ public class App {
         input.put("author", "codegenerator");
         input.put("version", "1.0.0");
         input.put("buildDtm", LocalDateTime.now());
-        input.put("javadoc", Boolean.TRUE);
+        input.put("javadoc", Boolean.FALSE);
 
         {
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
             inputTemplate.put("tableWrapper", new TableWrapper(factory.getTable(), sqlMappings));
-
 
             Template dao = cfg.getTemplate("dao.ftl");
             Writer cw = new OutputStreamWriter(System.out);

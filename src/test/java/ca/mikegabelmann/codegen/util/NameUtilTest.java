@@ -18,91 +18,59 @@ public class NameUtilTest {
 	
 	@Test
 	public void test1_getClassName() {
-		this.testClassName(null, null, JavaNamingType.NOCHANGE);
-		this.testClassName("", "", JavaNamingType.NOCHANGE);
-		this.testClassName("G", "G", JavaNamingType.NOCHANGE);
-		this.testClassName("g", "g", JavaNamingType.NOCHANGE);
-		this.testClassName("good_vs_evil", "good_vs_evil", JavaNamingType.NOCHANGE);
-		this.testClassName("GOOD_VS_EVIL", "GOOD_VS_EVIL", JavaNamingType.NOCHANGE);
-		this.testClassName("GoodVsEvil", "GoodVsEvil", JavaNamingType.NOCHANGE);
-		this.testClassName("gOODvSeVIL", "gOODvSeVIL", JavaNamingType.NOCHANGE);
-		this.testClassName("GOODVSEVIL", "GOODVSEVIL", JavaNamingType.NOCHANGE);
-		this.testClassName("goodvsevil", "goodvsevil", JavaNamingType.NOCHANGE);
+		this.testJavaName(null, null, JavaNamingType.NO_CHANGE);
+		this.testJavaName("", "", JavaNamingType.NO_CHANGE);
+		this.testJavaName("G", "G", JavaNamingType.NO_CHANGE);
+		this.testJavaName("g", "g", JavaNamingType.NO_CHANGE);
+		this.testJavaName("good_vs_evil", "good_vs_evil", JavaNamingType.NO_CHANGE);
+		this.testJavaName("GOOD_VS_EVIL", "GOOD_VS_EVIL", JavaNamingType.NO_CHANGE);
+		this.testJavaName("GoodVsEvil", "GoodVsEvil", JavaNamingType.NO_CHANGE);
+		this.testJavaName("gOODvSeVIL", "gOODvSeVIL", JavaNamingType.NO_CHANGE);
+		this.testJavaName("GOODVSEVIL", "GOODVSEVIL", JavaNamingType.NO_CHANGE);
+		this.testJavaName("goodvsevil", "goodvsevil", JavaNamingType.NO_CHANGE);
 	}
 	
 	@Test
 	public void test2_getClassName() {
-		this.testClassName(null, null, JavaNamingType.CAMELCASE);
-		this.testClassName("", "", JavaNamingType.CAMELCASE);
-		this.testClassName("G", "G", JavaNamingType.CAMELCASE);
-		this.testClassName("g", "G", JavaNamingType.CAMELCASE);
-		this.testClassName("good_vs_evil", "GoodVsEvil", JavaNamingType.CAMELCASE);
-		this.testClassName("GOOD_VS_EVIL", "GoodVsEvil", JavaNamingType.CAMELCASE);
-		this.testClassName("GoodVsEvil", "Goodvsevil", JavaNamingType.CAMELCASE);
-		this.testClassName("gOODvSeVIL", "Goodvsevil", JavaNamingType.CAMELCASE);
-		this.testClassName("GOODVSEVIL", "Goodvsevil", JavaNamingType.CAMELCASE);
-		this.testClassName("goodvsevil", "Goodvsevil", JavaNamingType.CAMELCASE);
-	}
-	
-	@Test
-	public void test3_getClassName() {
-		this.testClassName(null, null, JavaNamingType.UNDERSCORE);
-		this.testClassName("", "", JavaNamingType.UNDERSCORE);
-		this.testClassName("G", "g", JavaNamingType.UNDERSCORE);
-		this.testClassName("g", "g", JavaNamingType.UNDERSCORE);
-		this.testClassName("good_vs_evil", "good_vs_evil", JavaNamingType.UNDERSCORE);
-		this.testClassName("GOOD_VS_EVIL", "good_vs_evil", JavaNamingType.UNDERSCORE);
-		this.testClassName("GoodVsEvil", "goodvsevil", JavaNamingType.UNDERSCORE);
-		this.testClassName("gOODvSeVIL", "goodvsevil", JavaNamingType.UNDERSCORE);
-		this.testClassName("GOODVSEVIL", "goodvsevil", JavaNamingType.UNDERSCORE);
-		this.testClassName("goodvsevil", "goodvsevil", JavaNamingType.UNDERSCORE);
-	}
-	
-	
-	@Test
-	public void test1_getFieldName() {
-		this.testFieldName(null, null, JavaNamingType.NOCHANGE);
-		this.testFieldName("", "", JavaNamingType.NOCHANGE);
-		this.testFieldName("G", "G", JavaNamingType.NOCHANGE);
-		this.testFieldName("g", "g", JavaNamingType.NOCHANGE);
-		this.testFieldName("good_vs_evil", "good_vs_evil", JavaNamingType.NOCHANGE);
-		this.testFieldName("GOOD_VS_EVIL", "GOOD_VS_EVIL", JavaNamingType.NOCHANGE);
-		this.testFieldName("GoodVsEvil", "GoodVsEvil", JavaNamingType.NOCHANGE);
-		this.testFieldName("gOODvSeVIL", "gOODvSeVIL", JavaNamingType.NOCHANGE);
-		this.testFieldName("GOODVSEVIL", "GOODVSEVIL", JavaNamingType.NOCHANGE);
-		this.testFieldName("goodvsevil", "goodvsevil", JavaNamingType.NOCHANGE);
-	}
-	
-	@Test
-	public void test2_getFieldName() {
-		this.testFieldName(null, null, JavaNamingType.CAMELCASE);
-		this.testFieldName("", "", JavaNamingType.CAMELCASE);
-		this.testFieldName("G", "g", JavaNamingType.CAMELCASE);
-		this.testFieldName("g", "g", JavaNamingType.CAMELCASE);
-		this.testFieldName("good_vs_evil", "goodVsEvil", JavaNamingType.CAMELCASE);
-		this.testFieldName("GOOD_VS_EVIL", "goodVsEvil", JavaNamingType.CAMELCASE);
-		this.testFieldName("GoodVsEvil", "goodvsevil", JavaNamingType.CAMELCASE);
-		this.testFieldName("gOODvSeVIL", "goodvsevil", JavaNamingType.CAMELCASE);
-		this.testFieldName("GOODVSEVIL", "goodvsevil", JavaNamingType.CAMELCASE);
-		this.testFieldName("goodvsevil", "goodvsevil", JavaNamingType.CAMELCASE);
-		
-		this.testFieldName("GOOD_V_Evil", "goodVEvil", JavaNamingType.CAMELCASE);
-	}
-	
-	@Test
-	public void test3_getFieldName() {
-		this.testFieldName(null, null, JavaNamingType.UNDERSCORE);
-		this.testFieldName("", "", JavaNamingType.UNDERSCORE);
-		this.testFieldName("G", "g", JavaNamingType.UNDERSCORE);
-		this.testFieldName("g", "g", JavaNamingType.UNDERSCORE);
-		this.testFieldName("good_vs_evil", "good_vs_evil", JavaNamingType.UNDERSCORE);
-		this.testFieldName("GOOD_VS_EVIL", "good_vs_evil", JavaNamingType.UNDERSCORE);
-		this.testFieldName("GoodVsEvil", "goodvsevil", JavaNamingType.UNDERSCORE);
-		this.testFieldName("gOODvSeVIL", "goodvsevil", JavaNamingType.UNDERSCORE);
-		this.testFieldName("GOODVSEVIL", "goodvsevil", JavaNamingType.UNDERSCORE);
-		this.testFieldName("goodvsevil", "goodvsevil", JavaNamingType.UNDERSCORE);
+		this.testJavaName(null, null, JavaNamingType.UNDERSCORE);
+		this.testJavaName("", "", JavaNamingType.UNDERSCORE);
+		this.testJavaName("G", "g", JavaNamingType.UNDERSCORE);
+		this.testJavaName("g", "g", JavaNamingType.UNDERSCORE);
+		this.testJavaName("good_vs_evil", "good_vs_evil", JavaNamingType.UNDERSCORE);
+		this.testJavaName("GOOD_VS_EVIL", "good_vs_evil", JavaNamingType.UNDERSCORE);
+		this.testJavaName("GoodVsEvil", "goodvsevil", JavaNamingType.UNDERSCORE);
+		this.testJavaName("gOODvSeVIL", "goodvsevil", JavaNamingType.UNDERSCORE);
+		this.testJavaName("GOODVSEVIL", "goodvsevil", JavaNamingType.UNDERSCORE);
+		this.testJavaName("goodvsevil", "goodvsevil", JavaNamingType.UNDERSCORE);
 	}
 
+	@Test
+	public void test3_getClassName() {
+		this.testJavaName(null, null, JavaNamingType.LOWER_CAMEL_CASE);
+		this.testJavaName("", "", JavaNamingType.LOWER_CAMEL_CASE);
+		this.testJavaName("G", "g", JavaNamingType.LOWER_CAMEL_CASE);
+		this.testJavaName("g", "g", JavaNamingType.LOWER_CAMEL_CASE);
+		this.testJavaName("good_vs_evil", "goodVsEvil", JavaNamingType.LOWER_CAMEL_CASE);
+		this.testJavaName("GOOD_VS_EVIL", "goodVsEvil", JavaNamingType.LOWER_CAMEL_CASE);
+		this.testJavaName("GoodVsEvil", "goodvsevil", JavaNamingType.LOWER_CAMEL_CASE);
+		this.testJavaName("gOODvSeVIL", "goodvsevil", JavaNamingType.LOWER_CAMEL_CASE);
+		this.testJavaName("GOODVSEVIL", "goodvsevil", JavaNamingType.LOWER_CAMEL_CASE);
+		this.testJavaName("goodvsevil", "goodvsevil", JavaNamingType.LOWER_CAMEL_CASE);
+	}
+
+	@Test
+	public void test4_getClassName() {
+		this.testJavaName(null, null, JavaNamingType.UPPER_CAMEL_CASE);
+		this.testJavaName("", "", JavaNamingType.UPPER_CAMEL_CASE);
+		this.testJavaName("G", "G", JavaNamingType.UPPER_CAMEL_CASE);
+		this.testJavaName("g", "G", JavaNamingType.UPPER_CAMEL_CASE);
+		this.testJavaName("good_vs_evil", "GoodVsEvil", JavaNamingType.UPPER_CAMEL_CASE);
+		this.testJavaName("GOOD_VS_EVIL", "GoodVsEvil", JavaNamingType.UPPER_CAMEL_CASE);
+		this.testJavaName("GoodVsEvil", "Goodvsevil", JavaNamingType.UPPER_CAMEL_CASE);
+		this.testJavaName("gOODvSeVIL", "Goodvsevil", JavaNamingType.UPPER_CAMEL_CASE);
+		this.testJavaName("GOODVSEVIL", "Goodvsevil", JavaNamingType.UPPER_CAMEL_CASE);
+		this.testJavaName("goodvsevil", "Goodvsevil", JavaNamingType.UPPER_CAMEL_CASE);
+	}
 
 	@Test
 	public void test3_addKeyAndValue() {
@@ -118,29 +86,12 @@ public class NameUtilTest {
 		Assertions.assertEquals("\"a\"", NameUtil.quoteString("a"));
 	}
 
-	/*
-	@Test(expected=IllegalArgumentException.class)
-	public void test1_addKeyAndValue() {
-		StringUtil.addKeyAndValue(null, "", new Object());
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void test2_addKeyAndValue() {
-		StringUtil.addKeyAndValue(new TreeMap<String, List<Object>>(), null, new Object());
-	}
-	 */
+
+	//HELPER METHODS
 
 
-	
-	
-	
-	//-------------------------------------------------------------------------
-	//Helper methods
-	private void testClassName(String given, String expected, JavaNamingType type) {
-		Assertions.assertEquals(expected, NameUtil.getClassName(type, given));
+	private void testJavaName(String given, String expected, JavaNamingType type) {
+		Assertions.assertEquals(expected, NameUtil.getJavaName(type, given));
 	}
-	
-	private void testFieldName(String given, String expected, JavaNamingType type) {
-		Assertions.assertEquals(expected, NameUtil.getFieldName(type, given));
-	}
+
 }

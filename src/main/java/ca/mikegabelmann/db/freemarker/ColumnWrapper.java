@@ -35,16 +35,6 @@ public class ColumnWrapper implements JavaClass {
         return columnType;
     }
 
-    /*
-    public JavaArgument getJavaArgument() {
-        return new JavaArgument(true, this.getJavaSimpleName(), columnType.getJavaName());
-    }
-
-    public JavaReturnType getJavaReturnType() {
-        return new JavaReturnType(this.getJavaSimpleName(), columnType.getJavaName());
-    }
-    */
-
     @Override
     public String getCanonicalName() {
         return sqlMappings.get(columnType.getType().name());
