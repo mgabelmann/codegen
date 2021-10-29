@@ -45,7 +45,7 @@ public class App {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
         StringWriter sw = new StringWriter();
-        JAXBElement<TableType> je = new JAXBElement<TableType>(new QName("http://db.apache.org/torque/5.0/templates/database", "table"), TableType.class, factory.getTable());
+        JAXBElement<TableType> je = new JAXBElement<>(new QName("http://db.apache.org/torque/5.0/templates/database", "table"), TableType.class, factory.getTable());
         marshaller.marshal(je, sw);
 
         String xml = sw.toString();

@@ -38,7 +38,7 @@ public class StringUtil {
      */
     public static String initCap(final String value) {
         if (value == null) {
-            return value;
+            return null;
         }
 
         StringBuilder sb = new StringBuilder();

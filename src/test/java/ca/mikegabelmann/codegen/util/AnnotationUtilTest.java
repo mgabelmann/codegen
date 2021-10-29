@@ -59,7 +59,7 @@ public class AnnotationUtilTest {
 	 */
 	@Test
 	public void getStringList4() {
-		list.add(Integer.valueOf(1));
+		list.add(1);
 		
 		Assertions.assertEquals("1", AnnotationUtil.getString(list));
 	}
@@ -71,8 +71,8 @@ public class AnnotationUtilTest {
 	 */
 	@Test
 	public void getStringList5() {
-		list.add(Integer.valueOf(1));
-		list.add(Integer.valueOf(2));
+		list.add(1);
+		list.add(2);
 		
 		Assertions.assertEquals("{1, 2}", AnnotationUtil.getString(list));
 	}
@@ -159,7 +159,7 @@ public class AnnotationUtilTest {
 		Assertions.assertEquals("", AnnotationUtil.escapeValue(null));
 
 		Assertions.assertEquals("true", AnnotationUtil.escapeValue(Boolean.TRUE));
-		Assertions.assertEquals("1", AnnotationUtil.escapeValue(Integer.valueOf(1)));
+		Assertions.assertEquals("1", AnnotationUtil.escapeValue(1));
 		Assertions.assertEquals("\"a\"", AnnotationUtil.escapeValue("a"));
 		Assertions.assertEquals("", AnnotationUtil.escapeValue(""));
 

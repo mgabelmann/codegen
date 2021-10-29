@@ -35,7 +35,7 @@ public final class NameUtil {
 		final JavaNamingType namingMethodType,
 		final String value) {
 
-		if (value == null) return value;
+		if (value == null) return null;
 
 		StringBuilder sb = new StringBuilder();
 
@@ -104,7 +104,7 @@ public final class NameUtil {
 			return JavaTokens.QUOTE + value + JavaTokens.QUOTE;
 			
 		} else {
-			return value;
+			return null;
 		}
 	}
 	

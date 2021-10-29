@@ -153,7 +153,7 @@ public final class AnnotationUtil {
 		
 		} else if (o instanceof List<?>) {
 			//change lists to correct type (downcast)
-			value = getString(new ArrayList<Object>((List<?>) o));
+			value = getString(new ArrayList<>((List<?>) o));
 			
 		} else if (o != null && o.getClass().isEnum()) {
 			//handle simple enums (may not work for all)
