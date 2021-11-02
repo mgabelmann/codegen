@@ -28,6 +28,25 @@ public class ColumnWrapper extends AbstractWrapper {
     }
 
     /**
+     *
+     * @return
+     */
+    public boolean isTemporal() {
+        boolean temporal = false;
+
+        switch(columnType.getType()) {
+            case TIMESTAMP:
+            case TIME:
+            case DATE:
+                temporal = true;
+                break;
+            default:
+        }
+
+        return temporal;
+    }
+
+    /**
      * Return underlying object.
      * @return column
      */
@@ -50,23 +69,9 @@ public class ColumnWrapper extends AbstractWrapper {
         return columnType.getJavaName();
     }
 
-    public boolean isTemporal() {
-        boolean temporal;
-
-        switch(columnType.getType()) {
-            case TIMESTAMP:
-            case TIME:
-            case DATE:
-                temporal = true;
-                break;
-
-            default:
-                temporal = false;
-        }
-
-        return temporal;
+    @Override
+    public String getName() {
+        return columnType.getName();
     }
-
-    //TODO: add import?
 
 }

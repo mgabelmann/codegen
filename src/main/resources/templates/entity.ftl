@@ -23,7 +23,7 @@ public class ${tableWrapper.getSimpleName()} {
     private static final long serialVersionUID = 1L;
 
     //PROPERTIES
-<#list tableWrapper.getAllColumns() as column>
+<#list tableWrapper.getColumnsNonKeyList() as column>
     <#if javadoc>
         /** <p>Column <em>${column.columnType.name}</em> of type <em>${column.columnType.type}</em>.</p> */
     </#if>
@@ -35,7 +35,7 @@ public class ${tableWrapper.getSimpleName()} {
     <#if javadoc>
         /** Default constructor. */
     </#if>
-    ${Entity.constructorNoArgs(tableWrapper)}
+    <#--${Entity.constructorNoArgs(tableWrapper)}-->
 
     <#if javadoc>
         /** Required args constructor. */
@@ -45,10 +45,10 @@ public class ${tableWrapper.getSimpleName()} {
     <#if javadoc>
         /** All args constructor. */
     </#if>
-    ${Entity.constructorArgs(tableWrapper, true)}
+    <#--${Entity.constructorArgs(tableWrapper, true)}-->
 
     //GETTERS & SETTERS
-<#list tableWrapper.getAllColumns() as column>
+<#list tableWrapper.getColumnsNonKeyList() as column>
     ${Entity.setter(column)}
 
     ${Entity.getter(column)}

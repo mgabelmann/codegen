@@ -55,6 +55,12 @@ public abstract class AbstractWrapper implements JavaClass {
     }
 
     /**
+     * Get name of object, used for hashing.
+     * @return name
+     */
+    public abstract String getName();
+
+    /**
      *
      * @param sqlDataType
      * @return

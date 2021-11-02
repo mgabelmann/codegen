@@ -4,8 +4,8 @@ CREATE TABLE contact_groups(
 
    PRIMARY KEY (contact_id, group_id),
 
-   FOREIGN KEY (local1_id)
-      REFERENCES contacts (remote1_id)
+   FOREIGN KEY (contact_id)
+      REFERENCES contacts (contact_id)
          ON DELETE CASCADE
          ON UPDATE NO ACTION,
 

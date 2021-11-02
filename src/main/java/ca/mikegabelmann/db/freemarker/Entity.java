@@ -12,7 +12,7 @@ import org.apache.torque.SqlDataType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.TemporalType;
-import java.util.List;
+import java.util.Collection;
 
 /**
  *
@@ -157,7 +157,8 @@ public class Entity {
         JavaConstructor con = new JavaConstructor(table.getCanonicalName(), table.getSimpleName());
         con.addModifier(JavaConstructorModifier.PUBLIC);
 
-        List<ColumnWrapper> columns = allArgs ? table.getAllColumns() : table.getAllColumns();//table.getRequiredColumns();
+        //FIXME:
+        Collection<ColumnWrapper> columns = allArgs ? table.getColumnsNonKeyList() : table.getColumnsNonKeyList();
 
         for (ColumnWrapper column : columns) {
             con.addArgument(new JavaArgument(column.getSimpleName(), column.getVariableName()));
