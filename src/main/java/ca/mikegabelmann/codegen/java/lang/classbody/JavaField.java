@@ -40,23 +40,12 @@ public class JavaField extends AbstractJavaTypeAnnotated {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        for (JavaAnnotation annotation : annotations) {
-            sb.append(annotation.toString());
-            sb.append(JavaTokens.NEWLINE);
-        }
-
-        for (JavaFieldModifier modifier : modifiers) {
-            sb.append(modifier.toString());
-        }
-
-        sb.append(this.getType());
-        sb.append(JavaTokens.SPACE);
-        sb.append(this.getName());
-
-        sb.append(JavaTokens.SEMICOLON);
-
+        final StringBuilder sb = new StringBuilder("JavaField{");
+        sb.append("type='").append(type).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", annotations=").append(annotations);
+        sb.append(", modifiers=").append(modifiers);
+        sb.append('}');
         return sb.toString();
     }
 

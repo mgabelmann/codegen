@@ -7,16 +7,10 @@ class JavaReturnTypeTest {
 
     @Test
     void test1_constructor() {
-        JavaReturnType o = new JavaReturnType("type", "name");
+        JavaReturnType o = new JavaReturnType("Type", "type");
 
-        Assertions.assertEquals("type", o.getType());
-        Assertions.assertEquals("name", o.getName());
+        Assertions.assertEquals("Type", o.getType());
+        Assertions.assertEquals("type", o.getName());
     }
 
-    @Test
-    void test1_toString() {
-        JavaReturnType o = new JavaReturnType("type", "name");
-
-        Assertions.assertEquals("type", o.toString());
-    }
 }

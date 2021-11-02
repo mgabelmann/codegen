@@ -41,20 +41,4 @@ class JavaFieldTest {
         Assertions.assertEquals(0, field.getModifiers().size());
     }
 
-    @Test
-    @DisplayName("toString - happy path")
-    void test1_toString() {
-        field.addModifier(JavaFieldModifier.PUBLIC);
-
-        Assertions.assertEquals("public type name;", field.toString());
-    }
-
-    @Test
-    @DisplayName("toString - with annotation")
-    void test2_toString() {
-        field.addModifier(JavaFieldModifier.PUBLIC);
-        field.addAnnotation(new JavaAnnotation("A"));
-
-        Assertions.assertEquals("@A" + System.lineSeparator()  + "public type name;", field.toString());
-    }
 }

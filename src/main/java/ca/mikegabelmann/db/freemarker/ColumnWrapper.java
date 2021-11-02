@@ -9,22 +9,22 @@ import java.util.Map;
  *
  * @author mgabe
  */
-public class ColumnWrapper implements JavaClass {
-
+public class ColumnWrapper extends AbstractWrapper {
+    /**  */
     private final ColumnType columnType;
-    private final Map<String, String> sqlMappings;
+
 
     /**
      * Constructor.
-     * @param columnType column
      * @param sqlMappings SQL mappings
+     * @param columnType column
      */
     public ColumnWrapper(
-            @NotNull final ColumnType columnType,
-            @NotNull final Map<String, String> sqlMappings) {
+        @NotNull final Map<String, String> sqlMappings,
+        @NotNull final ColumnType columnType) {
 
+        super(sqlMappings);
         this.columnType = columnType;
-        this.sqlMappings = sqlMappings;
     }
 
     /**
@@ -37,20 +37,34 @@ public class ColumnWrapper implements JavaClass {
 
     @Override
     public String getCanonicalName() {
-        return sqlMappings.get(columnType.getType().name());
+        return super.getClass(columnType.getType()).getCanonicalName();
     }
 
     @Override
     public String getSimpleName() {
-        String type = sqlMappings.get(columnType.getType().name());
-        int index = type.lastIndexOf(".");
-
-        return index >= 0 ? type.substring(index + 1) : type;
+        return super.getClass(columnType.getType()).getSimpleName();
     }
 
     @Override
     public String getVariableName() {
         return columnType.getJavaName();
+    }
+
+    public boolean isTemporal() {
+        boolean temporal;
+
+        switch(columnType.getType()) {
+            case TIMESTAMP:
+            case TIME:
+            case DATE:
+                temporal = true;
+                break;
+
+            default:
+                temporal = false;
+        }
+
+        return temporal;
     }
 
     //TODO: add import?

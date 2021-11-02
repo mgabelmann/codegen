@@ -182,7 +182,6 @@
                 </executions>
             </plugin>
 
-            <!-- override configuration in parent -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>

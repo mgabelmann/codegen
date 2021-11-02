@@ -1,5 +1,6 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
+import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,8 +15,17 @@ public class JavaMethod extends AbstractJavaTypeAnnotated {
     /** Method modifiers. */
     private final Set<JavaMethodModifier> modifiers;
 
-    //FIXME: add arguments, throws, etc.
-    //FIXME: move functionality from ObjectUtil here
+    /**  */
+    private JavaReturnType javaReturnType;
+
+    /**  */
+    private JavaMethodNamePrefix namePrefix;
+
+    /**  */
+    private Set<JavaArgument> javaArguments;
+
+    /**  */
+    private Set<String> javaThrows;
 
 
     /**
@@ -26,8 +36,9 @@ public class JavaMethod extends AbstractJavaTypeAnnotated {
     public JavaMethod(@NotNull String type, @NotNull String name) {
         super(type, name);
         this.modifiers = new LinkedHashSet<>();
+        this.javaArguments = new LinkedHashSet<>();
+        this.javaThrows = new LinkedHashSet<>();
     }
-
 
     public Set<JavaMethodModifier> getModifiers() {
         return modifiers;
@@ -41,16 +52,58 @@ public class JavaMethod extends AbstractJavaTypeAnnotated {
         return this.modifiers.remove(modifier);
     }
 
+    public JavaReturnType getJavaReturnType() {
+        return javaReturnType;
+    }
+
+    public void setJavaReturnType(JavaReturnType javaReturnType) {
+        this.javaReturnType = javaReturnType;
+    }
+
+    public JavaMethodNamePrefix getNamePrefix() {
+        return namePrefix;
+    }
+
+    public void setNamePrefix(JavaMethodNamePrefix namePrefix) {
+        this.namePrefix = namePrefix;
+    }
+
+    public Set<JavaArgument> getArguments() {
+        return javaArguments;
+    }
+
+    public void addArgument(@NotNull JavaArgument argument) {
+        this.javaArguments.add(argument);
+    }
+
+    public boolean removeArgument(@NotNull JavaArgument argument) {
+        return this.javaArguments.remove(argument);
+    }
+
+    public Set<String> getThrows() {
+        return javaThrows;
+    }
+
+    public void addThrows(@NotNull String javaThrows) {
+        this.javaThrows.add(javaThrows);
+    }
+
+    public boolean removeThrows(@NotNull String javaThrows) {
+        return this.javaThrows.remove(javaThrows);
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        /*
-        for (JavaMethodModifier modifier : modifiers) {
-            sb.append(modifier.toString());
-        }
-        */
-
+        final StringBuilder sb = new StringBuilder("JavaMethod{");
+        sb.append("type='").append(type).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", annotations=").append(annotations);
+        sb.append(", modifiers=").append(modifiers);
+        sb.append(", javaReturnType=").append(javaReturnType);
+        sb.append(", namePrefix=").append(namePrefix);
+        sb.append(", javaArguments=").append(javaArguments);
+        sb.append(", javaThrows=").append(javaThrows);
+        sb.append('}');
         return sb.toString();
     }
 

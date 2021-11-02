@@ -25,29 +25,29 @@ abstract class AbstractJavaTypeAnnotated extends AbstractJavaType {
 
     }
 
+    /**
+     * Get Java annotations.
+     * @return annotations
+     */
     public final Set<JavaAnnotation> getAnnotations() {
         return annotations;
     }
 
+    /**
+     * Add Java annotation.
+     * @param annotation annotation to add
+     */
     public final void addAnnotation(@NotNull JavaAnnotation annotation) {
         this.annotations.add(annotation);
     }
 
+    /**
+     * Remove Java annotation.
+     * @param annotation annotation to remove
+     * @return true if removed, false otherwise
+     */
     public final boolean removeAnnotation(@NotNull JavaAnnotation annotation) {
         return this.annotations.remove(annotation);
     }
-
-/*    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        for (JavaAnnotation annotation : annotations) {
-            sb.append(annotation.toString());
-        }
-
-        sb.append(super.toString());
-
-        return sb.toString();
-    }*/
 
 }

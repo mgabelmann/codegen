@@ -1,31 +1,39 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
-import ca.mikegabelmann.codegen.util.AnnotationUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+
 /**
  *
  * @author mgabe
  */
-public class JavaAnnotation {
+public class JavaAnnotation extends AbstractJavaType {
     /** Logger. */
     private static final Logger logger = LogManager.getLogger(JavaAnnotation.class);
 
-    private final String name;
+    /** Properties of annotation. */
     private final SortedMap<String, List<Object>> properties;
 
 
     /**
      * Constructor.
-     * @param name annotation name
+     * @param type type
      */
-    public JavaAnnotation(@NotNull final String name) {
-        this.name = name;
+    public JavaAnnotation(@NotNull String type) {
+        super(type, "");
         this.properties = new TreeMap<>();
+    }
+
+    /**
+     * Get annotation properties.
+     * @return properties
+     */
+    public SortedMap<String, List<Object>> getProperties() {
+        return properties;
     }
 
     /**
@@ -53,7 +61,13 @@ public class JavaAnnotation {
 
     @Override
     public String toString() {
-        return AnnotationUtil.getAnnotation(name, properties);
+        final StringBuilder sb = new StringBuilder("JavaAnnotation{");
+        sb.append("type='").append(type).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", properties=").append(properties);
+        sb.append('}');
+
+        return sb.toString();
     }
 
 }

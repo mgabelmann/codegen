@@ -1,4 +1,4 @@
-package ca.mikegabelmann.codegen.java.lang.classbody;
+package ca.mikegabelmann.codegen.java.lang;
 
 /**
  *

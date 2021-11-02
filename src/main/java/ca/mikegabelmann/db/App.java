@@ -1,6 +1,7 @@
 package ca.mikegabelmann.db;
 
 import ca.mikegabelmann.db.freemarker.TableWrapper;
+import ca.mikegabelmann.db.sqlite.SQLiteFactory;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.*;
 import jakarta.xml.bind.JAXBContext;
@@ -37,7 +38,7 @@ public class App {
     public static void main(final String[] args) throws Exception {
 
         SQLiteFactory factory = new SQLiteFactory();
-        factory.parseFile(CharStreams.fromStream(App.class.getResourceAsStream("/example.sqlite")));
+        factory.parseFile(CharStreams.fromStream(App.class.getResourceAsStream("/example2.sqlite")));
 
         //JAXB - print XML tree
         JAXBContext context = JAXBContext.newInstance(TableType.class);
@@ -73,7 +74,7 @@ public class App {
         {
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
-            inputTemplate.put("tableWrapper", new TableWrapper(factory.getTable(), sqlMappings));
+            inputTemplate.put("tableWrapper", new TableWrapper(sqlMappings, factory.getTable()));
 
             Template dao = cfg.getTemplate("dao.ftl");
             Writer cw = new OutputStreamWriter(System.out);
@@ -83,7 +84,7 @@ public class App {
         {
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
-            inputTemplate.put("tableWrapper", new TableWrapper(factory.getTable(), sqlMappings));
+            inputTemplate.put("tableWrapper", new TableWrapper(sqlMappings, factory.getTable()));
 
             //allow template to access static classes
             BeansWrapperBuilder wrapper = new BeansWrapperBuilder(version);

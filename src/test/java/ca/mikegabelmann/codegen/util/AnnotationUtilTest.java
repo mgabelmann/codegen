@@ -179,19 +179,4 @@ public class AnnotationUtilTest {
 		//Assertions.assertEquals("FetchType.EAGER", AnnotationUtil.escapeValue(FetchType.EAGER));
 	}
 
-	@Test
-	void test1_getAnnotation() {
-		map.put("a", Arrays.asList(new Object[] {"a"}));
-
-		Assertions.assertEquals("@Test(a = \"a\")", AnnotationUtil.getAnnotation("Test", map));
-	}
-
-	@Test
-	void test2_getAnnotation() {
-		map.put("a", Arrays.asList(new Object[] {"a", "b"}));
-		map.put("c", Arrays.asList(new Object[] {true}));
-
-		Assertions.assertEquals("@Test(a = {\"a\", \"b\"}, c = true)", AnnotationUtil.getAnnotation("Test", map));
-	}
-
 }

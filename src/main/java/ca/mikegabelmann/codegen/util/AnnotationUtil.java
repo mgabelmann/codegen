@@ -12,6 +12,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 /**
  * 
  * @author mgabelmann
@@ -22,35 +25,7 @@ public final class AnnotationUtil {
 
 
 	/** Do not instantiate this class. */
-	private AnnotationUtil() {
-
-	}
-
-	/**
-	 * Get Java annotation.
-	 * <pre>
-	 * 
-	 * </pre>
-	 * @param name annotation name
-	 * @param values annotation key/value pairs
-	 * @return annotation
-	 */
-	public static String getAnnotation(
-			@NotNull final String name,
-			final SortedMap<String, List<Object>> values) {
-
-		StringBuilder sb = new StringBuilder();
-		sb.append(JavaTokens.ANNOTATION);
-		sb.append(name);
-		
-		if (values != null && ! values.isEmpty()) {
-			sb.append(JavaTokens.BRACKET_LEFT);
-			sb.append(AnnotationUtil.getString(values));
-			sb.append(JavaTokens.BRACKET_RIGHT);
-		}
-		
-		return sb.toString();
-	}
+	private AnnotationUtil() {}
 	
 	/**
 	 * Get key/value pairs for use in annotations.
@@ -82,7 +57,7 @@ public final class AnnotationUtil {
 				sb.append(JavaTokens.DELIMITER);
 			}
 		}
-		
+
 		return sb.toString();
 	}
 	

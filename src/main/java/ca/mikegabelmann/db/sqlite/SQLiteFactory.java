@@ -1,4 +1,4 @@
-package ca.mikegabelmann.db;
+package ca.mikegabelmann.db.sqlite;
 
 
 import ca.mikegabelmann.codegen.java.JavaNamingType;
@@ -210,10 +210,6 @@ public class SQLiteFactory {
                 column.setJavaName(NameUtil.getJavaName(JavaNamingType.LOWER_CAMEL_CASE, columnName));
                 column.setDescription("");
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("columnName={}, typeName={}", columnName, typeName);
-                }
-
                 //1s----------------------------------
                 //FIXME: we need a mapper to/from for each DB/Java type
 
@@ -235,6 +231,11 @@ public class SQLiteFactory {
                         column.setType(SqlDataType.TIMESTAMP);
                     }
                 }
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("columnName={}, type={}, typeName={}", columnName, column.getType().name(), typeName);
+                }
+
                 //1e----------------------------------
 
                 for (SQLiteParser.Column_constraintContext constraint : ctx.column_constraint()) {

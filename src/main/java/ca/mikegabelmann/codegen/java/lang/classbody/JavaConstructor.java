@@ -1,10 +1,14 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
+import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
+import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -14,8 +18,12 @@ public class JavaConstructor extends AbstractJavaTypeAnnotated {
     /** Constructor modifiers. */
     private final Set<JavaConstructorModifier> modifiers;
 
-    //FIXME: add arguments, throws, etc.
-    //FIXME: move functionality from ObjectUtil here
+    /** Constructor arguments. */
+    private Set<JavaArgument> javaArguments;
+
+    /** Constructor exceptions (if any). */
+    private Set<String> javaThrows;
+
 
     /**
      * Constructor.
@@ -25,8 +33,9 @@ public class JavaConstructor extends AbstractJavaTypeAnnotated {
     public JavaConstructor(@NotNull String type, @NotNull String name) {
         super(type, name);
         this.modifiers = new LinkedHashSet<>();
+        this.javaArguments = new LinkedHashSet<>();
+        this.javaThrows = new LinkedHashSet<>();
     }
-
 
     public Set<JavaConstructorModifier> getModifiers() {
         return modifiers;
@@ -40,25 +49,40 @@ public class JavaConstructor extends AbstractJavaTypeAnnotated {
         return this.modifiers.remove(modifier);
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        /*
-        for (JavaAnnotation annotation : annotations) {
-            sb.append(annotation.toString());
-            sb.append(JavaTokens.SPACE);
-        }
-
-        for (JavaConstructorModifier modifier : modifiers) {
-            sb.append(modifier.toString());
-        }
-
-        sb.append(super.toString());
-        sb.append(JavaTokens.SEMICOLON);
-         */
-
-        return sb.toString();
+    public Set<JavaArgument> getArguments() {
+        return javaArguments;
     }
 
+    public void addArgument(@NotNull JavaArgument argument) {
+        this.javaArguments.add(argument);
+    }
+
+    public boolean removeArgument(@NotNull JavaArgument argument) {
+        return this.javaArguments.remove(argument);
+    }
+
+    public Set<String> getThrows() {
+        return javaThrows;
+    }
+
+    public void addThrows(@NotNull String javaThrows) {
+        this.javaThrows.add(javaThrows);
+    }
+
+    public boolean removeThrows(@NotNull String javaThrows) {
+        return this.javaThrows.remove(javaThrows);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("JavaConstructor{");
+        sb.append("type='").append(type).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", annotations=").append(annotations);
+        sb.append(", modifiers=").append(modifiers);
+        sb.append(", javaArguments=").append(javaArguments);
+        sb.append(", javaThrows=").append(javaThrows);
+        sb.append('}');
+        return sb.toString();
+    }
 }

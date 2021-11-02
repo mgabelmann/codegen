@@ -1,6 +1,6 @@
 CREATE TABLE contact_groups(
    contact_id INTEGER,
-   group_id INTEGER,
+   group_id INTEGER NOT NULL,
 
    PRIMARY KEY (contact_id, group_id),
 

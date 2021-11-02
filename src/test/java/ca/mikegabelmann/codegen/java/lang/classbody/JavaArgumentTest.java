@@ -46,34 +46,4 @@ class JavaArgumentTest {
         Assertions.assertEquals(0, argument.getAnnotations().size());
     }
 
-    @Test
-    void test1_toString() {
-        JavaArgument argument = new JavaArgument("type", "name");
-
-        Assertions.assertEquals("final type name", argument.toString());
-    }
-
-    @Test
-    void test2_toString() {
-        JavaArgument argument = new JavaArgument("type", "name", false);
-
-        Assertions.assertEquals("type name", argument.toString());
-    }
-
-    @Test
-    void test3_toString() {
-        JavaArgument argument = new JavaArgument("type", "name");
-        argument.addAnnotation(new JavaAnnotation("A"));
-
-        Assertions.assertEquals("@A final type name", argument.toString());
-    }
-
-    @Test
-    void test4_toString() {
-        JavaArgument argument = new JavaArgument("type", "name", false);
-        argument.addAnnotation(new JavaAnnotation("A"));
-        argument.addAnnotation(new JavaAnnotation("B"));
-
-        Assertions.assertEquals("@A @B type name", argument.toString());
-    }
 }

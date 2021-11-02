@@ -23,7 +23,7 @@ class ColumnAnnotationTest {
      * @Column(name = "ACMA_RK", nullable = false, updatable = false, precision = 9, scale = 0)
      * </pre>
      */
-    @Test
+    /*@Test
     void test1_toString() {
         ann.setName("PRSN_ID");
         ann.setNullable(Boolean.FALSE);
@@ -32,9 +32,9 @@ class ColumnAnnotationTest {
         ann.setScale(0);
 
         Assertions.assertEquals("@Column(name = \"PRSN_ID\", nullable = false, precision = 9, scale = 0, updatable = false)", ann.toString());
-    }
+    }*/
 
-    @Test
+    /*@Test
     void test2_toString() {
         ann.setUnique(true);
         ann.setInsertable(true);
@@ -43,6 +43,6 @@ class ColumnAnnotationTest {
         ann.setTable("table");
 
         Assertions.assertEquals("@Column(columnDefinition = \"columnDefinition\", insertable = true, length = 50, table = \"table\", unique = true)", ann.toString());
-    }
+    }*/
 
 }

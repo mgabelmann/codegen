@@ -1,7 +1,5 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
-import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
-import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,11 +7,12 @@ import org.jetbrains.annotations.NotNull;
  * @author mgabe
  */
 public class JavaArgument extends AbstractJavaTypeAnnotated {
-
+    /** Is the argument final. */
     private final boolean isFinal;
 
+
     /**
-     *
+     * Constructor.
      * @param type
      * @param name
      */
@@ -42,21 +41,13 @@ public class JavaArgument extends AbstractJavaTypeAnnotated {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        for (JavaAnnotation annotation : annotations) {
-            sb.append(annotation.toString());
-            sb.append(JavaTokens.SPACE);
-        }
-
-        if (isFinal) {
-            sb.append(JavaKeywords.FINAL);
-        }
-
-        sb.append(type);
-        sb.append(JavaTokens.SPACE);
-        sb.append(name);
-
+        final StringBuilder sb = new StringBuilder("JavaArgument{");
+        sb.append("type='").append(type).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", annotations=").append(annotations);
+        sb.append(", isFinal=").append(isFinal);
+        sb.append('}');
         return sb.toString();
     }
+
 }

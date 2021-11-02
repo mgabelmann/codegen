@@ -19,6 +19,8 @@ package ${basePackagePath}.model;
 @Entity
 @Table(name = "${tableWrapper.tableType.name}")
 public class ${tableWrapper.getSimpleName()} {
+    /** UID. */
+    private static final long serialVersionUID = 1L;
 
     //PROPERTIES
 <#list tableWrapper.getAllColumns() as column>
@@ -33,17 +35,17 @@ public class ${tableWrapper.getSimpleName()} {
     <#if javadoc>
         /** Default constructor. */
     </#if>
-    ${tableWrapper.getConstructorNoArgs()}
+    ${Entity.constructorNoArgs(tableWrapper)}
 
     <#if javadoc>
         /** Required args constructor. */
     </#if>
-    ${tableWrapper.getConstructorRequiredArgs()}
+    <#--${Entity.constructorArgs(tableWrapper, false)}-->
 
     <#if javadoc>
         /** All args constructor. */
     </#if>
-    ${tableWrapper.getConstructorAllArgs()}
+    ${Entity.constructorArgs(tableWrapper, true)}
 
     //GETTERS & SETTERS
 <#list tableWrapper.getAllColumns() as column>

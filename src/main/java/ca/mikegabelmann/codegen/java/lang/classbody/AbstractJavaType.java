@@ -24,23 +24,20 @@ abstract class AbstractJavaType {
         this.name = name;
     }
 
+    /**
+     * Get Java type.
+     * @return Java type
+     */
     public final String getType() {
         return type;
     }
 
+    /**
+     * Get Java name.
+     * @return Java name
+     */
     public final String getName() {
         return name;
     }
-
-    /*@Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(type);
-        sb.append(JavaTokens.SPACE);
-        sb.append(name);
-
-        return sb.toString();
-    }*/
 
 }

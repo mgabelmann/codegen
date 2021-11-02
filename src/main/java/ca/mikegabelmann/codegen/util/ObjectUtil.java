@@ -3,13 +3,15 @@ package ca.mikegabelmann.codegen.util;
 import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
-import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethodNamePrefix;
+import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.SortedMap;
 import java.util.stream.Collectors;
 
 /**
@@ -23,11 +25,39 @@ public final class ObjectUtil {
 	private ObjectUtil() {}
 
 	/**
+	 * Get Java annotation.
+	 * <pre>
+	 *
+	 * </pre>
+	 * @param name annotation name
+	 * @param values annotation key/value pairs
+	 * @return annotation
+	 */
+	@Deprecated
+	public static String getAnnotation(
+			@NotNull final String name,
+			final SortedMap<String, List<Object>> values) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(JavaTokens.ANNOTATION);
+		sb.append(name);
+
+		if (values != null && ! values.isEmpty()) {
+			sb.append(JavaTokens.BRACKET_LEFT);
+			sb.append(AnnotationUtil.getString(values));
+			sb.append(JavaTokens.BRACKET_RIGHT);
+		}
+
+		return sb.toString();
+	}
+
+	/**
 	 * Get 'getter' method.
 	 * @param methodName method name
 	 * @param returnType return type
 	 * @return getter
 	 */
+	@Deprecated
 	public static String getMethod(
 		@NotNull String methodName,
 		@NotNull JavaReturnType returnType) {
@@ -49,6 +79,7 @@ public final class ObjectUtil {
 	 * @param methodExceptions exceptions
 	 * @return getter
 	 */
+	@Deprecated
 	public static String getMethod(
 		@NotNull JavaMethodModifier[] methodModifiers,
 		@NotNull JavaReturnType returnType,
@@ -96,6 +127,7 @@ public final class ObjectUtil {
 	 * @param arguments method arguments
 	 * @return setter
 	 */
+	@Deprecated
 	public static String setMethod(
 		@NotNull String methodName,
 		@NotNull JavaArgument[] arguments) {
@@ -117,6 +149,7 @@ public final class ObjectUtil {
 	 * @param methodExceptions exceptions
 	 * @return setter
 	 */
+	@Deprecated
 	public static String setMethod(
 		@NotNull JavaMethodModifier[] methodModifiers,
 		@NotNull JavaMethodNamePrefix javaMethodNamePrefix,
@@ -170,6 +203,7 @@ public final class ObjectUtil {
 	 * @param constructorExceptions exceptions
 	 * @return constructor
 	 */
+	@Deprecated
 	public static String constructorNoArgsMethod(
 		@NotNull JavaConstructorModifier[] constructorModifiers,
 		@NotNull String constructorName,
@@ -190,6 +224,7 @@ public final class ObjectUtil {
 	 * @param constructorExceptions exceptions
 	 * @return constructor
 	 */
+	@Deprecated
 	public static String constructorMethod(
 		@NotNull JavaConstructorModifier[] constructorModifiers,
 		@NotNull String constructorName,
@@ -230,34 +265,6 @@ public final class ObjectUtil {
 
 		sb.append(JavaTokens.BRACE_RIGHT);
 
-		return sb.toString();
-	}
-
-	/**
-	 * Get Java import statement.
-	 * @param value package/class to import
-	 * @return import statement
-	 */
-	public static String getImport(final String value) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(JavaKeywords.IMPORT);
-		sb.append(value);
-		sb.append(JavaTokens.SEMICOLON);
-		
-		return sb.toString();
-	}
-	
-	/**
-	 * Get Java package statement.
-	 * @param value package space
-	 * @return package statement
-	 */
-	public static String getPackage(final String value) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(JavaKeywords.PACKAGE);
-		sb.append(value);
-		sb.append(JavaTokens.SEMICOLON);
-		
 		return sb.toString();
 	}
 	

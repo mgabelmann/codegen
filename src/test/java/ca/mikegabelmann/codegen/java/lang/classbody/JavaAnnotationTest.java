@@ -15,7 +15,8 @@ class JavaAnnotationTest {
     void test1_constructor() {
         JavaAnnotation ann = new JavaAnnotation("Id");
 
-        Assertions.assertEquals("@Id", ann.toString());
+        Assertions.assertEquals("Id", ann.getType());
+        Assertions.assertEquals("", ann.getName());
     }
 
     @Test
@@ -23,24 +24,8 @@ class JavaAnnotationTest {
         JavaAnnotation ann = new JavaAnnotation("Id");
         ann.add("a", Boolean.TRUE);
 
-        Assertions.assertEquals("@Id(a = true)", ann.toString());
-    }
-
-    @Test
-    void test2_add() {
-        JavaAnnotation ann = new JavaAnnotation("Id");
-        ann.add("a", "A", "B");
-
-        Assertions.assertEquals("@Id(a = {\"A\", \"B\"})", ann.toString());
-    }
-
-    @Test
-    void test3_add() {
-        JavaAnnotation ann = new JavaAnnotation("Id");
-        ann.add("a", "A");
-        ann.add("a", "B");
-
-        Assertions.assertEquals("@Id(a = {\"A\", \"B\"})", ann.toString());
+        Assertions.assertEquals(1, ann.getProperties().size());
+        Assertions.assertEquals("a", ann.getProperties().firstKey());
     }
 
     @Test
@@ -50,7 +35,8 @@ class JavaAnnotationTest {
         ann.add("b", Boolean.FALSE);
         ann.remove("a");
 
-        Assertions.assertEquals("@Id(b = false)", ann.toString());
+        Assertions.assertEquals(1, ann.getProperties().size());
+        Assertions.assertEquals("b", ann.getProperties().firstKey());
     }
 
 }

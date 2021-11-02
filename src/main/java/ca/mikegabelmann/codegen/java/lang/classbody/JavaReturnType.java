@@ -13,13 +13,16 @@ public class JavaReturnType extends AbstractJavaType {
      * @param type object/primitive type
      * @param name variable name
      */
-    public JavaReturnType(@NotNull final String type, @NotNull final String name) {
+    public JavaReturnType(@NotNull String type, @NotNull String name) {
         super(type, name);
     }
 
     @Override
     public String toString() {
-        return type;
+        final StringBuilder sb = new StringBuilder("JavaReturnType{");
+        sb.append("type='").append(type).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
-
 }
