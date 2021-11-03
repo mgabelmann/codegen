@@ -74,4 +74,9 @@ public class ColumnWrapper extends AbstractWrapper {
         return columnType.getName();
     }
 
+    @Override
+    public boolean isRequired() {
+        return columnType.isRequired();
+    }
+
 }

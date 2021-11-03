@@ -35,7 +35,6 @@ public abstract class AbstractWrapper implements JavaClass {
         return sqlMappings;
     }
 
-
     /**
      *
      * @param type
@@ -59,6 +58,12 @@ public abstract class AbstractWrapper implements JavaClass {
      * @return name
      */
     public abstract String getName();
+
+    /**
+     *
+     * @return
+     */
+    public abstract boolean isRequired();
 
     /**
      *

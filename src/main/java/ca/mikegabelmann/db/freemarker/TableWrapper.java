@@ -7,14 +7,11 @@ import org.apache.logging.log4j.Logger;
 import org.apache.torque.ForeignKeyType;
 import org.apache.torque.ReferenceType;
 import org.apache.torque.TableType;
-import org.hibernate.reveng.Column;
-import org.hibernate.reveng.ForeignKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 
 /**
  *
@@ -34,10 +31,10 @@ public class TableWrapper extends AbstractWrapper {
     private final Map<String, ColumnWrapper> columnsNonKey;
 
     /**  */
-    private final Map<String, ColumnWrapper> columnsLocalKey;
+    private final Map<String, ForeignKeyWrapper> columnsForeignKey;
 
     /**  */
-    private final Map<String, ForeignKeyWrapper> columnsForeignKey;
+    private final LocalKeyWrapper localKey;
 
 
     /**
@@ -46,8 +43,8 @@ public class TableWrapper extends AbstractWrapper {
      * @param tableType
      */
     public TableWrapper(
-            @NotNull Map<String, String> sqlMappings,
-            @NotNull TableType tableType) {
+        @NotNull Map<String, String> sqlMappings,
+        @NotNull TableType tableType) {
 
         super(sqlMappings);
         this.tableType = tableType;
@@ -92,8 +89,12 @@ public class TableWrapper extends AbstractWrapper {
         //TODO: process unique
 
         this.columnsNonKey = columns;
-        this.columnsLocalKey = keys;
         this.columnsForeignKey = foreignKeys;
+        this.localKey = new LocalKeyWrapper(sqlMappings, this.getName());
+
+        for (ColumnWrapper column : keys.values()) {
+            localKey.addColumn(column);
+        }
     }
 
     /**
@@ -104,20 +105,12 @@ public class TableWrapper extends AbstractWrapper {
         return tableType;
     }
 
-    /**
-     *
-     * @return
-     */
     public Set<String> getImports() {
         return imports;
     }
 
     public Map<String, ColumnWrapper> getColumnsNonKey() {
         return columnsNonKey;
-    }
-
-    public Map<String, ColumnWrapper> getColumnsLocalKey() {
-        return columnsLocalKey;
     }
 
     public Map<String, ForeignKeyWrapper> getColumnsForeignKey() {
@@ -128,12 +121,21 @@ public class TableWrapper extends AbstractWrapper {
         return columnsNonKey.values();
     }
 
-    public Collection<ColumnWrapper> getColumnsLocalKeyList() {
-        return columnsLocalKey.values();
-    }
-
     public Collection<ForeignKeyWrapper> getColumnsForeignKeyList() {
         return columnsForeignKey.values();
+    }
+
+    public LocalKeyWrapper getLocalKey() {
+        return localKey;
+    }
+
+    public List<AbstractWrapper> getColumns() {
+        List<AbstractWrapper> columns = new ArrayList<>();
+        columns.add(localKey);
+        columns.addAll(columnsForeignKey.values());
+        columns.addAll(columnsNonKey.values());
+
+        return columns;
     }
 
     public final boolean addImport(@NotNull String importString) {
@@ -154,23 +156,12 @@ public class TableWrapper extends AbstractWrapper {
      * Does this table have a composite key or a single primary key?
      * @return true if composite, false otherwise
      */
-    public final boolean isCompositeKey() {
-        return columnsLocalKey.size() > 1;
-    }
-
-
-    public final String getPrimaryKeySimpleName() {
-        if (isCompositeKey()) {
-            return this.getSimpleName() + "Id";
-
-        } else {
-            return this.getSimpleName();
-        }
-    }
+/*    public final boolean isCompositeKey() {
+        return localKey.isCompositeKey();
+    }*/
 
     @Override
     public final String getCanonicalName() {
-        //we don't know the package name, so just return the class name
         return NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, tableType.getName());
     }
 
@@ -185,8 +176,13 @@ public class TableWrapper extends AbstractWrapper {
     }
 
     @Override
-    public String getName() {
+    public final String getName() {
         return tableType.getName();
+    }
+
+    @Override
+    public boolean isRequired() {
+        return false;
     }
 
 }

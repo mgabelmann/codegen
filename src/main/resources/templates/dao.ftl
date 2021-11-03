@@ -26,6 +26,6 @@ import ${basePackagePath}.model.${tableWrapper.getSimpleName()};
 )
 @Repository
 @Transactional
-public interface ${tableWrapper.getSimpleName()}Repository extends JpaRepository<${tableWrapper.getSimpleName()}, ${tableWrapper.getPrimaryKeySimpleName()}> {
+public interface ${tableWrapper.getSimpleName()}Repository extends JpaRepository<${tableWrapper.getSimpleName()}, ${tableWrapper.getLocalKey().getSimpleName()}> {
 
 }

@@ -23,10 +23,8 @@ public class ${tableWrapper.getSimpleName()} {
     private static final long serialVersionUID = 1L;
 
     //PROPERTIES
-<#list tableWrapper.getColumnsNonKeyList() as column>
-    <#if javadoc>
-        /** <p>Column <em>${column.columnType.name}</em> of type <em>${column.columnType.type}</em>.</p> */
-    </#if>
+<#list tableWrapper.getColumns() as column>
+    <#if javadoc></#if>
     ${Entity.field(column)}
 
 </#list>

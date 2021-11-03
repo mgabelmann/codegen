@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  *
  * @author mgabe
@@ -71,6 +70,11 @@ public class ForeignKeyWrapper extends AbstractWrapper {
     @Override
     public String getName() {
         return foreignKeyType.getName();
+    }
+
+    @Override
+    public boolean isRequired() {
+        return true;
     }
 
 }

@@ -22,15 +22,15 @@ public class LocalKeyWrapper extends AbstractWrapper {
     /**
      * Constructor.
      * @param sqlMappings
-     * @param tableWrapper
+     * @param tableWrapperName
      */
     public LocalKeyWrapper(
         @NotNull Map<String, String> sqlMappings,
-        @NotNull TableWrapper tableWrapper) {
+        @NotNull String tableWrapperName) {
 
         super(sqlMappings);
         this.columns = new ArrayList<>();
-        this.tableName = tableWrapper.getName();
+        this.tableName = tableWrapperName;
     }
 
     public List<ColumnWrapper> getColumns() {
@@ -60,17 +60,21 @@ public class LocalKeyWrapper extends AbstractWrapper {
 
     @Override
     public String getCanonicalName() {
-        return NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, this.getName());
+        return isCompositeKey() ? NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, this.getName()) : columns.get(0).getCanonicalName();
     }
 
     @Override
     public String getSimpleName() {
-        return NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, this.getName());
+        return isCompositeKey() ? NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, this.getName()) : columns.get(0).getSimpleName();
     }
 
     @Override
     public String getVariableName() {
-        return NameUtil.getJavaName(JavaNamingType.LOWER_CAMEL_CASE, this.getName());
+        return isCompositeKey() ? NameUtil.getJavaName(JavaNamingType.LOWER_CAMEL_CASE, this.getName()) : columns.get(0).getVariableName();
     }
 
+    @Override
+    public boolean isRequired() {
+        return true;
+    }
 }
