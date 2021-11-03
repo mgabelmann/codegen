@@ -11,6 +11,7 @@ import ca.mikegabelmann.codegen.util.PrintJavaUtil;
 import org.apache.torque.SqlDataType;
 import org.jetbrains.annotations.NotNull;
 
+import javax.persistence.FetchType;
 import javax.persistence.TemporalType;
 import java.util.Collection;
 
@@ -28,76 +29,114 @@ public class Entity {
      * @param column
      * @return
      */
-    public static String field(@NotNull final ColumnWrapper column) {
+    public static String field(@NotNull final AbstractWrapper column) {
         JavaField field = new JavaField(column.getSimpleName(), column.getVariableName());
         field.addModifier(JavaFieldModifier.PRIVATE);
 
         //TODO: determine annotations to add
 
-/*
-<table name="contact_groups" baseClass="" abstract="false" javaName="ContactGroups" description="" xmlns="http://db.apache.org/torque/5.0/templates/database">
-    <column name="contact_id" type="INTEGER" primaryKey="false" autoIncrement="false" required="false" javaName="contactId" description=""/>
-    <column name="group_id" type="INTEGER" primaryKey="false" autoIncrement="false" required="true" javaName="groupId" description=""/>
-    <foreign-key foreignTable="contacts">
-        <reference foreign="remote1_id" local="local1_id"/>
-    </foreign-key>
-    <foreign-key foreignTable="groups">
-        <reference foreign="remote1_id" local="local1_id"/>
-        <reference foreign="remote2_id" local="local2_id"/>
-    </foreign-key>
-</table>
-*/
-
         //@Id
-        if (column.getColumnType().isPrimaryKey()) {
+        if (column instanceof LocalKeyWrapper) {
+            LocalKeyWrapper lkw = (LocalKeyWrapper) column;
+
             field.addAnnotation(new JavaAnnotation("Id"));
+
+            if (!lkw.isCompositeKey()) {
+                //TODO: get @Column
+
+                //TODO: get @GeneratedValue and @SequenceGenerator if applicable
+                /*if (column.getColumnType().isAutoIncrement()) {
+                    //@GeneratedValue(strategy=GenerationType.AUTO, generator="addressSeq")
+                    //@SequenceGenerator(name="addressSeq", sequenceName="ADDRESS_SEQ")
+                }*/
+            }
+         }
+
+        if (column instanceof ForeignKeyWrapper) {
+            ForeignKeyWrapper fkw = (ForeignKeyWrapper) column;
+
+            //get @ManyToOne
+            JavaAnnotation jt1 = new JavaAnnotation("ManyToOne");
+
+            if (fkw.getName().endsWith("_CODE")) {
+                jt1.add("fetch", FetchType.EAGER);
+
+            } else {
+                jt1.add("fetch", FetchType.LAZY);
+            }
+
+            field.addAnnotation(jt1);
+
+            //get @JoinColumn
+            JavaAnnotation jt2 = new JavaAnnotation("JoinColumn");
+            jt2.add("name", fkw.getName());
+            jt2.add("nullable", !fkw.isRequired());
+            //TODO: insertable
+            //TODO: updatable
+
+            field.addAnnotation(jt2);
         }
 
-        //@Column
-        JavaAnnotation a = new JavaAnnotation("Column");
-        a.add("name", column.getColumnType().getName());
+        if (column instanceof ColumnWrapper) {
+            ColumnWrapper cw = (ColumnWrapper) column;
 
-        if (column.getColumnType().isPrimaryKey()) {
+            //get @Temporal
+            if (cw.isTemporal()) {
+                field.addAnnotation(Entity.getTemporalAnnotation(cw));
+            }
+
+            //get @Column
+            field.addAnnotation(Entity.getColumnAnnotation(cw));
+        }
+
+        return PrintJavaUtil.getField(field);
+    }
+
+    /**
+     *
+     * @param cw
+     * @return
+     */
+    public static JavaAnnotation getColumnAnnotation(@NotNull ColumnWrapper cw) {
+        JavaAnnotation a = new JavaAnnotation("Column");
+        a.add("name", cw.getColumnType().getName());
+
+        if (cw.getColumnType().isPrimaryKey()) {
             a.add("updatable", Boolean.FALSE);
         }
 
-        if (column.getColumnType().isRequired()) {
+        if (cw.getColumnType().isRequired()) {
             a.add("nullable", Boolean.FALSE);
         }
 
-        if (column.getColumnType().getSize() != null) {
-            a.add("length", column.getColumnType().getSize().intValue());
+        if (cw.getColumnType().getSize() != null) {
+            a.add("length", cw.getColumnType().getSize().intValue());
         }
 
         //TODO: precision/scale, size, length
 
-        field.addAnnotation(a);
+        return a;
+    }
 
-        if (column.getColumnType().isAutoIncrement()) {
-            //TODO: need to add annotations for sequence generator
-            //@GeneratedValue(strategy=GenerationType.AUTO, generator="addressSeq")
-            //@SequenceGenerator(name="addressSeq", sequenceName="ADDRESS_SEQ")
+    /**
+     *
+     * @param cw
+     * @return
+     */
+    public static JavaAnnotation getTemporalAnnotation(@NotNull ColumnWrapper cw) {
+        JavaAnnotation a = new JavaAnnotation("Temporal");
+
+        if (cw.getColumnType().getType().equals(SqlDataType.DATE)) {
+            a.add("value", TemporalType.DATE);
+
+        } else if (cw.getColumnType().getType().equals(SqlDataType.TIME)) {
+            a.add("value", TemporalType.TIME);
+
+        } else if (cw.getColumnType().getType().equals(SqlDataType.TIMESTAMP)) {
+            a.add("value", TemporalType.TIMESTAMP);
         }
 
-        //@Temporal
-        if (column.isTemporal()) {
-            JavaAnnotation t = new JavaAnnotation("Temporal");
-
-            if (column.getColumnType().getType().equals(SqlDataType.DATE)) {
-                t.add("value", TemporalType.DATE);
-
-            } else if (column.getColumnType().getType().equals(SqlDataType.TIME)) {
-                t.add("value", TemporalType.TIME);
-
-            } else if (column.getColumnType().getType().equals(SqlDataType.TIMESTAMP)) {
-                t.add("value", TemporalType.TIMESTAMP);
-            }
-
-            field.addAnnotation(t);
-        }
-
-
-        return PrintJavaUtil.getField(field);
+        return a;
     }
 
     /**
