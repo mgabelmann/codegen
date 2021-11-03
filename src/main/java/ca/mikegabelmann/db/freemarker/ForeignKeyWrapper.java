@@ -69,6 +69,11 @@ public class ForeignKeyWrapper extends AbstractWrapper {
 
     @Override
     public String getName() {
+        return foreignKeyType.getName();
+    }
+
+    @Override
+    public String getId() {
         return foreignKeyType.getForeignTable();
     }
 

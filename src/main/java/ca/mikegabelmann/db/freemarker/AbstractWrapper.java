@@ -54,13 +54,21 @@ public abstract class AbstractWrapper implements JavaClass {
     }
 
     /**
-     * Get name of object, used for hashing.
+     * Get name of object. Unique for a Table, Unique for a Column within a Table, Unique for a Foreign Key.
+     * or Unique Constraint.
      * @return name
      */
     public abstract String getName();
 
     /**
-     *
+     * Get name used for hashing, varies for tables, columns and keys. Value may be the same as getName().
+     * @return id for hashing
+     * @see AbstractWrapper#getName()
+     */
+    public abstract String getId();
+
+    /**
+     * Is the object required.
      * @return
      */
     public abstract boolean isRequired();

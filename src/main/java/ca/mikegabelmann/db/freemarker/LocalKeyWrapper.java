@@ -59,6 +59,11 @@ public class LocalKeyWrapper extends AbstractWrapper {
     }
 
     @Override
+    public String getId() {
+        return getName();
+    }
+
+    @Override
     public String getCanonicalName() {
         return isCompositeKey() ? NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, this.getName()) : columns.get(0).getCanonicalName();
     }
@@ -77,4 +82,5 @@ public class LocalKeyWrapper extends AbstractWrapper {
     public boolean isRequired() {
         return true;
     }
+
 }

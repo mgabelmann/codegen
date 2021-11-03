@@ -75,6 +75,11 @@ public class ColumnWrapper extends AbstractWrapper {
     }
 
     @Override
+    public String getId() {
+        return columnType.getName();
+    }
+
+    @Override
     public boolean isRequired() {
         return columnType.isRequired();
     }

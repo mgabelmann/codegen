@@ -152,14 +152,6 @@ public class TableWrapper extends AbstractWrapper {
         return added;
     }
 
-    /**
-     * Does this table have a composite key or a single primary key?
-     * @return true if composite, false otherwise
-     */
-/*    public final boolean isCompositeKey() {
-        return localKey.isCompositeKey();
-    }*/
-
     @Override
     public final String getCanonicalName() {
         return NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, tableType.getName());
@@ -177,6 +169,11 @@ public class TableWrapper extends AbstractWrapper {
 
     @Override
     public final String getName() {
+        return tableType.getName();
+    }
+
+    @Override
+    public String getId() {
         return tableType.getName();
     }
 
