@@ -52,6 +52,14 @@ public class ForeignKeyWrapper extends AbstractWrapper {
         return columns.remove(column);
     }
 
+    /**
+     * Does this table have a composite key or a single primary key?
+     * @return true if composite, false otherwise
+     */
+    public final boolean isCompositeKey() {
+        return columns.size() > 1;
+    }
+
     @Override
     public String getCanonicalName() {
         return NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, foreignKeyType.getForeignTable());

@@ -54,16 +54,6 @@ public class LocalKeyWrapper extends AbstractWrapper {
     }
 
     @Override
-    public String getName() {
-        return isCompositeKey() ? tableName + "_ID" : columns.get(0).getName();
-    }
-
-    @Override
-    public String getId() {
-        return getName();
-    }
-
-    @Override
     public String getCanonicalName() {
         return isCompositeKey() ? NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, this.getName()) : columns.get(0).getCanonicalName();
     }
@@ -76,6 +66,16 @@ public class LocalKeyWrapper extends AbstractWrapper {
     @Override
     public String getVariableName() {
         return isCompositeKey() ? NameUtil.getJavaName(JavaNamingType.LOWER_CAMEL_CASE, this.getName()) : columns.get(0).getVariableName();
+    }
+
+    @Override
+    public String getName() {
+        return isCompositeKey() ? tableName + "_ID" : columns.get(0).getName();
+    }
+
+    @Override
+    public String getId() {
+        return getName();
     }
 
     @Override

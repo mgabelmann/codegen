@@ -1,12 +1,19 @@
 package ca.mikegabelmann.codegen.util;
 
+import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
+import org.apache.torque.SqlDataType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-
+/**
+ *
+ * @author mgabe
+ */
 public class AnnotationUtilTest {
 	private List<Object> list;
 	private SortedMap<String, List<Object>> map;
@@ -16,167 +23,166 @@ public class AnnotationUtilTest {
 		list = new ArrayList<>();
 		map = new TreeMap<>();
 	}
-	
-	/**
-	 * <pre>
-	 * @Annotation
-	 * </pre>
-	 */
-	@Test
-	public void getStringList1() {
-		Assertions.assertEquals("", AnnotationUtil.getString(list));
-	}
-	
-	/**
-	 * <pre>
-	 * @Annotation("a")
-	 * </pre>
-	 */
-	@Test
-	public void getStringList2() {
-		list.add("a");
-		
-		Assertions.assertEquals("\"a\"", AnnotationUtil.getString(list));
-	}
 
-	/**
-	 * <pre>
-	 * @Annotation({"a", "b"})
-	 * </pre>
-	 */
 	@Test
-	public void getStringList3() {
-		list.add("a");
-		list.add("b");
-		
-		Assertions.assertEquals("{\"a\", \"b\"}", AnnotationUtil.getString(list));
-	}
-	
-	/**
-	 * <pre>
-	 * @Annotation(@A)
-	 * </pre>
-	 */
-	@Test
-	public void getStringList4() {
-		list.add(1);
-		
-		Assertions.assertEquals("1", AnnotationUtil.getString(list));
-	}
-	
-	/**
-	 * <pre>
-	 * @Annotation({@A, @A})
-	 * </pre>
-	 */
-	@Test
-	public void getStringList5() {
-		list.add(1);
-		list.add(2);
-		
-		Assertions.assertEquals("{1, 2}", AnnotationUtil.getString(list));
-	}
-	
-	/**
-	 * <pre>
-	 * @Annotation
-	 * </pre>
-	 */
-	@Test
-	public void getStringSortedMap1() {
+	@DisplayName("getStringUsingMap - no values")
+	void test1_getString_Map() {
 		Assertions.assertEquals("", AnnotationUtil.getString(map));
 	}
-	
-	/**
-	 * <pre>
-	 * @Annotation(a="a")
-	 * </pre>
-	 */
+
 	@Test
-	public void getStringSortedMap2() {
-		map.put("a", Arrays.asList(new Object[] {"a"}));
-		
-		Assertions.assertEquals("a = \"a\"", AnnotationUtil.getString(map));
-	}
-	
-	/**
-	 * <pre>
-	 * @Annotation(a={"a","b","c"})
-	 * </pre>
-	 */
-	@Test
-	public void getStringSortedMap3() {
-		map.put("a", Arrays.asList(new Object[] {"a", "b", "c"}));
-		
-		Assertions.assertEquals("a = {\"a\", \"b\", \"c\"}", AnnotationUtil.getString(map));
-	}
-	
-	/**
-	 * <pre>
-	 * @Annotation(a="a", b="b")
-	 * </pre>
-	 */
-	@Test
-	public void getStringSortedMap4() {
-		map.put("a", Arrays.asList(new Object[] {"a"}));
-		map.put("b", Arrays.asList(new Object[] {"b"}));
-		
-		Assertions.assertEquals("a = \"a\", b = \"b\"", AnnotationUtil.getString(map));
-	}
-	
-	/**
-	 * <pre>6
-	 * @Annotation(a="a", b={"b", "c", "d"})
-	 * </pre>
-	 */
-	@Test
-	public void getStringSortedMap5() {
-		map.put("a", Arrays.asList(new Object[] {"a"}));
-		map.put("b", Arrays.asList(new Object[] {"b", "c", "d"}));
-		
-		Assertions.assertEquals("a = \"a\", b = {\"b\", \"c\", \"d\"}", AnnotationUtil.getString(map));
-		
-	}
-	
-	@Test
-	public void getStringSortedMap6() {
-		map.put("a", Arrays.asList(new Object[] {new SimpleAnnotation()}));
-		
-		String expected = "a = " + SimpleAnnotation.EXPECTED;
-		Assertions.assertEquals(expected, AnnotationUtil.getString(map));
-	}
-	
-	@Test
-	public void getStringSortedMap7() {
-		map.put("a", Arrays.asList(new Object[] {new SimpleAnnotation(), new SimpleAnnotation()}));
-		
-		String expected = "a = {" + SimpleAnnotation.EXPECTED + ", " + SimpleAnnotation.EXPECTED + "}";
-		Assertions.assertEquals(expected, AnnotationUtil.getString(map));
+	@DisplayName("getStringUsingMap - no key, single String in list")
+	void test2_getString_Map() {
+		map.put("", List.of("a"));
+		Assertions.assertEquals("\"a\"", AnnotationUtil.getString(map));
 	}
 
 	@Test
-	public void escapeValue() {
-		Assertions.assertEquals("", AnnotationUtil.escapeValue(null));
+	@DisplayName("getStringUsingMap - no key, two Strings in list")
+	void test3_getString_Map() {
+		map.put("", List.of("a", "b"));
+		Assertions.assertEquals("{\"a\", \"b\"}", AnnotationUtil.getString(map));
+	}
 
+	@Test
+	@DisplayName("getStringUsingMap - no key, two Integers in list")
+	void test4_getString_Map() {
+		map.put("", List.of(1, 2));
+		Assertions.assertEquals("{1, 2}", AnnotationUtil.getString(map));
+	}
+
+	@Test
+	@DisplayName("getStringUsingMap - key, single String in list")
+	void test5_getString_Map() {
+		map.put("a", List.of("b"));
+		Assertions.assertEquals("a = \"b\"", AnnotationUtil.getString(map));
+	}
+
+	@Test
+	@DisplayName("getStringUsingMap - key, two Strings in list")
+	void test6_getString_Map() {
+		map.put("a", List.of("b", "c"));
+		Assertions.assertEquals("a = {\"b\", \"c\"}", AnnotationUtil.getString(map));
+	}
+
+	@Test
+	@DisplayName("getStringUsingMap - multiple keys and values")
+	void test7_getString_Map() {
+		map.put("a", List.of("b", "c"));
+		map.put("d", List.of(true, false));
+		Assertions.assertEquals("a = {\"b\", \"c\"}, d = {true, false}", AnnotationUtil.getString(map));
+	}
+
+	@Test
+	@DisplayName("getStringUsingMap - no key, single annotation in list")
+	void test8_getString_Map() {
+		map.put("", List.of(new JavaAnnotation("A")));
+		Assertions.assertEquals("@A", AnnotationUtil.getString(map));
+	}
+
+	@Test
+	@DisplayName("getStringUsingMap - no key, two annotations in list")
+	void test9_getString_Map() {
+		map.put("", List.of(new JavaAnnotation("A"), new JavaAnnotation("B")));
+		Assertions.assertEquals("{@A, @B}", AnnotationUtil.getString(map));
+	}
+
+	@Test
+	@DisplayName("getStringUsingMap - key, two annotations in list")
+	void test10_getString_Map() {
+		map.put("a", List.of(new JavaAnnotation("A"), new JavaAnnotation("B")));
+		Assertions.assertEquals("a = {@A, @B}", AnnotationUtil.getString(map));
+	}
+
+	@Test
+	@DisplayName("escapeValue - boolean")
+	void test1_escapeValue() {
 		Assertions.assertEquals("true", AnnotationUtil.escapeValue(Boolean.TRUE));
+		Assertions.assertEquals("true", AnnotationUtil.escapeValue(true));
+	}
+
+	@Test
+	@DisplayName("escapeValue - int")
+	void test2_escapeValue() {
 		Assertions.assertEquals("1", AnnotationUtil.escapeValue(1));
-		Assertions.assertEquals("\"a\"", AnnotationUtil.escapeValue("a"));
+	}
+
+	@Test
+	@DisplayName("escapeValue - String")
+	void test3_escapeValue() {
+		Assertions.assertEquals("\"string\"", AnnotationUtil.escapeValue("string"));
+	}
+
+	@Test
+	@DisplayName("escapeValue - empty String")
+	void test3a_escapeValue() {
 		Assertions.assertEquals("", AnnotationUtil.escapeValue(""));
+	}
 
-		Assertions.assertEquals("", AnnotationUtil.escapeValue(list));
+	@Test
+	@DisplayName("escapeValue - String[]")
+	void test4_escapeValue() {
+		Assertions.assertEquals("{\"str1\", \"str2\"}", AnnotationUtil.escapeValue(new String[] {"str1", "str2"}));
+	}
 
-		list.add("a");
-		Assertions.assertEquals("\"a\"", AnnotationUtil.escapeValue(list));
+	@Test
+	@DisplayName("escapeValue - List<String>")
+	void test5_escapeValue() {
+		Assertions.assertEquals("{\"a\", \"b\"}", AnnotationUtil.escapeValue(List.of("a", "b")));
+	}
 
-		list.add("b");
-		Assertions.assertEquals("{\"a\", \"b\"}", AnnotationUtil.escapeValue(list));
+	@Test
+	@DisplayName("escapeValue - Enum")
+	void test6_escapeValue() {
+		Assertions.assertEquals("SqlDataType.DATE", AnnotationUtil.escapeValue(SqlDataType.DATE));
+		Assertions.assertEquals("JavaMethodNamePrefix.GET", AnnotationUtil.escapeValue(JavaMethodNamePrefix.GET));
+	}
 
-		Assertions.assertEquals("", AnnotationUtil.escapeValue((String[]) null));
-		Assertions.assertEquals("{\"a\"}", AnnotationUtil.escapeValue(new String[]{"a"}));
-		Assertions.assertEquals("{\"a\", \"b\"}", AnnotationUtil.escapeValue(new String[]{"a", "b"}));
+	@Test
+	@DisplayName("escapeValue - Class")
+	void test7_escapeValue() {
+		Assertions.assertEquals("java.lang.String.class", AnnotationUtil.escapeValue(String.class));
+	}
 
-		//Assertions.assertEquals("CascadeType.PERSIST", AnnotationUtil.escapeValue(CascadeType.PERSIST));
-		//Assertions.assertEquals("FetchType.EAGER", AnnotationUtil.escapeValue(FetchType.EAGER));
+	@Test
+	@DisplayName("escapeValue - Object")
+	void test8_escapeValue() {
+		Assertions.assertEquals("my name is Tim", AnnotationUtil.escapeValue(new TestObject("Tim")));
+	}
+
+	@Test
+	@DisplayName("escapeValue - null")
+	void test9_escapeValue() {
+		Assertions.assertEquals("", AnnotationUtil.escapeValue(null));
+	}
+
+	@Test
+	@DisplayName("escapeValue - JavaAnnotation")
+	void test10_escapeValue() {
+		Assertions.assertEquals("@A", AnnotationUtil.escapeValue(new JavaAnnotation("A")));
+	}
+
+	@Test
+	@DisplayName("escapeValue - List<JavaAnnotation>")
+	void test11_escapeValue() {
+		Assertions.assertEquals("{@A, @B}", AnnotationUtil.escapeValue(List.of(new JavaAnnotation("A"), new JavaAnnotation("B"))));
+	}
+
+
+	//HELPER OBJECTS
+
+
+	class TestObject {
+		String name;
+
+		TestObject(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return "my name is " + name;
+		}
 	}
 
 }

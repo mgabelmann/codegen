@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,6 +41,32 @@ class PrintJavaUtilTest {
         a.add("b", Arrays.asList("c", "d"));
 
         Assertions.assertEquals("@A(b = {\"c\", \"d\"})", PrintJavaUtil.getAnnotation(a));
+    }
+
+    @Test
+    void test4_getAnnotation() {
+        JavaAnnotation b = new JavaAnnotation("B");
+        b.add("name1", "value1");
+        b.add("name2", "value2");
+
+        JavaAnnotation a = new JavaAnnotation("A");
+        a.add("value", b);
+
+        Assertions.assertEquals("@A(value = @B(name1 = \"value1\", name2 = \"value2\"))", PrintJavaUtil.getAnnotation(a));
+    }
+
+    @Test
+    void test5_getAnnotation() {
+        JavaAnnotation b = new JavaAnnotation("B");
+        b.add("name1", "value1");
+
+        JavaAnnotation c = new JavaAnnotation("C");
+        c.add("name2", "value2");
+
+        JavaAnnotation a = new JavaAnnotation("A");
+        a.add("", List.of(b, c));
+
+        Assertions.assertEquals("@A({@B(name1 = \"value1\"), @C(name2 = \"value2\")})", PrintJavaUtil.getAnnotation(a));
     }
 
     @Test

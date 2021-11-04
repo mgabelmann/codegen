@@ -8,12 +8,10 @@ import java.util.Map;
 import java.util.SortedMap;
 
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  * 
@@ -29,12 +27,6 @@ public final class AnnotationUtil {
 	
 	/**
 	 * Get key/value pairs for use in annotations.
-	 * <pre>
-	 * a="a"
-	 * a="a", b="b"
-	 * a="a", b={"b", "c", "d"}
-	 * a="a", b={@B, @C, @D}
-	 * </pre>
 	 * @param values key/value pairs
 	 * @return string
 	 */
@@ -51,6 +43,7 @@ public final class AnnotationUtil {
 				sb.append(key);
 				sb.append(JavaTokens.EQUALS_WITH_SPACES);
 			}
+
 			sb.append(AnnotationUtil.getString(rec.getValue()));
 			
 			if (it.hasNext()) {
@@ -63,12 +56,6 @@ public final class AnnotationUtil {
 	
 	/**
 	 * Get delimited string.
-	 * <pre>
-	 * "a"
-	 * {"a", "b"}
-	 * @A
-	 * {@A, @A}
-	 * </pre>
 	 * @param values values to delimit
 	 * @return delimited string
 	 */
@@ -132,11 +119,15 @@ public final class AnnotationUtil {
 			
 		} else if (o != null && o.getClass().isEnum()) {
 			//handle simple enums (may not work for all)
-			value = o.getClass().getSimpleName() + "." + o;
+			value = o.getClass().getSimpleName() + "." + ((Enum<?>) o).name();
 			
 		} else if (o instanceof Class) {
 			value = ((Class<?>) o).getCanonicalName() + ".class";
-			
+
+		} else if (o instanceof JavaAnnotation) {
+			//some recursion here for a special case since we don't want to alter the existing toString()
+			value = PrintJavaUtil.getAnnotation((JavaAnnotation) o);
+
 		} else if (o instanceof Object) {
 			value = o.toString();	
 			

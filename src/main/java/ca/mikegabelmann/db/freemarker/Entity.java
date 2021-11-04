@@ -13,7 +13,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.FetchType;
 import javax.persistence.TemporalType;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  *
@@ -55,10 +57,31 @@ public class Entity {
         if (column instanceof ForeignKeyWrapper) {
             ForeignKeyWrapper fkw = (ForeignKeyWrapper) column;
 
+            //TODO: get @OneToOne
+            //TODO: get @ManyToOne
+            //TODO: get @ManyToMany
+
+            //TODO: @JoinColumns if > 1 column with @JoinColumn, otherwise @JoinColumn
+
+            if (fkw.isCompositeKey()) {
+                //@JoinColumns
+                List<JavaAnnotation> colAnns = new ArrayList<>();
+                for (ColumnWrapper col : fkw.getColumns()) {
+
+                }
+
+                JavaAnnotation jt2 = new JavaAnnotation("JoinColumns");
+
+            } else {
+                //@JoinColumn
+
+            }
+
+            /*
             //get @ManyToOne
             JavaAnnotation jt1 = new JavaAnnotation("ManyToOne");
 
-            if (fkw.getName().endsWith("_CODE")) {
+            if (fkw.getId().endsWith("_CODE")) {
                 jt1.add("fetch", FetchType.EAGER);
 
             } else {
@@ -69,12 +92,13 @@ public class Entity {
 
             //get @JoinColumn
             JavaAnnotation jt2 = new JavaAnnotation("JoinColumn");
-            jt2.add("name", fkw.getName());
+            jt2.add("name", fkw.getId());
             jt2.add("nullable", !fkw.isRequired());
             //TODO: insertable
             //TODO: updatable
 
             field.addAnnotation(jt2);
+             */
         }
 
         if (column instanceof ColumnWrapper) {
@@ -99,7 +123,7 @@ public class Entity {
      */
     public static JavaAnnotation getColumnAnnotation(@NotNull ColumnWrapper cw) {
         JavaAnnotation a = new JavaAnnotation("Column");
-        a.add("name", cw.getColumnType().getName());
+        a.add("name", cw.getId());
 
         if (cw.getColumnType().isPrimaryKey()) {
             a.add("updatable", Boolean.FALSE);
@@ -113,7 +137,7 @@ public class Entity {
             a.add("length", cw.getColumnType().getSize().intValue());
         }
 
-        //TODO: precision/scale, size, length
+        //TODO: precision/scale, size, length, etc.
 
         return a;
     }
@@ -149,7 +173,7 @@ public class Entity {
 
         //TODO: determine annotations to add
 
-        JavaMethod method = new JavaMethod(column.getSimpleName(), NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, column.getColumnType().getName()));
+        JavaMethod method = new JavaMethod(column.getSimpleName(), NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, column.getId()));
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(returnType);
         method.setNamePrefix(JavaMethodNamePrefix.GET);
@@ -166,7 +190,7 @@ public class Entity {
 
         //TODO: determine annotations to add
 
-        JavaMethod method = new JavaMethod(column.getSimpleName(), NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, column.getColumnType().getName()));
+        JavaMethod method = new JavaMethod(column.getSimpleName(), NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, column.getId()));
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(null);
         method.setNamePrefix(JavaMethodNamePrefix.SET);
