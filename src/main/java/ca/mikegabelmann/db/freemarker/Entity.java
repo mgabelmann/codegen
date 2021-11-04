@@ -67,14 +67,26 @@ public class Entity {
                 //@JoinColumns
                 List<JavaAnnotation> colAnns = new ArrayList<>();
                 for (ColumnWrapper col : fkw.getColumns()) {
-
+                    JavaAnnotation a = new JavaAnnotation("JoinColumn");
+                    a.add("name", col.getName());
+                    a.add("nullable", !col.isRequired());
+                    a.add("referencedColumnName", "TODO");
                 }
 
                 JavaAnnotation jt2 = new JavaAnnotation("JoinColumns");
+                jt2.add("", colAnns);
+                field.addAnnotation(jt2);
 
             } else {
                 //@JoinColumn
+                ColumnWrapper col = fkw.getColumns().get(0);
 
+                JavaAnnotation a = new JavaAnnotation("JoinColumn");
+                a.add("name", col.getName());
+                a.add("nullable", !col.isRequired());
+                a.add("referencedColumnName", "TODO");
+
+                field.addAnnotation(a);
             }
 
             /*

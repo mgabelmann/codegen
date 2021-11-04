@@ -1,10 +1,11 @@
 package ca.mikegabelmann.codegen.util;
 
-import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
-import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
-import ca.mikegabelmann.codegen.java.lang.classbody.JavaConstructor;
-import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
+import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
+import ca.mikegabelmann.codegen.java.lang.JavaTokens;
+import ca.mikegabelmann.codegen.java.lang.classbody.*;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -71,21 +71,21 @@ class PrintJavaUtilTest {
 
     @Test
     void test1_getArgument() {
-        JavaArgument a = new JavaArgument("java.lang.String", "str");
+        JavaArgument a = new JavaArgument("String", "str");
 
         Assertions.assertEquals("final String str", PrintJavaUtil.getArgument(a));
     }
 
     @Test
     void test2_getArgument() {
-        JavaArgument a = new JavaArgument("java.lang.String", "str", false);
+        JavaArgument a = new JavaArgument("String", "str", false);
 
         Assertions.assertEquals("String str", PrintJavaUtil.getArgument(a));
     }
 
     @Test
     void test3_getArgument() {
-        JavaArgument a = new JavaArgument("java.lang.String", "str");
+        JavaArgument a = new JavaArgument("String", "str");
         a.addAnnotation(new JavaAnnotation("A"));
 
         Assertions.assertEquals("@A final String str", PrintJavaUtil.getArgument(a));
@@ -93,7 +93,7 @@ class PrintJavaUtilTest {
 
     @Test
     void test4_getArgument() {
-        JavaArgument a = new JavaArgument("java.lang.String", "str", false);
+        JavaArgument a = new JavaArgument("String", "str", false);
         a.addAnnotation(new JavaAnnotation("A"));
 
         Assertions.assertEquals("@A String str", PrintJavaUtil.getArgument(a));
@@ -102,7 +102,7 @@ class PrintJavaUtilTest {
     @Test
     @DisplayName("no arguments constructor")
     void test1_getConstructor() {
-        JavaConstructor a = new JavaConstructor("a.b.Person", "person");
+        JavaConstructor a = new JavaConstructor("Person", "person");
         a.addModifier(JavaConstructorModifier.PUBLIC);
 
         Assertions.assertEquals("public Person() {}", PrintJavaUtil.getConstructor(a));
@@ -111,7 +111,7 @@ class PrintJavaUtilTest {
     @Test
     @DisplayName("constructor with 2 arguments")
     void test2_getConstructor() {
-        JavaConstructor a = new JavaConstructor("a.b.Person", "person");
+        JavaConstructor a = new JavaConstructor("Person", "person");
         a.addModifier(JavaConstructorModifier.PUBLIC);
         a.addArgument(new JavaArgument("int", "age"));
         a.addArgument(new JavaArgument("String", "firstName", false));
@@ -122,45 +122,98 @@ class PrintJavaUtilTest {
     @Test
     @DisplayName("constructor with throws")
     void test3_getConstructor() {
-        JavaConstructor a = new JavaConstructor("a.b.Person", "person");
+        JavaConstructor a = new JavaConstructor("Person", "person");
         a.addModifier(JavaConstructorModifier.PUBLIC);
-        a.addThrows("java.io.IOException");
+        a.addThrows("IOException");
 
         Assertions.assertEquals("public Person() throws IOException {}", PrintJavaUtil.getConstructor(a));
     }
 
     @Test
-    void getField() {
-        Assertions.fail("TODO");
+    @DisplayName("get field without annotation")
+    void test1_getField() {
+        JavaField field = new JavaField("Integer", "age");
+        field.addModifier(JavaFieldModifier.PUBLIC);
+
+        Assertions.assertEquals("public Integer age;", PrintJavaUtil.getField(field));
     }
 
     @Test
-    void getMethod() {
-        Assertions.fail("TODO");
+    @DisplayName("get field with annotation")
+    void test2_getField() {
+        JavaAnnotation annotation = new JavaAnnotation("A");
+
+        JavaField field = new JavaField("Integer", "age");
+        field.addModifier(JavaFieldModifier.PUBLIC);
+        field.addAnnotation(annotation);
+
+        Assertions.assertEquals("@A" + JavaTokens.NEWLINE + "public Integer age;", PrintJavaUtil.getField(field));
     }
+
+    @Test
+    @DisplayName("get method")
+    void test1_getMethod() {
+        JavaMethod method = new JavaMethod("Integer", "Age");
+        method.addModifier(JavaMethodModifier.PUBLIC);
+        method.setJavaReturnType(new JavaReturnType("Integer", "age"));
+        method.setNamePrefix(JavaMethodNamePrefix.GET);
+
+        Assertions.assertEquals("public Integer getAge() {return this.age;}", PrintJavaUtil.getMethod(method));
+    }
+
+    @Test
+    @DisplayName("set method")
+    void test2_getMethod() {
+        JavaArgument argument = new JavaArgument("Integer", "age");
+
+        JavaMethod method = new JavaMethod("Integer", "Age");
+        method.addModifier(JavaMethodModifier.PUBLIC);
+        method.setNamePrefix(JavaMethodNamePrefix.SET);
+        method.addArgument(argument);
+        method.addThrows("IOException");
+
+        Assertions.assertEquals("public void  setAge(final Integer age) throws IOException {this.age = age;}", PrintJavaUtil.getMethod(method));
+    }
+
+    /*
+    if (method.getThrows().size() > 0) {
+            sb.append(JavaKeywords.THROWS);
+            String throwsList = method.getThrows().stream().map(Object::toString).collect(Collectors.joining(JavaTokens.DELIMITER));
+            sb.append(throwsList);
+            sb.append(JavaTokens.SPACE);
+        }
+
+        sb.append(JavaTokens.BRACE_LEFT);
+
+        for (JavaArgument argument : arguments) {
+            sb.append(JavaKeywords.THIS_DOT);
+            sb.append(argument.getName());
+            sb.append(JavaTokens.EQUALS_WITH_SPACES);
+            sb.append(argument.getName());
+            sb.append(JavaTokens.SEMICOLON);
+        }
+     */
 
     @Test
     void test1_getReturn() {
-        JavaReturnType r = new JavaReturnType("a.b.Person", "person");
+        JavaReturnType r = new JavaReturnType("Person", "person");
 
         Assertions.assertEquals("Person", PrintJavaUtil.getReturn(r));
     }
 
     @Test
     void test2_getReturn() {
-        JavaReturnType r = null;
-
-        Assertions.assertEquals("void ", PrintJavaUtil.getReturn(r));
+        Assertions.assertEquals("void ", PrintJavaUtil.getReturn(null));
     }
 
     @Test
     void getImport() {
-        Assertions.fail("TODO");
+        Assertions.assertEquals("import java.io.IOException;", PrintJavaUtil.getImport("java.io.IOException"));
     }
 
     @Test
     void getPackage() {
-        Assertions.fail("TODO");
+        Assertions.assertEquals("package a.b.c;", PrintJavaUtil.getPackage("a.b.c"));
     }
 
 }
