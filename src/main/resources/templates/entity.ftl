@@ -30,30 +30,24 @@ public class ${tableWrapper.getSimpleName()} {
 </#list>
 
     //CONSTRUCTORS
-    <#if javadoc>
-        /** Default constructor. */
-    </#if>
-    <#--${Entity.constructorNoArgs(tableWrapper)}-->
+    <#if javadoc>/** Default constructor. */</#if>
+    ${Entity.constructorNoArgs(tableWrapper)}
 
-    <#if javadoc>
-        /** Required args constructor. */
-    </#if>
-    <#--${Entity.constructorArgs(tableWrapper, false)}-->
+    <#if javadoc>/** Required args constructor. */</#if>
+    ${Entity.constructorArgs(tableWrapper, false)}
 
-    <#if javadoc>
-        /** All args constructor. */
-    </#if>
-    <#--${Entity.constructorArgs(tableWrapper, true)}-->
+    <#if javadoc>/** All args constructor. */</#if>
+    ${Entity.constructorArgs(tableWrapper, true)}
 
     //GETTERS & SETTERS
-<#list tableWrapper.getColumnsNonKeyList() as column>
+<#list tableWrapper.getColumns() as column>
     ${Entity.setter(column)}
 
     ${Entity.getter(column)}
 
 </#list>
-    //TODO: toString
 
+    //TODO: toString
     //TODO: hashCode
 
 }

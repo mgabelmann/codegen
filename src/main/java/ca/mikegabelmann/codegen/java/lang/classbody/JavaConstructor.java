@@ -1,14 +1,10 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
-import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
-import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -19,10 +15,10 @@ public class JavaConstructor extends AbstractJavaTypeAnnotated {
     private final Set<JavaConstructorModifier> modifiers;
 
     /** Constructor arguments. */
-    private Set<JavaArgument> javaArguments;
+    private final Set<JavaArgument> javaArguments;
 
     /** Constructor exceptions (if any). */
-    private Set<String> javaThrows;
+    private final Set<String> javaThrows;
 
 
     /**

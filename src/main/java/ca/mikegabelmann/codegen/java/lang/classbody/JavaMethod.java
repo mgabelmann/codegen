@@ -22,10 +22,10 @@ public class JavaMethod extends AbstractJavaTypeAnnotated {
     private JavaMethodNamePrefix namePrefix;
 
     /**  */
-    private Set<JavaArgument> javaArguments;
+    private final Set<JavaArgument> javaArguments;
 
     /**  */
-    private Set<String> javaThrows;
+    private final Set<String> javaThrows;
 
 
     /**

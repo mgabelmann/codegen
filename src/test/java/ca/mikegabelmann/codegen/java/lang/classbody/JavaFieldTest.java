@@ -1,7 +1,6 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaField;
-import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

@@ -38,7 +38,7 @@ public class App {
     public static void main(final String[] args) throws Exception {
 
         SQLiteFactory factory = new SQLiteFactory();
-        factory.parseFile(CharStreams.fromStream(App.class.getResourceAsStream("/example3.sqlite")));
+        factory.parseFile(CharStreams.fromStream(App.class.getResourceAsStream("/example4.sqlite")));
 
         //JAXB - print XML tree
         JAXBContext context = JAXBContext.newInstance(TableType.class);

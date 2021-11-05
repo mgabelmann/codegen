@@ -3,18 +3,14 @@ package ca.mikegabelmann.db.freemarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.torque.ColumnType;
-import org.apache.torque.JavaReturnType;
 import org.apache.torque.SqlDataType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.Map;
 import java.util.TreeMap;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *

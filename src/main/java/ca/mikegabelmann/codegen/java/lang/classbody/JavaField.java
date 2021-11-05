@@ -1,7 +1,6 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
-import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashSet;

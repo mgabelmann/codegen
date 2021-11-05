@@ -8,6 +8,7 @@ import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.codegen.util.PrintJavaUtil;
+import org.apache.torque.ReferenceType;
 import org.apache.torque.SqlDataType;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +17,9 @@ import javax.persistence.TemporalType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -37,83 +41,46 @@ public class Entity {
 
         //TODO: determine annotations to add
 
-        //@Id
         if (column instanceof LocalKeyWrapper) {
             LocalKeyWrapper lkw = (LocalKeyWrapper) column;
 
+            //get @Id
             field.addAnnotation(new JavaAnnotation("Id"));
 
             if (!lkw.isCompositeKey()) {
-                //TODO: get @Column
-
                 //TODO: get @GeneratedValue and @SequenceGenerator if applicable
                 /*if (column.getColumnType().isAutoIncrement()) {
                     //@GeneratedValue(strategy=GenerationType.AUTO, generator="addressSeq")
                     //@SequenceGenerator(name="addressSeq", sequenceName="ADDRESS_SEQ")
                 }*/
-            }
-         }
 
-        if (column instanceof ForeignKeyWrapper) {
+                //get @Column
+                field.addAnnotation(Entity.getColumnAnnotation(lkw.getColumns().get(0)));
+
+            } else {
+                //TODO:
+            }
+
+         } else if (column instanceof ForeignKeyWrapper) {
             ForeignKeyWrapper fkw = (ForeignKeyWrapper) column;
 
-            //TODO: get @OneToOne
-            //TODO: get @ManyToOne
-            //TODO: get @ManyToMany
+            //NOTE: need a better way to detect OneToOne, ManyToOne, ManyToMany
+            if (!fkw.isCompositeKey() && fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
+                //get @OneToOne
+                field.addAnnotation(Entity.getOneToOne(fkw.getColumns().get(0)));
 
-            //TODO: @JoinColumns if > 1 column with @JoinColumn, otherwise @JoinColumn
-
-            if (fkw.isCompositeKey()) {
-                //@JoinColumns
-                List<JavaAnnotation> colAnns = new ArrayList<>();
-                for (ColumnWrapper col : fkw.getColumns()) {
-                    JavaAnnotation a = new JavaAnnotation("JoinColumn");
-                    a.add("name", col.getName());
-                    a.add("nullable", !col.isRequired());
-                    a.add("referencedColumnName", "TODO");
-                }
-
-                JavaAnnotation jt2 = new JavaAnnotation("JoinColumns");
-                jt2.add("", colAnns);
-                field.addAnnotation(jt2);
+            } else if (fkw.isCompositeKey() && ! fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
+                //get @ManyToOne
+                field.addAnnotation(Entity.getManyToOne());
 
             } else {
-                //@JoinColumn
-                ColumnWrapper col = fkw.getColumns().get(0);
-
-                JavaAnnotation a = new JavaAnnotation("JoinColumn");
-                a.add("name", col.getName());
-                a.add("nullable", !col.isRequired());
-                a.add("referencedColumnName", "TODO");
-
-                field.addAnnotation(a);
+                //TODO: detect @ManyToMany
             }
 
-            /*
-            //get @ManyToOne
-            JavaAnnotation jt1 = new JavaAnnotation("ManyToOne");
+            //get @JoinColumns if > 1 column with @JoinColumn, otherwise @JoinColumn
+            field.addAnnotation(Entity.getJoinColumn(fkw));
 
-            if (fkw.getId().endsWith("_CODE")) {
-                jt1.add("fetch", FetchType.EAGER);
-
-            } else {
-                jt1.add("fetch", FetchType.LAZY);
-            }
-
-            field.addAnnotation(jt1);
-
-            //get @JoinColumn
-            JavaAnnotation jt2 = new JavaAnnotation("JoinColumn");
-            jt2.add("name", fkw.getId());
-            jt2.add("nullable", !fkw.isRequired());
-            //TODO: insertable
-            //TODO: updatable
-
-            field.addAnnotation(jt2);
-             */
-        }
-
-        if (column instanceof ColumnWrapper) {
+        } else if (column instanceof ColumnWrapper) {
             ColumnWrapper cw = (ColumnWrapper) column;
 
             //get @Temporal
@@ -123,9 +90,73 @@ public class Entity {
 
             //get @Column
             field.addAnnotation(Entity.getColumnAnnotation(cw));
+
+        } else {
+
         }
 
         return PrintJavaUtil.getField(field);
+    }
+
+    public static JavaAnnotation getOneToOne(@NotNull ColumnWrapper cw) {
+        JavaAnnotation ann = new JavaAnnotation("OneToOne");
+
+        if (cw.getId().endsWith("_CODE")) {
+            ann.add("fetch", FetchType.EAGER);
+
+        } else {
+            ann.add("fetch", FetchType.LAZY);
+        }
+
+        return ann;
+    }
+
+    public static JavaAnnotation getManyToOne() {
+        JavaAnnotation ann = new JavaAnnotation("ManyToOne");
+        ann.add("fetch", FetchType.LAZY);
+
+        return ann;
+    }
+
+    public static JavaAnnotation getJoinColumn(@NotNull ForeignKeyWrapper fkw) {
+        JavaAnnotation ja;
+
+        if (fkw.isCompositeKey()) {
+            ja = new JavaAnnotation("JoinColumns");
+
+            //TODO: @JoinColumns, @JoinColumn
+            Map<String, ColumnWrapper> hashedColumns = fkw.getColumns().stream().collect(Collectors.toMap(c -> c.getName(), Function.identity()));
+
+            List<JavaAnnotation> jaList = new ArrayList<>();
+
+            for (ReferenceType rt : fkw.getForeignKeyType().getReference()) {
+                ColumnWrapper c = hashedColumns.get(rt.getLocal());
+
+                if (c != null) {
+                    jaList.add(Entity.getJoinColumn(rt, c));
+                }
+            }
+
+            ja.add("", jaList);
+
+        } else {
+            //TODO: @JoinColumn
+            ja = Entity.getJoinColumn(fkw.getForeignKeyType().getReference().get(0), fkw.getColumns().get(0));
+
+        }
+
+        return ja;
+    }
+
+    private static JavaAnnotation getJoinColumn(ReferenceType referenceType, ColumnWrapper columnWrapper) {
+        JavaAnnotation ann = new JavaAnnotation("JoinColumn");
+        ann.add("name", referenceType.getLocal());
+        ann.add("referencedColumnName", referenceType.getForeign());
+        ann.add("nullable", !columnWrapper.isRequired());
+
+        //PROPERTIES: columnDefinition, foreignKey, insertable, table, unique, updatable
+
+        return ann;
     }
 
     /**
@@ -175,17 +206,12 @@ public class Entity {
         return a;
     }
 
-    /**
-     *
-     * @param column
-     * @return
-     */
-    public static String getter(@NotNull final ColumnWrapper column) {
-        JavaReturnType returnType = new JavaReturnType(column.getSimpleName(), column.getVariableName());
+    public static String getter(@NotNull final AbstractWrapper wrapper) {
+        JavaReturnType returnType = new JavaReturnType(wrapper.getSimpleName(), wrapper.getVariableName());
 
         //TODO: determine annotations to add
 
-        JavaMethod method = new JavaMethod(column.getSimpleName(), NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, column.getId()));
+        JavaMethod method = new JavaMethod(wrapper.getSimpleName(), NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, wrapper.getId()));
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(returnType);
         method.setNamePrefix(JavaMethodNamePrefix.GET);
@@ -193,20 +219,12 @@ public class Entity {
         return PrintJavaUtil.getMethod(method);
     }
 
-    /**
-     *
-     * @param column
-     * @return
-     */
-    public static String setter(@NotNull final ColumnWrapper column) {
-
-        //TODO: determine annotations to add
-
-        JavaMethod method = new JavaMethod(column.getSimpleName(), NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, column.getId()));
+    public static String setter(@NotNull final AbstractWrapper wrapper) {
+        JavaMethod method = new JavaMethod(wrapper.getSimpleName(), NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, wrapper.getId()));
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(null);
         method.setNamePrefix(JavaMethodNamePrefix.SET);
-        method.addArgument(new JavaArgument(column.getSimpleName(), column.getVariableName()));
+        method.addArgument(new JavaArgument(wrapper.getSimpleName(), wrapper.getVariableName()));
 
         return PrintJavaUtil.getMethod(method);
     }
@@ -232,11 +250,12 @@ public class Entity {
         JavaConstructor con = new JavaConstructor(table.getCanonicalName(), table.getSimpleName());
         con.addModifier(JavaConstructorModifier.PUBLIC);
 
-        //FIXME:
-        Collection<ColumnWrapper> columns = allArgs ? table.getColumnsNonKeyList() : table.getColumnsNonKeyList();
+        Collection<AbstractWrapper> columns = table.getColumns();
 
-        for (ColumnWrapper column : columns) {
-            con.addArgument(new JavaArgument(column.getSimpleName(), column.getVariableName()));
+        for (AbstractWrapper column : columns) {
+            if (allArgs || column.isRequired()) {
+                con.addArgument(new JavaArgument(column.getSimpleName(), column.getVariableName()));
+            }
         }
 
         return PrintJavaUtil.getConstructor(con);

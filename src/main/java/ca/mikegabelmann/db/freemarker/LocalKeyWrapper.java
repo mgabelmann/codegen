@@ -16,7 +16,7 @@ public class LocalKeyWrapper extends AbstractWrapper {
     /**  */
     private final List<ColumnWrapper> columns;
 
-    private String tableName;
+    private final String tableName;
 
 
     /**
