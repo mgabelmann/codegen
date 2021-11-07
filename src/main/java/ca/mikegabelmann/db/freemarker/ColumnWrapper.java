@@ -1,6 +1,7 @@
 package ca.mikegabelmann.db.freemarker;
 
 import org.apache.torque.ColumnType;
+import org.apache.torque.SqlDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -34,7 +35,7 @@ public class ColumnWrapper extends AbstractWrapper {
     public boolean isTemporal() {
         boolean temporal = false;
 
-        switch(columnType.getType()) {
+        switch (columnType.getType()) {
             case TIMESTAMP:
             case TIME:
             case DATE:

@@ -224,11 +224,14 @@ public class SQLiteFactory {
                     || SqlDataType.REAL.name().equals(typeName)
                     || SqlDataType.INTEGER.name().equals(typeName)) {
 
-                    if (columnName.endsWith("_dt")) {
+                    if (columnName.toUpperCase().endsWith("_DT")) {
                         column.setType(SqlDataType.DATE);
 
-                    } else if (columnName.endsWith("_dtm")) {
+                    } else if (columnName.toUpperCase().endsWith("_DTM")) {
                         column.setType(SqlDataType.TIMESTAMP);
+
+                    } else if (columnName.toUpperCase().endsWith("_TM")) {
+                        column.setType(SqlDataType.TIME);
                     }
                 }
 

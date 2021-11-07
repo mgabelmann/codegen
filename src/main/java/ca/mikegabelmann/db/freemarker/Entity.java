@@ -8,6 +8,8 @@ import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.codegen.util.PrintJavaUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.torque.ReferenceType;
 import org.apache.torque.SqlDataType;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,9 @@ import java.util.stream.Collectors;
  * @author mgabe
  */
 public class Entity {
+    /** Logger. */
+    private static final Logger LOG = LogManager.getLogger(Entity.class);
+
     /** Do not instantiate this class. */
     private Entity() {}
 
@@ -44,10 +49,10 @@ public class Entity {
         if (column instanceof LocalKeyWrapper) {
             LocalKeyWrapper lkw = (LocalKeyWrapper) column;
 
-            //get @Id
-            field.addAnnotation(new JavaAnnotation("Id"));
-
             if (!lkw.isCompositeKey()) {
+                //get @Id
+                field.addAnnotation(new JavaAnnotation("Id"));
+
                 //TODO: get @GeneratedValue and @SequenceGenerator if applicable
                 /*if (column.getColumnType().isAutoIncrement()) {
                     //@GeneratedValue(strategy=GenerationType.AUTO, generator="addressSeq")
@@ -58,7 +63,8 @@ public class Entity {
                 field.addAnnotation(Entity.getColumnAnnotation(lkw.getColumns().get(0)));
 
             } else {
-                //TODO:
+                //get @EmbeddedId
+                field.addAnnotation(new JavaAnnotation("EmbeddedId"));
             }
 
          } else if (column instanceof ForeignKeyWrapper) {
@@ -75,6 +81,7 @@ public class Entity {
 
             } else {
                 //TODO: detect @ManyToMany
+
             }
 
             //get @JoinColumns if > 1 column with @JoinColumn, otherwise @JoinColumn
@@ -101,7 +108,7 @@ public class Entity {
     public static JavaAnnotation getOneToOne(@NotNull ColumnWrapper cw) {
         JavaAnnotation ann = new JavaAnnotation("OneToOne");
 
-        if (cw.getId().endsWith("_CODE")) {
+        if (cw.getId().toUpperCase().endsWith("_CODE")) {
             ann.add("fetch", FetchType.EAGER);
 
         } else {
@@ -202,6 +209,8 @@ public class Entity {
         } else if (cw.getColumnType().getType().equals(SqlDataType.TIMESTAMP)) {
             a.add("value", TemporalType.TIMESTAMP);
         }
+
+        LOG.debug("import={}", cw.getCanonicalName());
 
         return a;
     }

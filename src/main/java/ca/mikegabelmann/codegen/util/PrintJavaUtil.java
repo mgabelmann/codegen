@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public class PrintJavaUtil {
     /** Logger. */
-    private static final Logger logger = LogManager.getLogger(NameUtil.class);
+    private static final Logger logger = LogManager.getLogger(PrintJavaUtil.class);
 
     /** Do not instantiate this class */
     private PrintJavaUtil() {}
@@ -30,7 +30,7 @@ public class PrintJavaUtil {
      * @param annotation
      * @return
      */
-    public static String getAnnotation(@NotNull JavaAnnotation annotation) {
+    public static String getAnnotation(@NotNull final JavaAnnotation annotation) {
         StringBuilder sb = new StringBuilder();
         sb.append(JavaTokens.ANNOTATION);
         sb.append(annotation.getType());
@@ -51,7 +51,7 @@ public class PrintJavaUtil {
      * @param argument argument
      * @return
      */
-    public static String getArgument(@NotNull JavaArgument argument) {
+    public static String getArgument(@NotNull final JavaArgument argument) {
         StringBuilder sb = new StringBuilder();
 
         for (JavaAnnotation annotation : argument.getAnnotations()) {
@@ -75,7 +75,7 @@ public class PrintJavaUtil {
      * @param constructor
      * @return
      */
-    public static String getConstructor(@NotNull JavaConstructor constructor) {
+    public static String getConstructor(@NotNull final JavaConstructor constructor) {
         StringBuilder sb = new StringBuilder();
 
         //UML
@@ -128,7 +128,7 @@ public class PrintJavaUtil {
      * @param field
      * @return
      */
-    public static String getField(@NotNull JavaField field) {
+    public static String getField(@NotNull final JavaField field) {
         StringBuilder sb = new StringBuilder();
 
         Set<JavaAnnotation> annotations = field.getAnnotations();
@@ -156,7 +156,7 @@ public class PrintJavaUtil {
      * @param method
      * @return
      */
-    public static String getMethod(@NotNull JavaMethod method) {
+    public static String getMethod(@NotNull final JavaMethod method) {
         StringBuilder sb = new StringBuilder();
 
         String annotationList = method.getAnnotations().stream().map(a -> PrintJavaUtil.getAnnotation(a)).collect(Collectors.joining());
@@ -215,7 +215,7 @@ public class PrintJavaUtil {
      * @param returnType
      * @return
      */
-    public static String getReturn(JavaReturnType returnType) {
+    public static String getReturn(final JavaReturnType returnType) {
         if (returnType != null) {
             return returnType.getType();
 

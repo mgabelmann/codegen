@@ -1,9 +1,23 @@
 package ${basePackagePath}.model;
 
+import javax.annotation.Generated;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+<#if tableWrapper.getLocalKey().isCompositeKey()>
+    import javax.persistence.EmbeddedId;
+<#else>
+    import javax.persistence.Id;
+</#if>
+import javax.persistence.Table;
+
+//TODO: import @Temporal, @JoinColumn, @JoinColumns,
+//TODO: import special types like LocalDate, LocalDateTime, Instant, etc.
+
+
 <#if javadoc>
 /**
  * <p>Entity for <em>${tableWrapper.tableType.name}</em>.</p>
- * <p><b>NOTE:</b>if this class is re-generated any changes will be lost, extend this interface if you wish to
+ * <p><b>NOTE:</b>if this class is re-generated any changes will be lost, extend this class if you wish to
  * add functionality</p>
  *
  * @author ${author}
@@ -49,5 +63,6 @@ public class ${tableWrapper.getSimpleName()} {
 
     //TODO: toString
     //TODO: hashCode
+    //TODO: equals
 
 }
