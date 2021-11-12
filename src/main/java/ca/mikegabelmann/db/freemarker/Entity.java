@@ -105,6 +105,11 @@ public class Entity {
         return PrintJavaUtil.getField(field);
     }
 
+    /**
+     *
+     * @param cw
+     * @return
+     */
     public static JavaAnnotation getOneToOne(@NotNull ColumnWrapper cw) {
         JavaAnnotation ann = new JavaAnnotation("OneToOne");
 
@@ -118,6 +123,10 @@ public class Entity {
         return ann;
     }
 
+    /**
+     *
+     * @return
+     */
     public static JavaAnnotation getManyToOne() {
         JavaAnnotation ann = new JavaAnnotation("ManyToOne");
         ann.add("fetch", FetchType.LAZY);
@@ -125,6 +134,11 @@ public class Entity {
         return ann;
     }
 
+    /**
+     *
+     * @param fkw
+     * @return
+     */
     public static JavaAnnotation getJoinColumn(@NotNull ForeignKeyWrapper fkw) {
         JavaAnnotation ja;
 
@@ -155,6 +169,12 @@ public class Entity {
         return ja;
     }
 
+    /**
+     *
+     * @param referenceType
+     * @param columnWrapper
+     * @return
+     */
     private static JavaAnnotation getJoinColumn(ReferenceType referenceType, ColumnWrapper columnWrapper) {
         JavaAnnotation ann = new JavaAnnotation("JoinColumn");
         ann.add("name", referenceType.getLocal());
@@ -176,7 +196,9 @@ public class Entity {
         a.add("name", cw.getId());
 
         if (cw.getColumnType().isPrimaryKey()) {
+            a.add("insertable", Boolean.FALSE);
             a.add("updatable", Boolean.FALSE);
+            a.add("unique", Boolean.TRUE);
         }
 
         if (cw.getColumnType().isRequired()) {
@@ -187,7 +209,10 @@ public class Entity {
             a.add("length", cw.getColumnType().getSize().intValue());
         }
 
-        //TODO: precision/scale, size, length, etc.
+        a.add("columnDefinition", cw.getColumnType().getType().value());
+
+        //TODO: precision/scale, size, length
+        //TODO: table
 
         return a;
     }
@@ -215,6 +240,11 @@ public class Entity {
         return a;
     }
 
+    /**
+     *
+     * @param wrapper
+     * @return
+     */
     public static String getter(@NotNull final AbstractWrapper wrapper) {
         JavaReturnType returnType = new JavaReturnType(wrapper.getSimpleName(), wrapper.getVariableName());
 
@@ -228,6 +258,11 @@ public class Entity {
         return PrintJavaUtil.getMethod(method);
     }
 
+    /**
+     *
+     * @param wrapper
+     * @return
+     */
     public static String setter(@NotNull final AbstractWrapper wrapper) {
         JavaMethod method = new JavaMethod(wrapper.getSimpleName(), NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, wrapper.getId()));
         method.addModifier(JavaMethodModifier.PUBLIC);
