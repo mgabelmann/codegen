@@ -86,13 +86,16 @@ public class App {
             inputTemplate.putAll(input);
             inputTemplate.put("tableWrapper", new TableWrapper(sqlMappings, factory.getTable()));
 
+            //specialized properties
+            //inputTemplate.put("schema", "SCHEMA");
+
             //allow template to access static classes
             BeansWrapperBuilder wrapper = new BeansWrapperBuilder(version);
             TemplateHashModel staticModels = wrapper.build().getStaticModels();
-            TemplateHashModel staticObjectUtil1 = (TemplateHashModel) staticModels.get("ca.mikegabelmann.codegen.util.ObjectUtil");
+            //TemplateHashModel staticObjectUtil1 = (TemplateHashModel) staticModels.get("ca.mikegabelmann.codegen.util.ObjectUtil");
             TemplateHashModel staticObjectUtil2 = (TemplateHashModel) staticModels.get("ca.mikegabelmann.db.freemarker.Entity");
 
-            inputTemplate.put("ObjectUtil", staticObjectUtil1);
+            //inputTemplate.put("ObjectUtil", staticObjectUtil1);
             inputTemplate.put("Entity", staticObjectUtil2);
 
             Template entity = cfg.getTemplate("entity.ftl");

@@ -8,6 +8,7 @@ import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.codegen.util.PrintJavaUtil;
+import ca.mikegabelmann.codegen.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.torque.ReferenceType;
@@ -37,72 +38,19 @@ public class Entity {
 
     /**
      *
-     * @param column
+     * @param tw
+     * @param schema
      * @return
      */
-    public static String field(@NotNull final AbstractWrapper column) {
-        JavaField field = new JavaField(column.getSimpleName(), column.getVariableName());
-        field.addModifier(JavaFieldModifier.PRIVATE);
+    public static JavaAnnotation getTableAnnotation(@NotNull TableWrapper tw, String schema) {
+        JavaAnnotation ann = new JavaAnnotation("Table");
+        ann.add("name", tw.getTableType().getName());
 
-        //TODO: determine annotations to add
-
-        if (column instanceof LocalKeyWrapper) {
-            LocalKeyWrapper lkw = (LocalKeyWrapper) column;
-
-            if (!lkw.isCompositeKey()) {
-                //get @Id
-                field.addAnnotation(new JavaAnnotation("Id"));
-
-                //TODO: get @GeneratedValue and @SequenceGenerator if applicable
-                /*if (column.getColumnType().isAutoIncrement()) {
-                    //@GeneratedValue(strategy=GenerationType.AUTO, generator="addressSeq")
-                    //@SequenceGenerator(name="addressSeq", sequenceName="ADDRESS_SEQ")
-                }*/
-
-                //get @Column
-                field.addAnnotation(Entity.getColumnAnnotation(lkw.getColumns().get(0)));
-
-            } else {
-                //get @EmbeddedId
-                field.addAnnotation(new JavaAnnotation("EmbeddedId"));
-            }
-
-         } else if (column instanceof ForeignKeyWrapper) {
-            ForeignKeyWrapper fkw = (ForeignKeyWrapper) column;
-
-            //NOTE: need a better way to detect OneToOne, ManyToOne, ManyToMany
-            if (!fkw.isCompositeKey() && fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
-                //get @OneToOne
-                field.addAnnotation(Entity.getOneToOne(fkw.getColumns().get(0)));
-
-            } else if (fkw.isCompositeKey() && ! fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
-                //get @ManyToOne
-                field.addAnnotation(Entity.getManyToOne());
-
-            } else {
-                //TODO: detect @ManyToMany
-
-            }
-
-            //get @JoinColumns if > 1 column with @JoinColumn, otherwise @JoinColumn
-            field.addAnnotation(Entity.getJoinColumn(fkw));
-
-        } else if (column instanceof ColumnWrapper) {
-            ColumnWrapper cw = (ColumnWrapper) column;
-
-            //get @Temporal
-            if (cw.isTemporal()) {
-                field.addAnnotation(Entity.getTemporalAnnotation(cw));
-            }
-
-            //get @Column
-            field.addAnnotation(Entity.getColumnAnnotation(cw));
-
-        } else {
-
+        if (StringUtil.isNotBlankOrNull(schema)) {
+            ann.add("schema", schema);
         }
 
-        return PrintJavaUtil.getField(field);
+        return ann;
     }
 
     /**
@@ -238,6 +186,85 @@ public class Entity {
         LOG.debug("import={}", cw.getCanonicalName());
 
         return a;
+    }
+
+    /**
+     *
+     * @param annotation
+     * @return
+     */
+    public static String annotation(@NotNull final JavaAnnotation annotation) {
+        return PrintJavaUtil.getAnnotation(annotation);
+    }
+
+    /**
+     *
+     * @param column
+     * @return
+     */
+    public static String field(@NotNull final AbstractWrapper column) {
+        JavaField field = new JavaField(column.getSimpleName(), column.getVariableName());
+        field.addModifier(JavaFieldModifier.PRIVATE);
+
+        //TODO: determine annotations to add
+
+        if (column instanceof LocalKeyWrapper) {
+            LocalKeyWrapper lkw = (LocalKeyWrapper) column;
+
+            if (!lkw.isCompositeKey()) {
+                //get @Id
+                field.addAnnotation(new JavaAnnotation("Id"));
+
+                //TODO: get @GeneratedValue and @SequenceGenerator if applicable
+                /*if (column.getColumnType().isAutoIncrement()) {
+                    //@GeneratedValue(strategy=GenerationType.AUTO, generator="addressSeq")
+                    //@SequenceGenerator(name="addressSeq", sequenceName="ADDRESS_SEQ")
+                }*/
+
+                //get @Column
+                field.addAnnotation(Entity.getColumnAnnotation(lkw.getColumns().get(0)));
+
+            } else {
+                //get @EmbeddedId
+                field.addAnnotation(new JavaAnnotation("EmbeddedId"));
+            }
+
+        } else if (column instanceof ForeignKeyWrapper) {
+            ForeignKeyWrapper fkw = (ForeignKeyWrapper) column;
+
+            //NOTE: need a better way to detect OneToOne, ManyToOne, ManyToMany
+            if (!fkw.isCompositeKey() && fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
+                //get @OneToOne
+                field.addAnnotation(Entity.getOneToOne(fkw.getColumns().get(0)));
+
+            } else if (fkw.isCompositeKey() && ! fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
+                //get @ManyToOne
+                field.addAnnotation(Entity.getManyToOne());
+
+            } else {
+                //TODO: detect @ManyToMany
+
+            }
+
+            //get @JoinColumns if > 1 column with @JoinColumn, otherwise @JoinColumn
+            field.addAnnotation(Entity.getJoinColumn(fkw));
+
+        } else if (column instanceof ColumnWrapper) {
+            ColumnWrapper cw = (ColumnWrapper) column;
+
+            //get @Temporal
+            if (cw.isTemporal()) {
+                field.addAnnotation(Entity.getTemporalAnnotation(cw));
+            }
+
+            //get @Column
+            field.addAnnotation(Entity.getColumnAnnotation(cw));
+
+        } else {
+
+        }
+
+        return PrintJavaUtil.getField(field);
     }
 
     /**
