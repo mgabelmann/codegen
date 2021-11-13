@@ -1,6 +1,5 @@
 package ca.mikegabelmann.db.mapper;
 
-
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import org.jetbrains.annotations.NotNull;
 

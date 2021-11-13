@@ -84,6 +84,37 @@ public class Entity {
 
     /**
      *
+     * @return
+     */
+    public static JavaAnnotation getOneToMany() {
+        JavaAnnotation ann = new JavaAnnotation("OneToMany");
+        //TODO: cascade
+        //TODO: fetch
+        //TODO: *mappedBy
+        ann.add("mappedBy", "FIXME");
+        //TODO: orphanRemoval
+        //TODO: targetEntity
+
+        return ann;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static JavaAnnotation getManyToMany() {
+        JavaAnnotation ann = new JavaAnnotation("ManyToMany");
+        //TODO: cascade
+        //TODO: fetch
+        //TODO: *mappedBy
+        ann.add("mappedBy", "FIXME");
+        //TODO: targetEntity
+
+        return ann;
+    }
+
+    /**
+     *
      * @param fkw
      * @return
      */
@@ -106,7 +137,9 @@ public class Entity {
                 }
             }
 
-            ja.add("", jaList);
+            ja.add("value", jaList);
+
+            //TODO: foreignKey (if necessary)
 
         } else {
             //TODO: @JoinColumn
@@ -125,11 +158,15 @@ public class Entity {
      */
     private static JavaAnnotation getJoinColumn(ReferenceType referenceType, ColumnWrapper columnWrapper) {
         JavaAnnotation ann = new JavaAnnotation("JoinColumn");
+        //TODO: columnDefinition
+        //TODO: foreignKey
+        //TODO: insertable
         ann.add("name", referenceType.getLocal());
-        ann.add("referencedColumnName", referenceType.getForeign());
         ann.add("nullable", !columnWrapper.isRequired());
-
-        //PROPERTIES: columnDefinition, foreignKey, insertable, table, unique, updatable
+        ann.add("referencedColumnName", referenceType.getForeign());
+        //TODO: table
+        //TODO: unique
+        //TODO: updatable
 
         return ann;
     }
@@ -159,7 +196,10 @@ public class Entity {
 
         a.add("columnDefinition", cw.getColumnType().getType().value());
 
-        //TODO: precision/scale, size, length
+        //TODO: sizes
+            //TODO: precision/scale,
+            //TODO: size
+            //TODO: length
         //TODO: table
 
         return a;
@@ -189,9 +229,9 @@ public class Entity {
     }
 
     /**
-     *
-     * @param annotation
-     * @return
+     * Get Java annotation formatted for use in Java code.
+     * @param annotation annotation
+     * @return Java annotation
      */
     public static String annotation(@NotNull final JavaAnnotation annotation) {
         return PrintJavaUtil.getAnnotation(annotation);

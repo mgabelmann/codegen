@@ -1,16 +1,8 @@
 package ${basePackagePath}.model;
 
-import javax.annotation.Generated;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-<#if tableWrapper.getLocalKey().isCompositeKey()>
-    import javax.persistence.EmbeddedId;
-<#else>
-    import javax.persistence.Id;
-</#if>
-import javax.persistence.Table;
+import javax.annotation.processing.Generated;
+import javax.persistence.*;
 
-//TODO: import @Temporal, @JoinColumn, @JoinColumns,
 //TODO: import special types like LocalDate, LocalDateTime, Instant, etc.
 
 
