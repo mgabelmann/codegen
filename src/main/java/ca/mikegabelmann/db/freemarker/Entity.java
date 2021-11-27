@@ -293,7 +293,8 @@ public class Entity {
             ColumnWrapper cw = (ColumnWrapper) column;
 
             //get @Temporal
-            if (cw.isTemporal()) {
+            //only applies to packages java.util.* or java.sql.*
+            if (cw.isTemporal() && !cw.getCanonicalName().contains("java.time")) {
                 field.addAnnotation(Entity.getTemporalAnnotation(cw));
             }
 
