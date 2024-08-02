@@ -41,7 +41,7 @@ public class ${tableWrapper.getSimpleName()} implements Serializable {
 </#list>
 
     //CONSTRUCTORS
-    <#if javadoc>/** Default constructor. */</#if>
+    <#if javadoc>/** Default constructor. Required by JPA. */</#if>
     ${Entity.constructorNoArgs(tableWrapper)}
 
     <#if javadoc>/** Required args constructor. */</#if>
