@@ -1,9 +1,13 @@
 package ${basePackagePath}.model;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 import javax.annotation.processing.Generated;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 //TODO: import special types like LocalDate, LocalDateTime, Instant, etc.
+//FIXME: don't use * imports!
 
 
 <#if javadoc>
@@ -24,8 +28,9 @@ import javax.persistence.*;
 )
 @Entity
 ${Entity.annotation(Entity.getTableAnnotation(tableWrapper, schema))}
-public class ${tableWrapper.getSimpleName()} {
+public class ${tableWrapper.getSimpleName()} implements Serializable {
     /** UID. */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     //PROPERTIES
@@ -44,6 +49,8 @@ public class ${tableWrapper.getSimpleName()} {
 
     <#if javadoc>/** All args constructor. */</#if>
     ${Entity.constructorArgs(tableWrapper, true)}
+
+    //TODO: associations, collections
 
     //GETTERS & SETTERS
 <#list tableWrapper.getColumns() as column>

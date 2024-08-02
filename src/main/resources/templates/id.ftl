@@ -1,6 +1,11 @@
 package ${basePackagePath}.model;
 
-//TODO: imports
+import javax.annotation.processing.Generated;
+
+import jakarta.persistence.*;
+
+//TODO: import special types like LocalDate, LocalDateTime, Instant, etc.
+//FIXME: don't use * imports!
 
 <#if javadoc>
 /**
