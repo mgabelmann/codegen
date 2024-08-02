@@ -16,6 +16,7 @@ import javax.xml.namespace.QName;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -38,15 +39,18 @@ public class App {
     public static void main(final String[] args) throws Exception {
 
         SQLiteFactory factory = new SQLiteFactory();
-        factory.parseFile(CharStreams.fromStream(App.class.getResourceAsStream("/example.sqlite")));
+        factory.parseFile(CharStreams.fromStream(App.class.getResourceAsStream("/example4.sqlite")));
 
         //JAXB - print XML tree
         JAXBContext context = JAXBContext.newInstance(TableType.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
+        List<TableType> tables = factory.getTableTypes();
+        TableType table = tables.get(0);
+
         StringWriter sw = new StringWriter();
-        JAXBElement<TableType> je = new JAXBElement<>(new QName("http://db.apache.org/torque/5.0/templates/database", "table"), TableType.class, factory.getTable());
+        JAXBElement<TableType> je = new JAXBElement<>(new QName("http://db.apache.org/torque/5.0/templates/database", "table"), TableType.class, table);
         marshaller.marshal(je, sw);
 
         String xml = sw.toString();
@@ -74,7 +78,7 @@ public class App {
         {
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
-            inputTemplate.put("tableWrapper", new TableWrapper(sqlMappings, factory.getTable()));
+            inputTemplate.put("tableWrapper", new TableWrapper(sqlMappings, table));
 
             Template dao = cfg.getTemplate("dao.ftl");
             Writer cw = new OutputStreamWriter(System.out);
@@ -84,7 +88,7 @@ public class App {
         {
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
-            inputTemplate.put("tableWrapper", new TableWrapper(sqlMappings, factory.getTable()));
+            inputTemplate.put("tableWrapper", new TableWrapper(sqlMappings, table));
 
             //specialized properties
             //inputTemplate.put("schema", "SCHEMA");

@@ -97,6 +97,11 @@
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
                 <version>${antlr.version}</version>
+                <configuration>
+                    <!--<sourceDirectory>${basedir}/src/main/antlr4</sourceDirectory>-->
+                    <visitor>false</visitor>
+                    <listener>true</listener>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
