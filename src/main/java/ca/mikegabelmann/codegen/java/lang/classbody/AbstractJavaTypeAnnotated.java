@@ -19,7 +19,7 @@ abstract class AbstractJavaTypeAnnotated extends AbstractJavaType {
      * @param type class or primitive type
      * @param name field or variable name
      */
-    AbstractJavaTypeAnnotated(@NotNull String type, @NotNull String name) {
+    AbstractJavaTypeAnnotated(@NotNull final String type, @NotNull final String name) {
         super(type, name);
         this.annotations = new LinkedHashSet<>();
 

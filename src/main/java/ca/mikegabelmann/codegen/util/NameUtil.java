@@ -101,7 +101,7 @@ public final class NameUtil {
 	 */
 	public static String quoteString(final String value) {
 		if (value != null) {
-			return JavaTokens.QUOTE + value + JavaTokens.QUOTE;
+			return JavaTokens.QUOTE_DOUBLE + value + JavaTokens.QUOTE_DOUBLE;
 			
 		} else {
 			return null;
@@ -129,9 +129,9 @@ public final class NameUtil {
 			Iterator<String> it = values.iterator();
 			
 			while (it.hasNext()) {
-				if (quoted) sb.append(JavaTokens.QUOTE);
+				if (quoted) sb.append(JavaTokens.QUOTE_DOUBLE);
 				sb.append(it.next());
-				if (quoted) sb.append(JavaTokens.QUOTE);
+				if (quoted) sb.append(JavaTokens.QUOTE_DOUBLE);
 				
 				if (it.hasNext()) sb.append(JavaTokens.DELIMITER);
 			}

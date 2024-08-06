@@ -20,7 +20,7 @@ public class JavaField extends AbstractJavaTypeAnnotated {
      * @param type class or primitive type
      * @param name field or variable name
      */
-    public JavaField(@NotNull String type, @NotNull String name) {
+    public JavaField(@NotNull final String type, @NotNull final String name) {
         super(type, name);
         this.modifiers = new LinkedHashSet<>();
     }

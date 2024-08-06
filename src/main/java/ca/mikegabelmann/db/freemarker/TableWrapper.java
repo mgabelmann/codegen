@@ -1,6 +1,8 @@
 package ca.mikegabelmann.db.freemarker;
 
 import ca.mikegabelmann.codegen.java.JavaNamingType;
+import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
+import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,6 +97,26 @@ public class TableWrapper extends AbstractWrapper {
         for (ColumnWrapper column : keys.values()) {
             localKey.addColumn(column);
         }
+
+        //FIXME: need a better way to do this, probably the different Wrappers should be able to do this.
+        //update imports based on keys, etc
+        if (localKey.isCompositeKey()) {
+            this.addImport("jakarta.persistence.EmbeddedId");
+        } else {
+            this.addImport("jakarta.persistence.Id");
+        }
+
+        if (!columnsNonKey.isEmpty()) {
+            this.addImport("jakarta.persistence.Column");
+        }
+
+        if (!foreignKeys.isEmpty()) {
+            this.addImport("jakarta.persistence.FetchType");
+
+            //TODO: detect OneToOne, OneToMany, ManyToOne, ManyToMany
+
+            //TODO: OneToOne requires FetchType.EAGER
+        }
     }
 
     /**
@@ -138,18 +160,21 @@ public class TableWrapper extends AbstractWrapper {
         return columns;
     }
 
-    public final boolean addImport(@NotNull String importString) {
-        boolean added = false;
+    public final void addImport(@NotNull String importString) {
+        boolean added = imports.add(importString);
 
-        if (!imports.contains(importString)) {
-            added = imports.add(importString);
-        }
-
-        if (LOG.isDebugEnabled()) {
+        if (added && LOG.isDebugEnabled()) {
             LOG.debug("import {} - {}", importString, added);
         }
+    }
 
-        return added;
+    public final String addTypedImport(@NotNull String importString) {
+        this.addImport(importString);
+        return importString.substring(importString.lastIndexOf('.') + 1);
+    }
+
+    public final String getFormattedImports() {
+        return imports.stream().map(s -> JavaKeywords.IMPORT + s + JavaTokens.SEMICOLON).collect(Collectors.joining("\n"));
     }
 
     @Override

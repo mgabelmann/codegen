@@ -7,9 +7,12 @@ package ca.mikegabelmann.codegen.java.lang;
 public final class JavaTokens {
 	public static final String NEWLINE = System.getProperty("line.separator");
 	
-	public static final String QUOTE = "\"";
-	public static final String QUOTES = "\"\"";
-	
+	public static final String QUOTE_DOUBLE = "\"";
+	public static final String QUOTE_DOUBLES = "\"\"";
+
+	public static final String QUOTE_SINGLE = "'";
+	public static final String QUOTE_SINGLES = "''";
+
 	public static final String DELIMITER = ", ";
 	public static final String SPACE = " ";
 	

@@ -77,7 +77,7 @@ class TableWrapperTest {
     @DisplayName("getImports - none")
     void test1_getImports() {
         Assertions.assertNotNull(tw1.getImports());
-        Assertions.assertEquals(0, tw1.getImports().size());
+        Assertions.assertEquals(2, tw1.getImports().size());
     }
 
     @Test
@@ -124,7 +124,7 @@ class TableWrapperTest {
     @DisplayName("addImport")
     void test1_addImport() {
         tw1.addImport("javax.annotation.Generated");
-        Assertions.assertEquals(1, tw1.getImports().size());
+        Assertions.assertEquals(3, tw1.getImports().size());
     }
 
     @Test

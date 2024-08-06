@@ -19,7 +19,7 @@ abstract class AbstractJavaType {
      * @param type class or primitive type
      * @param name field or variable name
      */
-    AbstractJavaType(@NotNull String type, @NotNull String name) {
+    AbstractJavaType(@NotNull final String type, @NotNull final String name) {
         this.type = type;
         this.name = name;
     }

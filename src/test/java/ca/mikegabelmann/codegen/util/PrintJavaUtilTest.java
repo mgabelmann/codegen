@@ -102,7 +102,7 @@ class PrintJavaUtilTest {
     @Test
     @DisplayName("no arguments constructor")
     void test1_getConstructor() {
-        JavaConstructor a = new JavaConstructor("Person", "person");
+        JavaConstructor a = new JavaConstructor("Person");
         a.addModifier(JavaConstructorModifier.PUBLIC);
 
         Assertions.assertEquals("public Person() {}", PrintJavaUtil.getConstructor(a));
@@ -111,7 +111,7 @@ class PrintJavaUtilTest {
     @Test
     @DisplayName("constructor with 2 arguments")
     void test2_getConstructor() {
-        JavaConstructor a = new JavaConstructor("Person", "person");
+        JavaConstructor a = new JavaConstructor("Person");
         a.addModifier(JavaConstructorModifier.PUBLIC);
         a.addArgument(new JavaArgument("int", "age"));
         a.addArgument(new JavaArgument("String", "firstName", false));
@@ -122,7 +122,7 @@ class PrintJavaUtilTest {
     @Test
     @DisplayName("constructor with throws")
     void test3_getConstructor() {
-        JavaConstructor a = new JavaConstructor("Person", "person");
+        JavaConstructor a = new JavaConstructor("Person");
         a.addModifier(JavaConstructorModifier.PUBLIC);
         a.addThrows("IOException");
 

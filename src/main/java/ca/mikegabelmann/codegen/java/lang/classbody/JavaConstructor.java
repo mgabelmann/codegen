@@ -24,10 +24,9 @@ public class JavaConstructor extends AbstractJavaTypeAnnotated {
     /**
      * Constructor.
      * @param type class or primitive type
-     * @param name field or variable name
      */
-    public JavaConstructor(@NotNull String type, @NotNull String name) {
-        super(type, name);
+    public JavaConstructor(@NotNull String type) {
+        super(type, "");
         this.modifiers = new LinkedHashSet<>();
         this.javaArguments = new LinkedHashSet<>();
         this.javaThrows = new LinkedHashSet<>();

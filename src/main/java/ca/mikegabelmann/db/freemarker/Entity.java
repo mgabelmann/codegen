@@ -336,7 +336,7 @@ public class Entity {
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(null);
         method.setNamePrefix(JavaMethodNamePrefix.SET);
-        method.addArgument(new JavaArgument(wrapper.getSimpleName(), wrapper.getVariableName()));
+        method.addArgument(new JavaArgument(wrapper.getSimpleName(), wrapper.getVariableName(), true));
 
         return PrintJavaUtil.getMethod(method);
     }
@@ -347,7 +347,7 @@ public class Entity {
      * @return
      */
     public static String constructorNoArgs(@NotNull final TableWrapper table) {
-        JavaConstructor con = new JavaConstructor(table.getCanonicalName(), table.getSimpleName());
+        JavaConstructor con = new JavaConstructor(table.getCanonicalName());
         con.addModifier(JavaConstructorModifier.PUBLIC);
 
         return PrintJavaUtil.getConstructor(con);
@@ -359,7 +359,7 @@ public class Entity {
      * @return
      */
     public static String constructorArgs(@NotNull final TableWrapper table, boolean allArgs) {
-        JavaConstructor con = new JavaConstructor(table.getCanonicalName(), table.getSimpleName());
+        JavaConstructor con = new JavaConstructor(table.getCanonicalName());
         con.addModifier(JavaConstructorModifier.PUBLIC);
 
         Collection<AbstractWrapper> columns = table.getColumns();

@@ -1,13 +1,11 @@
-package ${basePackagePath}.model;
+<#assign classbody>
 
 import java.io.Serial;
 import java.io.Serializable;
 
 import javax.annotation.processing.Generated;
-import jakarta.persistence.*;
-
-//TODO: import special types like LocalDate, LocalDateTime, Instant, etc.
-//FIXME: don't use * imports!
+import jakarta.persistence.Table;
+import jakarta.persistence.Entity;
 
 
 <#if javadoc>
@@ -54,8 +52,10 @@ public class ${tableWrapper.getSimpleName()} implements Serializable {
 
     //GETTERS & SETTERS
 <#list tableWrapper.getColumns() as column>
+    <#if javadoc></#if>
     ${Entity.setter(column)}
 
+    <#if javadoc></#if>
     ${Entity.getter(column)}
 
 </#list>
@@ -65,3 +65,11 @@ public class ${tableWrapper.getSimpleName()} implements Serializable {
     //TODO: equals
 
 }
+</#assign>
+
+
+package ${basePackagePath}.model;
+
+${tableWrapper.formattedImports}
+
+${classbody}

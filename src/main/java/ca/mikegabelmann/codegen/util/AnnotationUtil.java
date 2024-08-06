@@ -103,7 +103,7 @@ public final class AnnotationUtil {
 			String s = (String) o;
 			
 			if (StringUtil.isNotBlankOrNull(s)) {
-				value = JavaTokens.QUOTE + s + JavaTokens.QUOTE;
+				value = JavaTokens.QUOTE_DOUBLE + s + JavaTokens.QUOTE_DOUBLE;
 			} else {
 				//throw new IllegalArgumentException("value cannot be blank or null");
 				value = "";
