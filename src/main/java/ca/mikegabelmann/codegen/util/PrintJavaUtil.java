@@ -37,7 +37,7 @@ public class PrintJavaUtil {
 
         SortedMap<String, List<Object>> map = annotation.getProperties();
 
-        if (map != null && map.size() > 0) {
+        if (map != null && !map.isEmpty()) {
             sb.append(JavaTokens.BRACKET_LEFT);
             sb.append(AnnotationUtil.getString(map));
             sb.append(JavaTokens.BRACKET_RIGHT);
@@ -71,8 +71,8 @@ public class PrintJavaUtil {
     }
 
     /**
-     *
-     * @param constructor
+     * Get Java constructor.
+     * @param constructor constructor
      * @return
      */
     public static String getConstructor(@NotNull final JavaConstructor constructor) {
@@ -84,7 +84,7 @@ public class PrintJavaUtil {
         //  +plot()
         //  +move(x : int, y : int)
 
-        String annotationList = constructor.getAnnotations().stream().map(a -> PrintJavaUtil.getAnnotation(a)).collect(Collectors.joining());
+        String annotationList = constructor.getAnnotations().stream().map(PrintJavaUtil::getAnnotation).collect(Collectors.joining());
         sb.append(annotationList);
 
         String modifiersList = constructor.getModifiers().stream().map(Object::toString).collect(Collectors.joining(JavaTokens.SPACE));
@@ -94,14 +94,14 @@ public class PrintJavaUtil {
         sb.append(JavaTokens.BRACKET_LEFT);
 
         Set<JavaArgument> arguments = constructor.getArguments();
-        String argumentList = arguments.stream().map(a -> PrintJavaUtil.getArgument(a)).collect(Collectors.joining(JavaTokens.DELIMITER));
+        String argumentList = arguments.stream().map(PrintJavaUtil::getArgument).collect(Collectors.joining(JavaTokens.DELIMITER));
         sb.append(argumentList);
 
         sb.append(JavaTokens.BRACKET_RIGHT);
         sb.append(JavaTokens.SPACE);
 
         Set<String> javaThrows = constructor.getThrows();
-        if (javaThrows.size() > 0) {
+        if (!javaThrows.isEmpty()) {
             sb.append(JavaKeywords.THROWS);
             String exceptions = javaThrows.stream().map(Object::toString).collect(Collectors.joining(JavaTokens.DELIMITER));
             sb.append(exceptions);
@@ -124,8 +124,8 @@ public class PrintJavaUtil {
     }
 
     /**
-     *
-     * @param field
+     * Get Java field.
+     * @param field field
      * @return
      */
     public static String getField(@NotNull final JavaField field) {
@@ -137,7 +137,7 @@ public class PrintJavaUtil {
             sb.append(JavaTokens.NEWLINE);
         }
 
-        Set<JavaFieldModifier> modifiers = field.getModifiers();
+        List<JavaFieldModifier> modifiers = field.getOrderedModifiers();
         for (JavaFieldModifier modifier : modifiers) {
             sb.append(modifier.toString());
         }
@@ -152,14 +152,14 @@ public class PrintJavaUtil {
     }
 
     /**
-     *
-     * @param method
+     * Get Java method.
+     * @param method method
      * @return
      */
     public static String getMethod(@NotNull final JavaMethod method) {
         StringBuilder sb = new StringBuilder();
 
-        String annotationList = method.getAnnotations().stream().map(a -> PrintJavaUtil.getAnnotation(a)).collect(Collectors.joining());
+        String annotationList = method.getAnnotations().stream().map(PrintJavaUtil::getAnnotation).collect(Collectors.joining());
         sb.append(annotationList);
 
         String modifiers = method.getModifiers().stream().map(Object::toString).collect(Collectors.joining(JavaTokens.SPACE));
@@ -175,13 +175,13 @@ public class PrintJavaUtil {
         sb.append(JavaTokens.BRACKET_LEFT);
 
         Set<JavaArgument> arguments = method.getArguments();
-        String argumentList = arguments.stream().map(a -> PrintJavaUtil.getArgument(a)).collect(Collectors.joining(JavaTokens.DELIMITER));
+        String argumentList = arguments.stream().map(PrintJavaUtil::getArgument).collect(Collectors.joining(JavaTokens.DELIMITER));
         sb.append(argumentList);
 
         sb.append(JavaTokens.BRACKET_RIGHT);
         sb.append(JavaTokens.SPACE);
 
-        if (method.getThrows().size() > 0) {
+        if (!method.getThrows().isEmpty()) {
             sb.append(JavaKeywords.THROWS);
             String throwsList = method.getThrows().stream().map(Object::toString).collect(Collectors.joining(JavaTokens.DELIMITER));
             sb.append(throwsList);
@@ -211,8 +211,8 @@ public class PrintJavaUtil {
     }
 
     /**
-     *
-     * @param returnType
+     * Get Java return type.
+     * @param returnType return type
      * @return
      */
     public static String getReturn(final JavaReturnType returnType) {
@@ -229,13 +229,8 @@ public class PrintJavaUtil {
      * @param value package/class to import
      * @return import statement
      */
-    public static String getImport(final String value) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(JavaKeywords.IMPORT);
-        sb.append(value);
-        sb.append(JavaTokens.SEMICOLON);
-
-        return sb.toString();
+    public static String getImport(@NotNull final JavaImport value) {
+        return JavaKeywords.IMPORT + value.getType() + JavaTokens.SEMICOLON;
     }
 
     /**
@@ -243,13 +238,8 @@ public class PrintJavaUtil {
      * @param value package space
      * @return package statement
      */
-    public static String getPackage(final String value) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(JavaKeywords.PACKAGE);
-        sb.append(value);
-        sb.append(JavaTokens.SEMICOLON);
-
-        return sb.toString();
+    public static String getPackage(@NotNull final JavaPackage value) {
+        return JavaKeywords.PACKAGE + value.getType() + JavaTokens.SEMICOLON;
     }
 
 }

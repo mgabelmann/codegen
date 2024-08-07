@@ -3,7 +3,10 @@ package ca.mikegabelmann.codegen.java.lang.classbody;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,6 +38,12 @@ public class JavaField extends AbstractJavaTypeAnnotated {
 
     public boolean removeModifier(@NotNull JavaFieldModifier modifier) {
         return this.modifiers.remove(modifier);
+    }
+
+    public List<JavaFieldModifier> getOrderedModifiers() {
+        List<JavaFieldModifier> ordered = new ArrayList<>(modifiers);
+        ordered.sort(Comparator.comparingInt(JavaFieldModifier::getOrder));
+        return ordered;
     }
 
     @Override

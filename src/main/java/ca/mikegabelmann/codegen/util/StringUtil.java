@@ -1,6 +1,8 @@
 package ca.mikegabelmann.codegen.util;
 
+import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -37,12 +39,21 @@ public class StringUtil {
      * @return value
      */
     public static String initCap(final String value) {
+        return StringUtil.initCap(value, "\s");
+    }
+
+    /**
+     * Capitalize first character of a string and lowercase remaining.
+     * @param value value to process
+     * @return value
+     */
+    public static String initCap(final String value, @NotNull final String separator) {
         if (value == null) {
             return null;
         }
 
         StringBuilder sb = new StringBuilder();
-        String[] tokens = value.split("\s");
+        String[] tokens = value.split(separator);
 
         for (String token : tokens) {
             if (token.length() == 1) {
@@ -50,7 +61,7 @@ public class StringUtil {
 
             } else if (token.length() > 1) {
                 sb.append(token.substring(0,1).toUpperCase() + token.substring(1).toLowerCase());
-                sb.append(" ");
+                sb.append(JavaTokens.SPACE);
             }
         }
 

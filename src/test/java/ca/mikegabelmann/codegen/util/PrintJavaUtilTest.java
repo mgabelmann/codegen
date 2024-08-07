@@ -139,8 +139,29 @@ class PrintJavaUtilTest {
     }
 
     @Test
-    @DisplayName("get field with annotation")
+    @DisplayName("get field with modifiers")
     void test2_getField() {
+        JavaField field = new JavaField("Integer", "age");
+        field.addModifier(JavaFieldModifier.PUBLIC);
+        field.addModifier(JavaFieldModifier.FINAL);
+
+        Assertions.assertEquals("public final Integer age;", PrintJavaUtil.getField(field));
+    }
+
+    @Test
+    @DisplayName("get field with special modifiers ordered")
+    void test3_getField() {
+        JavaField field = new JavaField("Integer", "age");
+        field.addModifier(JavaFieldModifier.PRIVATE);
+        field.addModifier(JavaFieldModifier.FINAL);
+        field.addModifier(JavaFieldModifier.STATIC);
+
+        Assertions.assertEquals("private static final Integer age;", PrintJavaUtil.getField(field));
+    }
+
+    @Test
+    @DisplayName("get field with annotation")
+    void test4_getField() {
         JavaAnnotation annotation = new JavaAnnotation("A");
 
         JavaField field = new JavaField("Integer", "age");
@@ -149,6 +170,8 @@ class PrintJavaUtilTest {
 
         Assertions.assertEquals("@A" + JavaTokens.NEWLINE + "public Integer age;", PrintJavaUtil.getField(field));
     }
+
+
 
     @Test
     @DisplayName("get method")
@@ -208,12 +231,12 @@ class PrintJavaUtilTest {
 
     @Test
     void getImport() {
-        Assertions.assertEquals("import java.io.IOException;", PrintJavaUtil.getImport("java.io.IOException"));
+        Assertions.assertEquals("import java.io.IOException;", PrintJavaUtil.getImport(new JavaImport("java.io.IOException")));
     }
 
     @Test
     void getPackage() {
-        Assertions.assertEquals("package a.b.c;", PrintJavaUtil.getPackage("a.b.c"));
+        Assertions.assertEquals("package a.b.c;", PrintJavaUtil.getPackage(new JavaPackage("a.b.c")));
     }
 
 }

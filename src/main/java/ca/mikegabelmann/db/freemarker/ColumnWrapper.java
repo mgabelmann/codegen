@@ -1,7 +1,6 @@
 package ca.mikegabelmann.db.freemarker;
 
 import org.apache.torque.ColumnType;
-import org.apache.torque.SqlDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

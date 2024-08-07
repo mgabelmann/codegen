@@ -1,10 +1,14 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -90,6 +94,12 @@ public class JavaMethod extends AbstractJavaTypeAnnotated {
 
     public boolean removeThrows(@NotNull String javaThrows) {
         return this.javaThrows.remove(javaThrows);
+    }
+
+    public List<JavaMethodModifier> getOrderedModifiers() {
+        List<JavaMethodModifier> ordered = new ArrayList<>(modifiers);
+        ordered.sort(Comparator.comparingInt(JavaMethodModifier::getOrder));
+        return ordered;
     }
 
     @Override
