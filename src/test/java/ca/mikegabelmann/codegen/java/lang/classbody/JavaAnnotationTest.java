@@ -15,8 +15,8 @@ class JavaAnnotationTest {
     void test1_constructor() {
         JavaAnnotation ann = new JavaAnnotation("Id");
 
-        Assertions.assertEquals("Id", ann.getType());
-        Assertions.assertEquals("", ann.getName());
+        Assertions.assertEquals("Id", ann.getCanonicalName());
+        Assertions.assertEquals("Id", ann.getSimpleName());
     }
 
     @Test

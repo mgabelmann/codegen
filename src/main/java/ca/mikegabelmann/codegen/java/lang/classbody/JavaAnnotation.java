@@ -10,20 +10,18 @@ import java.util.*;
  *
  * @author mgabe
  */
-public class JavaAnnotation extends AbstractJavaType {
+public class JavaAnnotation implements JavaType {
     /** Logger. */
     private static final Logger logger = LogManager.getLogger(JavaAnnotation.class);
+
+    private final String type;
 
     /** Properties of annotation. */
     private final SortedMap<String, List<Object>> properties;
 
 
-    /**
-     * Constructor.
-     * @param type type
-     */
-    public JavaAnnotation(@NotNull String type) {
-        super(type, "");
+    public JavaAnnotation(@NotNull final String type) {
+        this.type = type;
         this.properties = new TreeMap<>();
     }
 
@@ -60,13 +58,19 @@ public class JavaAnnotation extends AbstractJavaType {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("JavaAnnotation{");
-        sb.append("type='").append(type).append('\'');
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", properties=").append(properties);
-        sb.append('}');
-
-        return sb.toString();
+        return "JavaAnnotation{" +
+                "type='" + type + '\'' +
+                ", properties=" + properties +
+                '}';
     }
 
+    @Override
+    public String getCanonicalName() {
+        return type;
+    }
+
+    @Override
+    public String getSimpleName() {
+        return !type.contains(".") ? type : type.substring(type.lastIndexOf(".") + 1);
+    }
 }

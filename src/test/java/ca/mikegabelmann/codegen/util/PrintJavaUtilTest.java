@@ -1,6 +1,7 @@
 package ca.mikegabelmann.codegen.util;
 
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
+import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.classbody.*;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
@@ -71,7 +72,7 @@ class PrintJavaUtilTest {
 
     @Test
     void test1_getArgument() {
-        JavaArgument a = new JavaArgument("String", "str");
+        JavaArgument a = new JavaArgument("String", "str", true);
 
         Assertions.assertEquals("final String str", PrintJavaUtil.getArgument(a));
     }
@@ -85,7 +86,7 @@ class PrintJavaUtilTest {
 
     @Test
     void test3_getArgument() {
-        JavaArgument a = new JavaArgument("String", "str");
+        JavaArgument a = new JavaArgument("String", "str", true);
         a.addAnnotation(new JavaAnnotation("A"));
 
         Assertions.assertEquals("@A final String str", PrintJavaUtil.getArgument(a));
@@ -113,7 +114,7 @@ class PrintJavaUtilTest {
     void test2_getConstructor() {
         JavaConstructor a = new JavaConstructor("Person");
         a.addModifier(JavaConstructorModifier.PUBLIC);
-        a.addArgument(new JavaArgument("int", "age"));
+        a.addArgument(new JavaArgument(JavaPrimitive.INT, "age", true));
         a.addArgument(new JavaArgument("String", "firstName", false));
 
         Assertions.assertEquals("public Person(final int age, String firstName) {this.age = age;this.firstName = firstName;}", PrintJavaUtil.getConstructor(a));
@@ -176,7 +177,7 @@ class PrintJavaUtilTest {
     @Test
     @DisplayName("get method")
     void test1_getMethod() {
-        JavaMethod method = new JavaMethod("Integer", "Age");
+        JavaMethod method = new JavaMethod("Age");
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(new JavaReturnType("Integer", "age"));
         method.setNamePrefix(JavaMethodNamePrefix.GET);
@@ -187,9 +188,9 @@ class PrintJavaUtilTest {
     @Test
     @DisplayName("set method")
     void test2_getMethod() {
-        JavaArgument argument = new JavaArgument("Integer", "age");
+        JavaArgument argument = new JavaArgument("Integer", "age", true);
 
-        JavaMethod method = new JavaMethod("Integer", "Age");
+        JavaMethod method = new JavaMethod("Age");
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setNamePrefix(JavaMethodNamePrefix.SET);
         method.addArgument(argument);

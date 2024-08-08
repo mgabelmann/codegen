@@ -13,23 +13,23 @@ class JavaArgumentTest {
     void test1_constructor1() {
         JavaArgument argument = new JavaArgument("type", "name", false);
 
-        Assertions.assertEquals("type", argument.getType());
+        Assertions.assertEquals("type", argument.getCanonicalName());
         Assertions.assertEquals("name", argument.getName());
         Assertions.assertFalse(argument.isFinal());
     }
 
     @Test
     void test2_constructor1() {
-        JavaArgument argument = new JavaArgument("type", "name");
+        JavaArgument argument = new JavaArgument("type", "name", true);
 
-        Assertions.assertEquals("type", argument.getType());
+        Assertions.assertEquals("type", argument.getCanonicalName());
         Assertions.assertEquals("name", argument.getName());
         Assertions.assertTrue(argument.isFinal());
     }
 
     @Test
     void test1_getAnnotations() {
-        JavaArgument argument = new JavaArgument("type", "name");
+        JavaArgument argument = new JavaArgument("type", "name", true);
         argument.addAnnotation(new JavaAnnotation("A"));
 
         Assertions.assertEquals(1, argument.getAnnotations().size());
@@ -39,7 +39,7 @@ class JavaArgumentTest {
     void test1_removeAnnotation() {
         JavaAnnotation ann = new JavaAnnotation("A");
 
-        JavaArgument argument = new JavaArgument("type", "name");
+        JavaArgument argument = new JavaArgument("type", "name", true);
         argument.addAnnotation(ann);
 
         Assertions.assertTrue(argument.removeAnnotation(ann));

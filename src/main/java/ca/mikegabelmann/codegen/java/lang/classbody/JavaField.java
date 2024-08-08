@@ -1,5 +1,6 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
+import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,10 +14,13 @@ import java.util.Set;
  *
  * @author mgabe
  */
-public class JavaField extends AbstractJavaTypeAnnotated {
+public class JavaField extends AbstractJavaTypeAnnotated implements JavaType, JavaName {
+
+    private final String type;
+    private final String name;
+
     /** Field modifiers. */
     private final Set<JavaFieldModifier> modifiers;
-
 
     /**
      * Constructor.
@@ -24,7 +28,9 @@ public class JavaField extends AbstractJavaTypeAnnotated {
      * @param name field or variable name
      */
     public JavaField(@NotNull final String type, @NotNull final String name) {
-        super(type, name);
+        super();
+        this.type = type;
+        this.name = name;
         this.modifiers = new LinkedHashSet<>();
     }
 
@@ -44,6 +50,21 @@ public class JavaField extends AbstractJavaTypeAnnotated {
         List<JavaFieldModifier> ordered = new ArrayList<>(modifiers);
         ordered.sort(Comparator.comparingInt(JavaFieldModifier::getOrder));
         return ordered;
+    }
+
+    @Override
+    public String getCanonicalName() {
+        return type;
+    }
+
+    @Override
+    public String getSimpleName() {
+        return !type.contains(".") ? type : type.substring(type.lastIndexOf(".") + 1);
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

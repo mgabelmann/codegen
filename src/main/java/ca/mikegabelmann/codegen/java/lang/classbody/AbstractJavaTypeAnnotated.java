@@ -9,20 +9,17 @@ import java.util.Set;
  *
  * @author mgabe
  */
-abstract class AbstractJavaTypeAnnotated extends AbstractJavaType {
+abstract class AbstractJavaTypeAnnotated {
     /** Annotations. */
     protected final Set<JavaAnnotation> annotations;
 
 
     /**
      * Constructor.
-     * @param type class or primitive type
-     * @param name field or variable name
-     */
-    AbstractJavaTypeAnnotated(@NotNull final String type, @NotNull final String name) {
-        super(type, name);
-        this.annotations = new LinkedHashSet<>();
 
+     */
+    AbstractJavaTypeAnnotated() {
+        this.annotations = new LinkedHashSet<>();
     }
 
     /**

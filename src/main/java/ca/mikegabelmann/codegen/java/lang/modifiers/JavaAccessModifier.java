@@ -7,6 +7,7 @@ import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
  * @author mgabelmann
  */
 public enum JavaAccessModifier implements JavaModifier {
+    //accessability
     PUBLIC(JavaKeywords.PUBLIC, 1),
     PROTECTED(JavaKeywords.PROTECTED, 2),
     PACKAGE("", 5),

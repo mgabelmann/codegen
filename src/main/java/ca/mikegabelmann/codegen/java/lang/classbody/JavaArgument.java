@@ -1,23 +1,28 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
+import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
 import org.jetbrains.annotations.NotNull;
 
 /**
  *
  * @author mgabe
  */
-public class JavaArgument extends AbstractJavaTypeAnnotated {
+public class JavaArgument extends AbstractJavaTypeAnnotated implements JavaType, JavaName {
     /** Is the argument final. */
     private final boolean isFinal;
 
+    private final String name;
+
+    private final String type;
 
     /**
-     * Constructor.
+     *
      * @param type
      * @param name
+     * @param isFinal
      */
-    public JavaArgument(@NotNull String type, @NotNull String name) {
-        this(type, name, true);
+    public JavaArgument(@NotNull final JavaPrimitive type, @NotNull final String name, final boolean isFinal) {
+        this(type.getCanonicalName(), name, isFinal);
     }
 
     /**
@@ -26,9 +31,25 @@ public class JavaArgument extends AbstractJavaTypeAnnotated {
      * @param name
      * @param isFinal
      */
-    public JavaArgument(@NotNull String type, @NotNull String name, boolean isFinal) {
-        super(type, name);
+    public JavaArgument(@NotNull final String type, @NotNull final String name, final boolean isFinal) {
+        this.type = type;
+        this.name = name;
         this.isFinal = isFinal;
+    }
+
+    @Override
+    public String getCanonicalName() {
+        return type;
+    }
+
+    @Override
+    public String getSimpleName() {
+        return !type.contains(".") ? type : type.substring(type.lastIndexOf(".") + 1);
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     /**

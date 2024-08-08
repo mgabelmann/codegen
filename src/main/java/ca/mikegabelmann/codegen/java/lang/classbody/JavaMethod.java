@@ -15,7 +15,7 @@ import java.util.Set;
  *
  * @author mgabelmann
  */
-public class JavaMethod extends AbstractJavaTypeAnnotated {
+public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName {
     /** Method modifiers. */
     private final Set<JavaMethodModifier> modifiers;
 
@@ -31,14 +31,17 @@ public class JavaMethod extends AbstractJavaTypeAnnotated {
     /**  */
     private final Set<String> javaThrows;
 
+    /**  */
+    private final String name;
+
 
     /**
      * Constructor.
-     * @param type class or primitive type
      * @param name field or variable name
      */
-    public JavaMethod(@NotNull String type, @NotNull String name) {
-        super(type, name);
+    public JavaMethod(@NotNull String name) {
+        super();
+        this.name = name;
         this.modifiers = new LinkedHashSet<>();
         this.javaArguments = new LinkedHashSet<>();
         this.javaThrows = new LinkedHashSet<>();
@@ -103,10 +106,15 @@ public class JavaMethod extends AbstractJavaTypeAnnotated {
     }
 
     @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("JavaMethod{");
-        sb.append("type='").append(type).append('\'');
-        sb.append(", name='").append(name).append('\'');
+        //sb.append("type='").append(type).append('\'');
+        sb.append("name='").append(name).append('\'');
         sb.append(", annotations=").append(annotations);
         sb.append(", modifiers=").append(modifiers);
         sb.append(", javaReturnType=").append(javaReturnType);

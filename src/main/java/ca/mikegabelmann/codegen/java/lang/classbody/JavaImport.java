@@ -3,24 +3,27 @@ package ca.mikegabelmann.codegen.java.lang.classbody;
 import org.jetbrains.annotations.NotNull;
 
 
-public class JavaImport extends AbstractJavaType {
+public class JavaImport {
+
+    private final String type;
 
     /**
      * Constructor.
-     * @param type
+     * @param type canonical name [package.]class
      */
-    public JavaImport(@NotNull String type) {
-        super(type, "");
+    public JavaImport(@NotNull final String type) {
+        this.type = type;
     }
 
-//    public String getImport() {
-//        return JavaKeywords.IMPORT + this.getType() + JavaTokens.SEMICOLON;
-//    }
+    public String getType() {
+        return type;
+    }
 
     @Override
     public String toString() {
         return "JavaImport{" +
-                "name='" + name + '\'' +
+                "importName='" + type + '\'' +
                 '}';
     }
+
 }

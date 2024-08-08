@@ -1,7 +1,6 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
-import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.Set;
  *
  * @author mgabe
  */
-public class JavaConstructor extends AbstractJavaTypeAnnotated {
+public class JavaConstructor extends AbstractJavaTypeAnnotated implements JavaName {
     /** Constructor modifiers. */
     private final Set<JavaConstructorModifier> modifiers;
 
@@ -24,52 +23,42 @@ public class JavaConstructor extends AbstractJavaTypeAnnotated {
     /** Constructor exceptions (if any). */
     private final Set<String> javaThrows;
 
+    private final String name;
 
     /**
      * Constructor.
-     * @param type class or primitive type
+     * @param name name
      */
-    public JavaConstructor(@NotNull String type) {
-        super(type, "");
+    public JavaConstructor(@NotNull final String name) {
+        super();
         this.modifiers = new LinkedHashSet<>();
         this.javaArguments = new LinkedHashSet<>();
         this.javaThrows = new LinkedHashSet<>();
+        this.name = name;
+    }
+
+    public Set<JavaArgument> getJavaArguments() {
+        return javaArguments;
+    }
+
+    public Set<String> getJavaThrows() {
+        return javaThrows;
     }
 
     public Set<JavaConstructorModifier> getModifiers() {
         return modifiers;
     }
 
-    public void addModifier(@NotNull JavaConstructorModifier modifier) {
-        this.modifiers.add(modifier);
+    public void addModifier(@NotNull final JavaConstructorModifier modifier) {
+        modifiers.add(modifier);
     }
 
-    public boolean removeModifier(@NotNull JavaConstructorModifier modifier) {
-        return this.modifiers.remove(modifier);
+    public void addArgument(@NotNull final JavaArgument argument) {
+        javaArguments.add(argument);
     }
 
-    public Set<JavaArgument> getArguments() {
-        return javaArguments;
-    }
-
-    public void addArgument(@NotNull JavaArgument argument) {
-        this.javaArguments.add(argument);
-    }
-
-    public boolean removeArgument(@NotNull JavaArgument argument) {
-        return this.javaArguments.remove(argument);
-    }
-
-    public Set<String> getThrows() {
-        return javaThrows;
-    }
-
-    public void addThrows(@NotNull String javaThrows) {
-        this.javaThrows.add(javaThrows);
-    }
-
-    public boolean removeThrows(@NotNull String javaThrows) {
-        return this.javaThrows.remove(javaThrows);
+    public void addThrows(@NotNull final String value) {
+        javaThrows.add(value);
     }
 
     public List<JavaConstructorModifier> getOrderedModifiers() {
@@ -79,15 +68,8 @@ public class JavaConstructor extends AbstractJavaTypeAnnotated {
     }
 
     @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("JavaConstructor{");
-        sb.append("type='").append(type).append('\'');
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", annotations=").append(annotations);
-        sb.append(", modifiers=").append(modifiers);
-        sb.append(", javaArguments=").append(javaArguments);
-        sb.append(", javaThrows=").append(javaThrows);
-        sb.append('}');
-        return sb.toString();
+    public String getName() {
+        return name;
     }
+
 }

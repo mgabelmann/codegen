@@ -33,7 +33,7 @@ public class PrintJavaUtil {
     public static String getAnnotation(@NotNull final JavaAnnotation annotation) {
         StringBuilder sb = new StringBuilder();
         sb.append(JavaTokens.ANNOTATION);
-        sb.append(annotation.getType());
+        sb.append(annotation.getSimpleName());
 
         SortedMap<String, List<Object>> map = annotation.getProperties();
 
@@ -63,7 +63,7 @@ public class PrintJavaUtil {
             sb.append(JavaKeywords.FINAL);
         }
 
-        sb.append(argument.getType());
+        sb.append(argument.getSimpleName());
         sb.append(JavaTokens.SPACE);
         sb.append(argument.getName());
 
@@ -90,17 +90,17 @@ public class PrintJavaUtil {
         String modifiersList = constructor.getModifiers().stream().map(Object::toString).collect(Collectors.joining(JavaTokens.SPACE));
         sb.append(modifiersList);
 
-        sb.append(constructor.getType());
+        sb.append(constructor.getName());
         sb.append(JavaTokens.BRACKET_LEFT);
 
-        Set<JavaArgument> arguments = constructor.getArguments();
+        Set<JavaArgument> arguments = constructor.getJavaArguments();
         String argumentList = arguments.stream().map(PrintJavaUtil::getArgument).collect(Collectors.joining(JavaTokens.DELIMITER));
         sb.append(argumentList);
 
         sb.append(JavaTokens.BRACKET_RIGHT);
         sb.append(JavaTokens.SPACE);
 
-        Set<String> javaThrows = constructor.getThrows();
+        Set<String> javaThrows = constructor.getJavaThrows();
         if (!javaThrows.isEmpty()) {
             sb.append(JavaKeywords.THROWS);
             String exceptions = javaThrows.stream().map(Object::toString).collect(Collectors.joining(JavaTokens.DELIMITER));
@@ -142,7 +142,7 @@ public class PrintJavaUtil {
             sb.append(modifier.toString());
         }
 
-        sb.append(field.getType());
+        sb.append(field.getCanonicalName());
         sb.append(JavaTokens.SPACE);
         sb.append(field.getName());
 
@@ -217,7 +217,7 @@ public class PrintJavaUtil {
      */
     public static String getReturn(final JavaReturnType returnType) {
         if (returnType != null) {
-            return returnType.getType();
+            return returnType.getSimpleName();
 
         } else {
             return JavaKeywords.VOID;
@@ -239,7 +239,7 @@ public class PrintJavaUtil {
      * @return package statement
      */
     public static String getPackage(@NotNull final JavaPackage value) {
-        return JavaKeywords.PACKAGE + value.getType() + JavaTokens.SEMICOLON;
+        return JavaKeywords.PACKAGE + value.getPackageName() + JavaTokens.SEMICOLON;
     }
 
 }

@@ -318,7 +318,7 @@ public class Entity {
 
         //TODO: determine annotations to add
 
-        JavaMethod method = new JavaMethod(wrapper.getSimpleName(), NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, wrapper.getId()));
+        JavaMethod method = new JavaMethod(NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, wrapper.getId()));
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(returnType);
         method.setNamePrefix(JavaMethodNamePrefix.GET);
@@ -332,7 +332,7 @@ public class Entity {
      * @return
      */
     public static String setter(@NotNull final AbstractWrapper wrapper) {
-        JavaMethod method = new JavaMethod(wrapper.getSimpleName(), NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, wrapper.getId()));
+        JavaMethod method = new JavaMethod(NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, wrapper.getId()));
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(null);
         method.setNamePrefix(JavaMethodNamePrefix.SET);
@@ -366,7 +366,7 @@ public class Entity {
 
         for (AbstractWrapper column : columns) {
             if (allArgs || column.isRequired()) {
-                con.addArgument(new JavaArgument(column.getSimpleName(), column.getVariableName()));
+                con.addArgument(new JavaArgument(column.getSimpleName(), column.getVariableName(), true));
             }
         }
 
