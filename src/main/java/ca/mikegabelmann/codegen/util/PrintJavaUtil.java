@@ -230,7 +230,7 @@ public class PrintJavaUtil {
      * @return import statement
      */
     public static String getImport(@NotNull final JavaImport value) {
-        return JavaKeywords.IMPORT + value.getType() + JavaTokens.SEMICOLON;
+        return JavaKeywords.IMPORT + value.getCanonicalName() + JavaTokens.SEMICOLON;
     }
 
     /**

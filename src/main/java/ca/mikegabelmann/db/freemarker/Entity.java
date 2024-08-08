@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,8 +43,8 @@ public class Entity {
      * @param schema
      * @return
      */
-    public static JavaAnnotation getTableAnnotation(@NotNull TableWrapper tw, String schema) {
-        JavaAnnotation ann = new JavaAnnotation("Table");
+    public static JavaAnnotation getTableAnnotation(@NotNull TableWrapper tw, @NotNull String type, String schema) {
+        JavaAnnotation ann = new JavaAnnotation(type);
         ann.add("name", tw.getTableType().getName());
 
         if (StringUtil.isNotBlankOrNull(schema)) {
@@ -52,6 +53,16 @@ public class Entity {
 
         return ann;
     }
+
+    //TESTING
+    public static String tableAnnotation(@NotNull TableWrapper tw, @NotNull String type, String schema) {
+        tw.addImport(type);
+
+        JavaAnnotation ann = Entity.getTableAnnotation(tw, type, schema);
+
+        return PrintJavaUtil.getAnnotation(ann);
+    }
+
 
     /**
      *
@@ -226,6 +237,17 @@ public class Entity {
         LOG.debug("import={}", cw.getCanonicalName());
 
         return a;
+    }
+
+    /**
+     * Get all imports for use in Java code.
+     * @param table
+     * @return
+     */
+    public static String imports(@NotNull final TableWrapper table) {
+        Set<String> imports = table.getImports();
+
+        return imports.stream().map(a -> PrintJavaUtil.getImport(new JavaImport(a))).collect(Collectors.joining(System.lineSeparator()));
     }
 
     /**

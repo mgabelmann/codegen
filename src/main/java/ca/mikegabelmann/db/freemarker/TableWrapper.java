@@ -173,10 +173,6 @@ public class TableWrapper extends AbstractWrapper {
         return importString.substring(importString.lastIndexOf('.') + 1);
     }
 
-    public final String getFormattedImports() {
-        return imports.stream().map(s -> JavaKeywords.IMPORT + s + JavaTokens.SEMICOLON).collect(Collectors.joining("\n"));
-    }
-
     @Override
     public final String getCanonicalName() {
         return NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, tableType.getName());

@@ -57,14 +57,6 @@ public class JavaAnnotation implements JavaType {
     }
 
     @Override
-    public String toString() {
-        return "JavaAnnotation{" +
-                "type='" + type + '\'' +
-                ", properties=" + properties +
-                '}';
-    }
-
-    @Override
     public String getCanonicalName() {
         return type;
     }
@@ -73,4 +65,13 @@ public class JavaAnnotation implements JavaType {
     public String getSimpleName() {
         return !type.contains(".") ? type : type.substring(type.lastIndexOf(".") + 1);
     }
+
+    @Override
+    public String toString() {
+        return "JavaAnnotation{" +
+                "type='" + type + '\'' +
+                ", properties=" + properties +
+                '}';
+    }
+
 }

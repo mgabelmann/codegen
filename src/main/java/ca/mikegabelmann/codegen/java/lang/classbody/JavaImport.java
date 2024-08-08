@@ -3,7 +3,7 @@ package ca.mikegabelmann.codegen.java.lang.classbody;
 import org.jetbrains.annotations.NotNull;
 
 
-public class JavaImport {
+public class JavaImport implements JavaType {
 
     private final String type;
 
@@ -17,6 +17,16 @@ public class JavaImport {
 
     public String getType() {
         return type;
+    }
+
+    @Override
+    public String getCanonicalName() {
+        return type;
+    }
+
+    @Override
+    public String getSimpleName() {
+        return !type.contains(".") ? type : type.substring(type.lastIndexOf('.') + 1);
     }
 
     @Override
