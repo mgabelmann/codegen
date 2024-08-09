@@ -1,4 +1,5 @@
 <#assign classbody>
+${tableWrapper.setPackageName("${basePackagePath}.model")}
 
 <#if javadoc>
 /**
@@ -18,7 +19,7 @@
 )
 @${tableWrapper.addTypedImport("jakarta.persistence.Entity")}
 ${Entity.tableAnnotation(tableWrapper, "jakarta.persistence.Table", schema)}
-<#--alternative way to print complex statement${Entity.annotation(Entity.getTableAnnotation(tableWrapper, "jakarta.persistence.Table", schema))}-->
+<#--alternative way to print complex statement ${Entity.annotation(Entity.getTableAnnotation(tableWrapper, "jakarta.persistence.Table", schema))} -->
 public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedImport("java.io.Serializable")} {
     /** UID. */
     @${tableWrapper.addTypedImport("java.io.Serial")}
@@ -61,8 +62,8 @@ public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedI
 </#assign>
 
 
-package ${basePackagePath}.model;
+${Entity.printPackage(tableWrapper)}
 
-${Entity.imports(tableWrapper)}
+${Entity.printImports(tableWrapper)}
 
 ${classbody}

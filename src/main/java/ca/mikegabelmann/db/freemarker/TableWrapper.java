@@ -1,8 +1,6 @@
 package ca.mikegabelmann.db.freemarker;
 
 import ca.mikegabelmann.codegen.java.JavaNamingType;
-import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
-import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +9,10 @@ import org.apache.torque.ReferenceType;
 import org.apache.torque.TableType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -26,8 +27,7 @@ public class TableWrapper extends AbstractWrapper {
     /**  */
     private final TableType tableType;
 
-    /**  */
-    private final Set<String> imports;
+
 
     /**  */
     private final Map<String, ColumnWrapper> columnsNonKey;
@@ -50,7 +50,6 @@ public class TableWrapper extends AbstractWrapper {
 
         super(sqlMappings);
         this.tableType = tableType;
-        this.imports = new TreeSet<>();
 
         //collection of all columns by column name
         Map<String, ColumnWrapper> columns = tableType.getColumn().stream()
@@ -99,24 +98,24 @@ public class TableWrapper extends AbstractWrapper {
         }
 
         //FIXME: need a better way to do this, probably the different Wrappers should be able to do this.
-        //update imports based on keys, etc
         if (localKey.isCompositeKey()) {
-            this.addImport("jakarta.persistence.EmbeddedId");
+            //this.addImport("jakarta.persistence.EmbeddedId");
         } else {
-            this.addImport("jakarta.persistence.Id");
+            //this.addImport("jakarta.persistence.Id");
         }
 
         if (!columnsNonKey.isEmpty()) {
-            this.addImport("jakarta.persistence.Column");
+            //this.addImport("jakarta.persistence.Column");
         }
 
         if (!foreignKeys.isEmpty()) {
-            this.addImport("jakarta.persistence.FetchType");
+            //this.addImport("jakarta.persistence.FetchType");
 
             //TODO: detect OneToOne, OneToMany, ManyToOne, ManyToMany
 
             //TODO: OneToOne requires FetchType.EAGER
         }
+
     }
 
     /**
@@ -125,10 +124,6 @@ public class TableWrapper extends AbstractWrapper {
      */
     public final TableType getTableType() {
         return tableType;
-    }
-
-    public Set<String> getImports() {
-        return imports;
     }
 
     public Map<String, ColumnWrapper> getColumnsNonKey() {
@@ -160,14 +155,7 @@ public class TableWrapper extends AbstractWrapper {
         return columns;
     }
 
-    public final void addImport(@NotNull String importString) {
-        boolean added = imports.add(importString);
-
-        if (added && LOG.isDebugEnabled()) {
-            LOG.debug("import {} - {}", importString, added);
-        }
-    }
-
+    //FIXME: move to AbstractWrapper?
     public final String addTypedImport(@NotNull String importString) {
         this.addImport(importString);
         return importString.substring(importString.lastIndexOf('.') + 1);

@@ -1,11 +1,15 @@
 package ca.mikegabelmann.db.freemarker;
 
+import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaClassModifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.torque.SqlDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
@@ -18,6 +22,12 @@ public abstract class AbstractWrapper implements JavaClass {
     /** SQL mappings. */
     protected final Map<String, String> sqlMappings;
 
+    /** Java classes to import. */
+    protected final Set<String> imports;
+
+    /** Java package, default unless specified. */
+    protected String packageName;
+
 
     /**
      * Constructor.
@@ -25,32 +35,52 @@ public abstract class AbstractWrapper implements JavaClass {
      */
     public AbstractWrapper(@NotNull Map<String, String> sqlMappings) {
         this.sqlMappings = sqlMappings;
+        this.imports = new TreeSet<>();
+        this.packageName = "";
     }
 
-    /**
-     * Get SQL mappings.
-     * @return
-     */
     public final Map<String, String> getSqlMappings() {
         return sqlMappings;
     }
 
-    /**
-     *
-     * @param type
-     * @return
-     */
+    public final Set<String> getImports() {
+        return imports;
+    }
+
+    public final String getPackageName() {
+        return packageName;
+    }
+
+    public final void setPackageName(@NotNull final String packageName) {
+        this.packageName = packageName;
+    }
+
     public final String getSqlMapping(@NotNull String type) {
         return sqlMappings.get(type);
     }
 
-    /**
-     *
-     * @param sqlDataType
-     * @return
-     */
     public final String getSqlMapping(@NotNull final SqlDataType sqlDataType) {
         return sqlMappings.get(sqlDataType.name());
+    }
+
+    /**
+     * Add fully qualified import
+     * @param importString
+     */
+    public final void addImport(@NotNull String importString) {
+        //do not add classes from java.lang.* since they are available globally, also avoid primitive types
+        if (importString.startsWith("java.lang") || JavaPrimitive.isPrimitiveType(importString)) {
+            LOG.debug("import {} - ignored", importString);
+            return;
+        }
+
+        //TODO: ignore items in the same package
+
+        boolean added = imports.add(importString);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("import {} - {}", importString, added);
+        }
     }
 
     /**
@@ -84,9 +114,9 @@ public abstract class AbstractWrapper implements JavaClass {
 
     /**
      *
-     * @param name
-     * @return
-     * @throws ClassNotFoundException
+     * @param name name of class to find
+     * @return class
+     * @throws ClassNotFoundException error
      */
     protected Class<?> getClass(@NotNull final String name) {
         Class<?> o;

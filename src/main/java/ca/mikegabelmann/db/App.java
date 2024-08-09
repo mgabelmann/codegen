@@ -38,16 +38,17 @@ public class App {
      */
     public static void main(final String[] args) throws Exception {
 
+        //ANTR parse file
         SQLiteFactory factory = new SQLiteFactory();
-        factory.parseFile(CharStreams.fromStream(App.class.getResourceAsStream("/example4.sqlite")));
+        factory.parseFile(CharStreams.fromStream(App.class.getResourceAsStream("/example5.sqlite")));
+
+        List<TableType> tables = factory.getTableTypes();
+        TableType table = tables.get(0);
 
         //JAXB - print XML tree
         JAXBContext context = JAXBContext.newInstance(TableType.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-        List<TableType> tables = factory.getTableTypes();
-        TableType table = tables.get(0);
 
         StringWriter sw = new StringWriter();
         JAXBElement<TableType> je = new JAXBElement<>(new QName("http://db.apache.org/torque/5.0/templates/database", "table"), TableType.class, table);
@@ -69,13 +70,15 @@ public class App {
 
         //base set of parameters inherited by all
         Map<String, Object> input = new HashMap<>();
-        input.put("basePackagePath", "ca.mikegabelmann.persistence");
+        input.put("basePackagePath", "ca.mgabelmann.persistence");
         input.put("author", "codegenerator");
         input.put("version", "1.0.0");
         input.put("buildDtm", LocalDateTime.now());
         input.put("javadoc", Boolean.FALSE);
+//        input.put("jpa.type", "jakarta.persistence");
 
         {
+            //Java JPA DAO/Repository
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
             inputTemplate.put("tableWrapper", new TableWrapper(sqlMappings, table));
@@ -86,6 +89,7 @@ public class App {
         }
 
         {
+            //Java JPA Table/Entity
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
             inputTemplate.put("tableWrapper", new TableWrapper(sqlMappings, table));

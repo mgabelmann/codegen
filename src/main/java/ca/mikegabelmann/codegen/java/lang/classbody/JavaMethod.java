@@ -1,7 +1,6 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
-import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import org.jetbrains.annotations.NotNull;
 

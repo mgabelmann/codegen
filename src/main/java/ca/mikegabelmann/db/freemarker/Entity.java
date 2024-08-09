@@ -224,6 +224,8 @@ public class Entity {
     public static JavaAnnotation getTemporalAnnotation(@NotNull ColumnWrapper cw) {
         JavaAnnotation a = new JavaAnnotation("Temporal");
 
+
+
         if (cw.getColumnType().getType().equals(SqlDataType.DATE)) {
             a.add("value", TemporalType.DATE);
 
@@ -239,12 +241,16 @@ public class Entity {
         return a;
     }
 
+    public static String printPackage(@NotNull final TableWrapper table) {
+        return PrintJavaUtil.getPackage(new JavaPackage(table.getPackageName()));
+    }
+
     /**
      * Get all imports for use in Java code.
      * @param table
      * @return
      */
-    public static String imports(@NotNull final TableWrapper table) {
+    public static String printImports(@NotNull final TableWrapper table) {
         Set<String> imports = table.getImports();
 
         return imports.stream().map(a -> PrintJavaUtil.getImport(new JavaImport(a))).collect(Collectors.joining(System.lineSeparator()));
@@ -388,7 +394,10 @@ public class Entity {
 
         for (AbstractWrapper column : columns) {
             if (allArgs || column.isRequired()) {
+                LOG.trace("constructor arg type={}", column.getCanonicalName());
                 con.addArgument(new JavaArgument(column.getSimpleName(), column.getVariableName(), true));
+
+                table.addImport(column.getCanonicalName());
             }
         }
 

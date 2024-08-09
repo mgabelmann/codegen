@@ -2,10 +2,6 @@ package ca.mikegabelmann.codegen.java.lang.modifiers;
 
 import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 /**
  *
  * @author mgabelmann
