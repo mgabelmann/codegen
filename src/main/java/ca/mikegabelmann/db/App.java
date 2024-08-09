@@ -81,7 +81,10 @@ public class App {
             //Java JPA DAO/Repository
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
-            inputTemplate.put("tableWrapper", new TableWrapper(sqlMappings, table));
+
+            TableWrapper tw = new TableWrapper(sqlMappings, table);
+            tw.setPackageName("ca.mgabelmann.persistence.dao");
+            inputTemplate.put("tableWrapper", tw);
 
             Template dao = cfg.getTemplate("dao.ftl");
             Writer cw = new OutputStreamWriter(System.out);
@@ -92,7 +95,10 @@ public class App {
             //Java JPA Table/Entity
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
-            inputTemplate.put("tableWrapper", new TableWrapper(sqlMappings, table));
+
+            TableWrapper tw = new TableWrapper(sqlMappings, table);
+            tw.setPackageName("ca.mgabelmann.persistence.model");
+            inputTemplate.put("tableWrapper", tw);
 
             //specialized properties
             //inputTemplate.put("schema", "SCHEMA");

@@ -70,7 +70,7 @@ public class Entity {
      * @return
      */
     public static JavaAnnotation getOneToOne(@NotNull ColumnWrapper cw) {
-        JavaAnnotation ann = new JavaAnnotation("OneToOne");
+        JavaAnnotation ann = new JavaAnnotation("jakarta.persistence.OneToOne");
 
         if (cw.getId().toUpperCase().endsWith("_CODE")) {
             ann.add("fetch", FetchType.EAGER);
@@ -78,6 +78,8 @@ public class Entity {
         } else {
             ann.add("fetch", FetchType.LAZY);
         }
+
+        cw.addImport("jakarta.persistence.FetchType");
 
         return ann;
     }
@@ -133,7 +135,7 @@ public class Entity {
         JavaAnnotation ja;
 
         if (fkw.isCompositeKey()) {
-            ja = new JavaAnnotation("JoinColumns");
+            ja = new JavaAnnotation("jakarta.persistence.JoinColumns");
 
             //TODO: @JoinColumns, @JoinColumn
             Map<String, ColumnWrapper> hashedColumns = fkw.getColumns().stream().collect(Collectors.toMap(c -> c.getName(), Function.identity()));
@@ -168,7 +170,7 @@ public class Entity {
      * @return
      */
     private static JavaAnnotation getJoinColumn(ReferenceType referenceType, ColumnWrapper columnWrapper) {
-        JavaAnnotation ann = new JavaAnnotation("JoinColumn");
+        JavaAnnotation ann = new JavaAnnotation("jakarta.persistence.JoinColumn");
         //TODO: columnDefinition
         //TODO: foreignKey
         //TODO: insertable
@@ -188,7 +190,7 @@ public class Entity {
      * @return
      */
     public static JavaAnnotation getColumnAnnotation(@NotNull ColumnWrapper cw) {
-        JavaAnnotation a = new JavaAnnotation("Column");
+        JavaAnnotation a = new JavaAnnotation("jakarta.persistence.Column");
         a.add("name", cw.getId());
 
         if (cw.getColumnType().isPrimaryKey()) {
@@ -222,7 +224,7 @@ public class Entity {
      * @return
      */
     public static JavaAnnotation getTemporalAnnotation(@NotNull ColumnWrapper cw) {
-        JavaAnnotation a = new JavaAnnotation("Temporal");
+        JavaAnnotation a = new JavaAnnotation("jakarta.persistence.Temporal");
 
 
 
@@ -251,6 +253,7 @@ public class Entity {
      * @return
      */
     public static String printImports(@NotNull final TableWrapper table) {
+        table.consolidateImports();
         Set<String> imports = table.getImports();
 
         return imports.stream().map(a -> PrintJavaUtil.getImport(new JavaImport(a))).collect(Collectors.joining(System.lineSeparator()));
@@ -281,7 +284,7 @@ public class Entity {
 
             if (!lkw.isCompositeKey()) {
                 //get @Id
-                field.addAnnotation(new JavaAnnotation("Id"));
+                field.addAnnotation(new JavaAnnotation("jakarta.persistence.Id"));
 
                 //TODO: get @GeneratedValue and @SequenceGenerator if applicable
                 /*if (column.getColumnType().isAutoIncrement()) {
@@ -294,7 +297,7 @@ public class Entity {
 
             } else {
                 //get @EmbeddedId
-                field.addAnnotation(new JavaAnnotation("EmbeddedId"));
+                field.addAnnotation(new JavaAnnotation("jakarta.persistence.EmbeddedId"));
             }
 
         } else if (column instanceof ForeignKeyWrapper) {
@@ -331,6 +334,10 @@ public class Entity {
 
         } else {
 
+        }
+
+        for (JavaAnnotation ann : field.getAnnotations()) {
+            column.addImport(ann.getCanonicalName());
         }
 
         return PrintJavaUtil.getField(field);
@@ -394,10 +401,13 @@ public class Entity {
 
         for (AbstractWrapper column : columns) {
             if (allArgs || column.isRequired()) {
-                LOG.trace("constructor arg type={}", column.getCanonicalName());
+                //LOG.trace("constructor arg type={}", column.getCanonicalName());
                 con.addArgument(new JavaArgument(column.getSimpleName(), column.getVariableName(), true));
 
-                table.addImport(column.getCanonicalName());
+                if (column instanceof ColumnWrapper) {
+                    //do not add keys or foreign key imports as they are in same package
+                    table.addImport(column.getCanonicalName());
+                }
             }
         }
 

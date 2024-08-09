@@ -27,8 +27,6 @@ public class TableWrapper extends AbstractWrapper {
     /**  */
     private final TableType tableType;
 
-
-
     /**  */
     private final Map<String, ColumnWrapper> columnsNonKey;
 
@@ -159,6 +157,18 @@ public class TableWrapper extends AbstractWrapper {
     public final String addTypedImport(@NotNull String importString) {
         this.addImport(importString);
         return importString.substring(importString.lastIndexOf('.') + 1);
+    }
+
+    public void consolidateImports() {
+        this.imports.addAll(localKey.getImports());
+        this.imports.addAll(localKey.getColumns().stream().map(ColumnWrapper::getImports).flatMap(Collection::stream).toList());
+
+        this.imports.addAll(columnsForeignKey.values().stream().map(ForeignKeyWrapper::getImports).flatMap(Collection::stream).toList());
+        this.imports.addAll(columnsForeignKey.values().stream().map(ForeignKeyWrapper::getColumns).flatMap(Collection::stream).map(ColumnWrapper::getImports).flatMap(Collection::stream).toList());
+
+        this.imports.addAll(columnsNonKey.values().stream().map(ColumnWrapper::getImports).flatMap(Collection::stream).toList());
+
+
     }
 
     @Override

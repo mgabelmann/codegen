@@ -70,7 +70,7 @@ public abstract class AbstractWrapper implements JavaClass {
     public final void addImport(@NotNull String importString) {
         //do not add classes from java.lang.* since they are available globally, also avoid primitive types
         if (importString.startsWith("java.lang") || JavaPrimitive.isPrimitiveType(importString)) {
-            LOG.debug("import {} - ignored", importString);
+            LOG.debug("{} - import {} - ignored", this.getId(), importString);
             return;
         }
 
@@ -78,8 +78,8 @@ public abstract class AbstractWrapper implements JavaClass {
 
         boolean added = imports.add(importString);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("import {} - {}", importString, added);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("{} - import {} - {}", this.getId(), importString, added ? "added" : "duplicate");
         }
     }
 
@@ -102,6 +102,8 @@ public abstract class AbstractWrapper implements JavaClass {
      * @return
      */
     public abstract boolean isRequired();
+
+
 
     /**
      *
