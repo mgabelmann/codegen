@@ -95,23 +95,19 @@ public class TableWrapper extends AbstractWrapper {
             localKey.addColumn(column);
         }
 
-        //FIXME: need a better way to do this, probably the different Wrappers should be able to do this.
+
         if (localKey.isCompositeKey()) {
-            //this.addImport("jakarta.persistence.EmbeddedId");
+            //TODO:
         } else {
-            //this.addImport("jakarta.persistence.Id");
+            //TODO:
         }
 
         if (!columnsNonKey.isEmpty()) {
-            //this.addImport("jakarta.persistence.Column");
+            //TODO:
         }
 
         if (!foreignKeys.isEmpty()) {
-            //this.addImport("jakarta.persistence.FetchType");
-
             //TODO: detect OneToOne, OneToMany, ManyToOne, ManyToMany
-
-            //TODO: OneToOne requires FetchType.EAGER
         }
 
     }
@@ -147,8 +143,8 @@ public class TableWrapper extends AbstractWrapper {
     public List<AbstractWrapper> getColumns() {
         List<AbstractWrapper> columns = new ArrayList<>();
         columns.add(localKey);
-        columns.addAll(columnsForeignKey.values());
         columns.addAll(columnsNonKey.values());
+        columns.addAll(columnsForeignKey.values());
 
         return columns;
     }
@@ -159,16 +155,13 @@ public class TableWrapper extends AbstractWrapper {
         return importString.substring(importString.lastIndexOf('.') + 1);
     }
 
+    /**
+     * Adds all imports from the different wrapper class children, duplicates will be discarded.
+     */
     public void consolidateImports() {
         this.imports.addAll(localKey.getImports());
-        this.imports.addAll(localKey.getColumns().stream().map(ColumnWrapper::getImports).flatMap(Collection::stream).toList());
-
         this.imports.addAll(columnsForeignKey.values().stream().map(ForeignKeyWrapper::getImports).flatMap(Collection::stream).toList());
-        this.imports.addAll(columnsForeignKey.values().stream().map(ForeignKeyWrapper::getColumns).flatMap(Collection::stream).map(ColumnWrapper::getImports).flatMap(Collection::stream).toList());
-
         this.imports.addAll(columnsNonKey.values().stream().map(ColumnWrapper::getImports).flatMap(Collection::stream).toList());
-
-
     }
 
     @Override

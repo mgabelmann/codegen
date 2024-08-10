@@ -20,13 +20,13 @@
 ${Entity.tableAnnotation(tableWrapper, "jakarta.persistence.Table", schema)}
 <#--alternative way to print complex statement ${Entity.annotation(Entity.getTableAnnotation(tableWrapper, "jakarta.persistence.Table", schema))} -->
 public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedImport("java.io.Serializable")} {
-    /** UID. */
+    <#if javadoc>/** UID. */</#if>
     @${tableWrapper.addTypedImport("java.io.Serial")}
     private static final long serialVersionUID = 1L;
 
     //PROPERTIES
 <#list tableWrapper.getColumns() as column>
-    <#if javadoc></#if>
+    <#if javadoc>/** Column ${column.id}. */</#if>
     ${Entity.field(column)}
 
 </#list>
@@ -45,10 +45,10 @@ public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedI
 
     //GETTERS & SETTERS
 <#list tableWrapper.getColumns() as column>
-    <#if javadoc></#if>
+    <#if javadoc>/** Set ${column.id}. */</#if>
     ${Entity.setter(column)}
 
-    <#if javadoc></#if>
+    <#if javadoc>/** Get ${column.id}. */</#if>
     ${Entity.getter(column)}
 
 </#list>

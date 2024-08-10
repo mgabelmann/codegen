@@ -5,6 +5,7 @@ import ca.mikegabelmann.codegen.util.NameUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +82,11 @@ public class LocalKeyWrapper extends AbstractWrapper {
     @Override
     public boolean isRequired() {
         return true;
+    }
+
+    @Override
+    public void consolidateImports() {
+        this.imports.addAll(columns.stream().map(ColumnWrapper::getImports).flatMap(Collection::stream).toList());
     }
 
 }

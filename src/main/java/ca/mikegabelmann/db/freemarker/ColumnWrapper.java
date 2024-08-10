@@ -84,4 +84,9 @@ public class ColumnWrapper extends AbstractWrapper {
         return columnType.isRequired();
     }
 
+    @Override
+    public void consolidateImports() {
+        //nothing to do
+    }
+
 }

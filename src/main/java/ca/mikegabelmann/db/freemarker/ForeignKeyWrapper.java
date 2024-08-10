@@ -6,6 +6,7 @@ import org.apache.torque.ForeignKeyType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -88,6 +89,11 @@ public class ForeignKeyWrapper extends AbstractWrapper {
     @Override
     public boolean isRequired() {
         return isCompositeKey() ? true : columns.get(0).isRequired();
+    }
+
+    @Override
+    public void consolidateImports() {
+        this.imports.addAll(columns.stream().map(ColumnWrapper::getImports).flatMap(Collection::stream).toList());
     }
 
 }

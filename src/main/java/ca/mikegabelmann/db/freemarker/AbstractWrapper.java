@@ -103,7 +103,10 @@ public abstract class AbstractWrapper implements JavaClass {
      */
     public abstract boolean isRequired();
 
-
+    /**
+     * Gather imports locally or from child classes.
+     */
+    public abstract void consolidateImports();
 
     /**
      *

@@ -74,7 +74,7 @@ public class App {
         input.put("author", "codegenerator");
         input.put("version", "1.0.0");
         input.put("buildDtm", LocalDateTime.now());
-        input.put("javadoc", Boolean.FALSE);
+        input.put("javadoc", Boolean.TRUE);
 //        input.put("jpa.type", "jakarta.persistence");
 
         {

@@ -23,9 +23,9 @@
     </description>
 
     <scm>
-        <connection>scm:git:https://github.com/mgabelmann/codegen.git</connection>
-        <developerConnection>scm:git:https://github.com/mgabelmann/codegen.git</developerConnection>
-        <url>https://github.com/mgabelmann/codegen</url>
+        <connection>scm:git:https://github.com/mgabelmann/reveng.git</connection>
+        <developerConnection>scm:git:https://github.com/mgabelmann/reveng.git</developerConnection>
+        <url>https://github.com/mgabelmann/reveng</url>
     </scm>
 
     <properties>
