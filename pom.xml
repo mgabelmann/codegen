@@ -11,10 +11,10 @@
     </parent>
 
     <groupId>ca.mikegabelmann.db</groupId>
-    <artifactId>reveng</artifactId>
+    <artifactId>codegen</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>reveng</name>
+    <name>codegen</name>
     <description>
         'Reveng' short for Reverse Engineering.
         Similar to Hibernate Tools, this library will generate Java source code from an existing database or
@@ -23,9 +23,9 @@
     </description>
 
     <scm>
-        <connection>scm:git:https://github.com/mgabelmann/reveng.git</connection>
-        <developerConnection>scm:git:https://github.com/mgabelmann/reveng.git</developerConnection>
-        <url>https://github.com/mgabelmann/reveng</url>
+        <connection>scm:git:https://github.com/mgabelmann/codegen.git</connection>
+        <developerConnection>scm:git:https://github.com/mgabelmann/codegen.git</developerConnection>
+        <url>https://github.com/mgabelmann/codegen</url>
     </scm>
 
     <properties>

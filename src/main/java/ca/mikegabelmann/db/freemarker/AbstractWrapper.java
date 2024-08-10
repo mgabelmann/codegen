@@ -1,7 +1,6 @@
 package ca.mikegabelmann.db.freemarker;
 
 import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
-import ca.mikegabelmann.codegen.java.lang.modifiers.JavaClassModifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.torque.SqlDataType;

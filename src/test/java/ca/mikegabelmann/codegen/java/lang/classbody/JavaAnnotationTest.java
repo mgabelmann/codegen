@@ -1,7 +1,6 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
 
-import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
