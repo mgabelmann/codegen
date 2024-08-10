@@ -12,7 +12,7 @@
 
     <groupId>ca.mikegabelmann.db</groupId>
     <artifactId>codegen</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <name>codegen</name>
     <description>
@@ -55,10 +55,17 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- old library
         <dependency>
             <groupId>javax.persistence</groupId>
             <artifactId>javax.persistence-api</artifactId>
             <version>2.2</version>
+            <scope>compile</scope>
+        </dependency>-->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.2.0</version>
             <scope>compile</scope>
         </dependency>
 
@@ -73,13 +80,13 @@
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>3.0.1</version>
+            <version>4.0.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>3.0.2</version>
+            <version>4.0.5</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -114,11 +121,16 @@
                 </executions>
             </plugin>
 
-            <!-- generate JAXB java files, the codehaus plugin doesn't work well with Java 11 -->
+            <!-- generate JAXB java files from XSD files -->
             <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-xjc-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>4.0.1</version>
+                <configuration>
+                    <extensions>
+                        <extension>org.apache.cxf.xjcplugins:cxf-xjc-dv:4.0.1</extension>
+                    </extensions>
+                </configuration>
                 <executions>
                     <execution>
                         <id>xjc-1</id>
@@ -132,32 +144,10 @@
                                     <xsd>${basedir}/src/main/xsd/hibernate-reverse-engineering-3.0.xsd</xsd>
                                     <packagename>org.hibernate.reveng</packagename>
                                 </xsdOption>
-                            </xsdOptions>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>xjc-2</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>xsdtojava</goal>
-                        </goals>
-                        <configuration>
-                            <xsdOptions>
                                 <xsdOption>
                                     <xsd>${basedir}/src/main/xsd/hibernate-mapping-3.0.xsd</xsd>
                                     <packagename>org.hibernate.mapping</packagename>
                                 </xsdOption>
-                            </xsdOptions>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>xjc-3</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>xsdtojava</goal>
-                        </goals>
-                        <configuration>
-                            <xsdOptions>
                                 <xsdOption>
                                     <xsd>${basedir}/src/main/xsd/apache-torque-5.0.xsd</xsd>
                                     <packagename>org.apache.torque</packagename>
@@ -167,13 +157,17 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- NOTE: previous versions of cxf-xjc-plugin generated with javax.xml.bind instead of
+                       jakarta.xml.bind, so we used following plugin to search and replace. might be
+                       useful to keep example
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <!-- NOTE: classes are generated with the wrong JAXB package -->
+                        &lt;!&ndash; NOTE: classes are generated with the wrong JAXB package &ndash;&gt;
                         <id>ant-1</id>
                         <phase>process-resources</phase>
                         <goals>
@@ -189,6 +183,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
 
             <plugin>
                 <groupId>org.jacoco</groupId>

@@ -28,7 +28,7 @@
            xmlns="http://db.apache.org/torque/5.0/templates/database"
            elementFormDefault="qualified"
            version="5.0"
-           xmlns:jxb="http://java.sun.com/xml/ns/jaxb" jxb:version="2.1">
+           xmlns:jxb="https://jakarta.ee/xml/ns/jaxb" jxb:version="3.0">
 
     <xs:annotation>
         <xs:documentation xml:lang="en">

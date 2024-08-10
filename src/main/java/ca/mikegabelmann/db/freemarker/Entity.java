@@ -15,8 +15,8 @@ import org.apache.torque.ReferenceType;
 import org.apache.torque.SqlDataType;
 import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.FetchType;
-import javax.persistence.TemporalType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.TemporalType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
