@@ -21,7 +21,7 @@ public class StringUtil {
      */
     @Contract("null -> true")
     public static boolean isBlankOrNull(final String arg) {
-        return (arg == null || arg.replaceAll("\\s", "").length() == 0);
+        return (arg == null || arg.replaceAll("\\s", "").isEmpty());
     }
 
     /**

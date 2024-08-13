@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -85,8 +86,9 @@ public class LocalKeyWrapper extends AbstractWrapper {
     }
 
     @Override
-    public void consolidateImports() {
-        this.imports.addAll(columns.stream().map(ColumnWrapper::getImports).flatMap(Collection::stream).toList());
+    public Set<String> getAllImports() {
+        this.imports.addAll(columns.stream().map(ColumnWrapper::getAllImports).flatMap(Collection::stream).toList());
+        return imports;
     }
 
 }

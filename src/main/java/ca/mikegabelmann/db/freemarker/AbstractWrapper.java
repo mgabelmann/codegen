@@ -63,10 +63,10 @@ public abstract class AbstractWrapper implements JavaClass {
     }
 
     /**
-     * Add fully qualified import
+     * Add fully qualified import.
      * @param importString
      */
-    public final void addImport(@NotNull String importString) {
+    public final void addImport(@NotNull final String importString) {
         //do not add classes from java.lang.* since they are available globally, also avoid primitive types
         if (importString.startsWith("java.lang") || JavaPrimitive.isPrimitiveType(importString)) {
             LOG.debug("{} - import {} - ignored", this.getId(), importString);
@@ -105,7 +105,7 @@ public abstract class AbstractWrapper implements JavaClass {
     /**
      * Gather imports locally or from child classes.
      */
-    public abstract void consolidateImports();
+    public abstract Set<String> getAllImports();
 
     /**
      *

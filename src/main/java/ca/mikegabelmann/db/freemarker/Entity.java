@@ -253,8 +253,7 @@ public class Entity {
      * @return
      */
     public static String printImports(@NotNull final TableWrapper table) {
-        table.consolidateImports();
-        Set<String> imports = table.getImports();
+        Set<String> imports = table.getAllImports();
 
         return imports.stream().map(a -> PrintJavaUtil.getImport(new JavaImport(a))).collect(Collectors.joining(System.lineSeparator()));
     }

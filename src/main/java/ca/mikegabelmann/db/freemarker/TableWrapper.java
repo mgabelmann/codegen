@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -155,13 +156,12 @@ public class TableWrapper extends AbstractWrapper {
         return importString.substring(importString.lastIndexOf('.') + 1);
     }
 
-    /**
-     * Adds all imports from the different wrapper class children, duplicates will be discarded.
-     */
-    public void consolidateImports() {
-        this.imports.addAll(localKey.getImports());
-        this.imports.addAll(columnsForeignKey.values().stream().map(ForeignKeyWrapper::getImports).flatMap(Collection::stream).toList());
-        this.imports.addAll(columnsNonKey.values().stream().map(ColumnWrapper::getImports).flatMap(Collection::stream).toList());
+    @Override
+    public Set<String> getAllImports() {
+        this.imports.addAll(columnsForeignKey.values().stream().map(ForeignKeyWrapper::getAllImports).flatMap(Collection::stream).toList());
+        this.imports.addAll(columnsNonKey.values().stream().map(ColumnWrapper::getAllImports).flatMap(Collection::stream).toList());
+        this.imports.addAll(localKey.getAllImports());
+        return this.imports;
     }
 
     @Override

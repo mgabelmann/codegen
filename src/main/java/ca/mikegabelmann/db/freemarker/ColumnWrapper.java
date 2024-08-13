@@ -4,6 +4,7 @@ import org.apache.torque.ColumnType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -85,8 +86,8 @@ public class ColumnWrapper extends AbstractWrapper {
     }
 
     @Override
-    public void consolidateImports() {
-        //nothing to do
+    public Set<String> getAllImports() {
+        return imports;
     }
 
 }
