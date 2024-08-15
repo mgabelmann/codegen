@@ -168,7 +168,6 @@ public class PrintJavaUtil {
         JavaReturnType returnType = method.getJavaReturnType();
 
         sb.append(PrintJavaUtil.getReturn(returnType));
-        sb.append(JavaTokens.SPACE);
 
         sb.append(method.getNamePrefix());
         sb.append(method.getName());
@@ -217,7 +216,7 @@ public class PrintJavaUtil {
      */
     public static String getReturn(final JavaReturnType returnType) {
         if (returnType != null) {
-            return returnType.getSimpleName();
+            return returnType.getSimpleName() + JavaTokens.SPACE;
 
         } else {
             return JavaKeywords.VOID;

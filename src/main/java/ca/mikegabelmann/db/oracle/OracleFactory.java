@@ -1,8 +1,8 @@
-package ca.mikegabelmann.db.sqlite;
+package ca.mikegabelmann.db.oracle;
 
 import ca.mikegabelmann.db.DatabaseFactory;
-import ca.mikegabelmann.db.antlr.sqlite.SQLiteLexer;
-import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
+import ca.mikegabelmann.db.antlr.oracle.PlSqlLexer;
+import ca.mikegabelmann.db.antlr.oracle.PlSqlParser;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -16,22 +16,22 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class SQLiteFactory implements DatabaseFactory {
+public class OracleFactory implements DatabaseFactory {
     /** Logger. */
-    private static final Logger LOG = LogManager.getLogger(SQLiteFactory.class);
+    private static final Logger LOG = LogManager.getLogger(OracleFactory.class);
 
-    private SQLiteParserImpl sqliteParser;
+    private OracleParserImpl oracleParser;
 
 
     /** Constructor. */
-    public SQLiteFactory() {
-        this.sqliteParser = new SQLiteParserImpl();
+    public OracleFactory() {
+        this.oracleParser = new OracleParserImpl();
     }
 
     @Override
     public void parseStream(CharStream cs) throws IOException {
-        SQLiteLexer lexer = new SQLiteLexer(cs);
-        SQLiteParser parser = new SQLiteParser(new CommonTokenStream(lexer));
+        PlSqlLexer lexer = new PlSqlLexer(cs);
+        PlSqlParser parser = new PlSqlParser(new CommonTokenStream(lexer));
 
 
         parser.addErrorListener(new BaseErrorListener() {
@@ -41,19 +41,19 @@ public class SQLiteFactory implements DatabaseFactory {
             }
         });
 
-        parser.addParseListener(sqliteParser);
+        parser.addParseListener(oracleParser);
 
-        parser.parse();
+        parser.sql_script();
     }
 
     @Override
     public List<TableType> getTables() {
-        return sqliteParser.getTables();
+        return oracleParser.getTables();
     }
 
     @Override
-    public TableType getTable(final String tableName) {
-        return sqliteParser.getTable(tableName);
+    public TableType getTable(String tableName) {
+        return oracleParser.getTable(tableName);
     }
 
 }

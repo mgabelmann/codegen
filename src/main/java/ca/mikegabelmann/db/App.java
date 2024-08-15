@@ -1,6 +1,7 @@
 package ca.mikegabelmann.db;
 
 import ca.mikegabelmann.db.freemarker.TableWrapper;
+import ca.mikegabelmann.db.oracle.OracleFactory;
 import ca.mikegabelmann.db.sqlite.SQLiteFactory;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.*;
@@ -39,10 +40,21 @@ public class App {
     public static void main(final String[] args) throws Exception {
 
         //ANTR parse file
+        //Parse SQLITE DB statements
         SQLiteFactory factory = new SQLiteFactory();
-        factory.parseFile(CharStreams.fromStream(App.class.getResourceAsStream("/example5.sqlite")));
+        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_1.sql")));
+        //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
 
-        List<TableType> tables = factory.getTableTypes();
+        //Parse ORACLE DB statements
+        //OracleFactory factory = new OracleFactory();
+        //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
+
+        List<TableType> tables = factory.getTables();
+        if (tables.isEmpty()) {
+            LOG.error("No tables found");
+            return;
+        }
+
         TableType table = tables.get(0);
 
         //JAXB - print XML tree

@@ -139,6 +139,7 @@
                             <goal>xsdtojava</goal>
                         </goals>
                         <configuration>
+                            <sourceRoot>${basedir}/target/generated-sources/jaxb</sourceRoot>
                             <xsdOptions>
                                 <xsdOption>
                                     <xsd>${basedir}/src/main/xsd/hibernate-reverse-engineering-3.0.xsd</xsd>

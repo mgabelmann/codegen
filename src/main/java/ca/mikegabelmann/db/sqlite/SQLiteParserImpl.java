@@ -2,6 +2,7 @@ package ca.mikegabelmann.db.sqlite;
 
 import ca.mikegabelmann.codegen.java.JavaNamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
+import ca.mikegabelmann.db.DatabaseParser;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParserBaseListener;
 import org.apache.logging.log4j.LogManager;
@@ -14,11 +15,12 @@ import org.apache.torque.TableType;
 import org.apache.torque.UniqueColumnType;
 import org.apache.torque.UniqueType;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class SQLiteParserImpl extends SQLiteParserBaseListener {
+public class SQLiteParserImpl extends SQLiteParserBaseListener implements DatabaseParser {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(SQLiteFactory.class);
 
@@ -33,10 +35,17 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener {
         this.tableTypes = new ArrayList<>();
     }
 
-    public List<TableType> getTableTypes() {
+    @Override
+    public List<TableType> getTables() {
         return tableTypes;
     }
 
+    @Override
+    public TableType getTable(final String tableName) {
+        return tableTypes.stream().filter(tt -> tt.getName().equals(tableName)).findFirst().orElse(null);
+    }
+
+    //ANTLR method overrides
     @Override
     public void enterParse(SQLiteParser.ParseContext ctx) {
         LOG.debug("parse - start");
@@ -73,7 +82,7 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener {
     @Override
     public void exitColumn_def(SQLiteParser.Column_defContext ctx) {
         String columnName = ctx.column_name().getText();
-        String typeName = ctx.type_name().getText();
+        String typeName = ctx.type_name().name(0).getText().toUpperCase();
 
         ColumnType column = new ColumnType();
         column.setName(columnName);
@@ -81,6 +90,12 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener {
         column.setRequired(false);
         column.setAutoIncrement(Boolean.FALSE);
         //column.setJavaType(JavaReturnType.OBJECT);
+
+        SQLiteParser.Signed_numberContext sn = ctx.type_name().signed_number(0);
+
+        if (sn != null) {
+            column.setSize(new BigDecimal(sn.getText()));
+        }
 
         //TODO: column.setSize();
 
