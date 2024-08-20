@@ -3,6 +3,7 @@ package ca.mikegabelmann.db.sqlite;
 import ca.mikegabelmann.db.DatabaseFactory;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteLexer;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
+import ca.mikegabelmann.db.mapping.Mapping;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -20,12 +21,12 @@ public class SQLiteFactory implements DatabaseFactory {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(SQLiteFactory.class);
 
-    private SQLiteParserImpl sqliteParser;
+    private final SQLiteParserImpl sqliteParser;
 
 
     /** Constructor. */
-    public SQLiteFactory() {
-        this.sqliteParser = new SQLiteParserImpl();
+    public SQLiteFactory(List<Mapping> mappings) {
+        this.sqliteParser = new SQLiteParserImpl(mappings);
     }
 
     @Override

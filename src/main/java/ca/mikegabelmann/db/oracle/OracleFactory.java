@@ -20,7 +20,7 @@ public class OracleFactory implements DatabaseFactory {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(OracleFactory.class);
 
-    private OracleParserImpl oracleParser;
+    private final OracleParserImpl oracleParser;
 
 
     /** Constructor. */

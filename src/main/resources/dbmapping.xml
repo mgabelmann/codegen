@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE reverse-engineering SYSTEM "dbmapping.dtd">
+<!--<!DOCTYPE reverse-engineering SYSTEM "dbmapping.dtd">-->
 <reverse-engineering>
     <databases>
         <database name="ALL">
@@ -7,11 +7,28 @@
         </database>
 
         <database name="ORACLE">
-            <mapping database-type="RAW" length="16" precision="" scale="" name="" jdbc-type="java.sql.Types.VARBINARY" java-type="java.util.UUID" />
+            <!-- determine UUID type -->
+            <mapping database-type="RAW" length="16" name="" jdbc-type="VARBINARY" java-type="java.util.UUID" />
 
-            <mapping database-type="VARCHAR2" length="" precision="" scale="" name="" jdbc-type="java.sql.Types.VARCHAR" java-type="java.lang.String"/>
-            <mapping database-type="RAW" length="" precision="" scale="" name="" jdbc-type="java.sql.Types.VARBINARY" java-type="byte[]"/>
-            <mapping database-type="DATE" length="" precision="" scale="" name="" jdbc-type="java.sql.Types.TIMESTAMP" java-type="java.time.LocalDateTime"/>
+            <!-- defaults -->
+            <mapping database-type="VARCHAR2" name="" jdbc-type="VARCHAR" java-type="java.lang.String"/>
+            <mapping database-type="NUMBER" name="" jdbc-type="NUMERIC" java-type="java.math.BigDecimal"/>
+            <mapping database-type="DATE" name="" jdbc-type="TIMESTAMP" java-type="java.time.LocalDateTime"/>
+            <mapping database-type="RAW" name="" jdbc-type="VARBINARY" java-type="byte[]"/>
+
+        </database>
+
+        <database name="SQLITE">
+            <mapping database-type="" name=".*_DT$" jdbc-type="DATE" java-type="java.time.LocalDate"/>
+            <mapping database-type="" name=".*_TM$" jdbc-type="TIME" java-type="java.time.LocalTime"/>
+            <mapping database-type="" name=".*_DTM$" jdbc-type="TIMESTAMP" java-type="java.time.LocalDateTime"/>
+
+            <!-- defaults -->
+            <mapping database-type="INTEGER" name="" jdbc-type="INTEGER" java-type="java.lang.Integer"/>
+            <mapping database-type="TEXT" name="" jdbc-type="VARCHAR" java-type="java.lang.String"/>
+            <mapping database-type="BLOB" name="" jdbc-type="BLOB" java-type="java.sql.Blob"/>
+            <mapping database-type="REAL" name="" jdbc-type="FLOAT" java-type="java.lang.Float"/>
+            <mapping database-type="NUMERIC" name="" jdbc-type="NUMERIC" java-type="java.math.BigDecimal"/>
         </database>
 
     </databases>

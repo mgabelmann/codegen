@@ -1,6 +1,9 @@
 package ca.mikegabelmann.db;
 
 import ca.mikegabelmann.db.freemarker.TableWrapper;
+import ca.mikegabelmann.db.mapping.Database;
+import ca.mikegabelmann.db.mapping.Mapping;
+import ca.mikegabelmann.db.mapping.ReverseEngineering;
 import ca.mikegabelmann.db.oracle.OracleFactory;
 import ca.mikegabelmann.db.sqlite.SQLiteFactory;
 import freemarker.ext.beans.BeansWrapperBuilder;
@@ -8,6 +11,7 @@ import freemarker.template.*;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import org.antlr.v4.runtime.CharStreams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +20,7 @@ import org.apache.torque.TableType;
 import javax.xml.namespace.QName;
 import java.io.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -39,9 +44,31 @@ public class App {
      */
     public static void main(final String[] args) throws Exception {
 
+        List<Mapping> mappings = new ArrayList<>();
+        {
+            JAXBContext jc = JAXBContext.newInstance(ReverseEngineering.class);
+            Unmarshaller unmarshaller = jc.createUnmarshaller();
+            ReverseEngineering re = (ReverseEngineering) unmarshaller.unmarshal(App.class.getResourceAsStream("/dbmapping.xml"));
+
+            //TODO: add user custom mappings
+            for (Database db : re.getDatabases().getDatabase()) {
+                if ("SQLITE".equalsIgnoreCase(db.getName())) {
+                    LOG.debug("adding SQLITE mappings");
+                    mappings.addAll(db.getMapping());
+                }
+            }
+            for (Database db : re.getDatabases().getDatabase()) {
+                if ("ALL".equalsIgnoreCase(db.getName())) {
+                    LOG.debug("adding ALL mappings");
+                    mappings.addAll(db.getMapping());
+                }
+            }
+            LOG.debug("added all database mappings");
+        }
+
         //ANTR parse file
         //Parse SQLITE DB statements
-        SQLiteFactory factory = new SQLiteFactory();
+        SQLiteFactory factory = new SQLiteFactory(mappings);
         factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_1.sql")));
         //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
 
