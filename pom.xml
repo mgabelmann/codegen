@@ -153,6 +153,10 @@
                                     <xsd>${basedir}/src/main/xsd/apache-torque-5.0.xsd</xsd>
                                     <packagename>org.apache.torque</packagename>
                                 </xsdOption>
+                                <xsdOption>
+                                    <xsd>${basedir}/src/main/xsd/dbmapping.xsd</xsd>
+                                    <packagename>ca.mikegabelmann.db.mapping</packagename>
+                                </xsdOption>
                             </xsdOptions>
                         </configuration>
                     </execution>

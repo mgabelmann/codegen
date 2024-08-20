@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE reverse-engineering SYSTEM "dbmapping.dtd">
+<reverse-engineering>
+    <databases>
+        <database name="ALL">
+
+        </database>
+
+        <database name="ORACLE">
+            <mapping database-type="RAW" length="16" precision="" scale="" name="" jdbc-type="java.sql.Types.VARBINARY" java-type="java.util.UUID" />
+
+            <mapping database-type="VARCHAR2" length="" precision="" scale="" name="" jdbc-type="java.sql.Types.VARCHAR" java-type="java.lang.String"/>
+            <mapping database-type="RAW" length="" precision="" scale="" name="" jdbc-type="java.sql.Types.VARBINARY" java-type="byte[]"/>
+            <mapping database-type="DATE" length="" precision="" scale="" name="" jdbc-type="java.sql.Types.TIMESTAMP" java-type="java.time.LocalDateTime"/>
+        </database>
+
+    </databases>
+    <tables>
+        <table name="PERSON" exclude="true"/>
+    </tables>
+</reverse-engineering>

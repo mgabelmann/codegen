@@ -1,0 +1,35 @@
+
+<!ELEMENT reverse-engineering (
+        (databases)?, (tables)?
+        )>
+
+<!ELEMENT databases (database*) >
+
+<!ELEMENT database (mapping*) >
+<!ATTLIST database name CDATA #REQUIRED >
+
+<!ELEMENT mapping EMPTY >
+<!ATTLIST mapping database-type CDATA #REQUIRED >
+<!ATTLIST mapping not-null (true|false) #IMPLIED >
+<!ATTLIST mapping length CDATA #IMPLIED >
+<!ATTLIST mapping precision CDATA #IMPLIED >
+<!ATTLIST mapping scale CDATA #IMPLIED >
+<!ATTLIST mapping name CDATA #IMPLIED >
+<!ATTLIST mapping jdbc-type CDATA #REQUIRED >
+<!ATTLIST mapping java-type CDATA #REQUIRED >
+
+<!ELEMENT tables (table*) >
+
+<!ELEMENT table (column*) >
+<!ATTLIST table name CDATA #REQUIRED >
+<!ATTLIST table catalog CDATA #IMPLIED >
+<!ATTLIST table schema CDATA #IMPLIED >
+<!ATTLIST table java-name CDATA #IMPLIED >
+<!ATTLIST table exclude (true|false) #REQUIRED "false" >
+
+<!ELEMENT column EMPTY >
+<!ATTLIST column name CDATA #REQUIRED >
+<!ATTLIST column jdbc-type CDATA #REQUIRED >
+<!ATTLIST column java-type CDATA #REQUIRED >
+<!ATTLIST column java-name CDATA #IMPLIED >
+<!ATTLIST column exclude (true|false) #REQUIRED "false" >

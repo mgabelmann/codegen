@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<databases>
+    <database name="oracle">
+        //processed in order, first match is used
+        <mapping databaseType="VARCHAR2" notNull="" length="1" precision="" scale="" name="" jdbcType="java.sql.Types.BOOLEAN" javaType="java.lang.Boolean"/>
+
+        <mapping databaseType="RAW" notNull="" length="16" precision="" scale="" name="" jdbcType="java.sql.Types.VARBINARY" javaType="java.util.UUID" />
+
+        //examples of what custom mappings might look like
+        <mapping databaseType="DATE" notNull="" length="" precision="" scale="" name="*_DT" jdbcType="java.sql.Types.DATE" javaType="java.time.LocalDate"/>
+        <mapping databaseType="DATE" notNull="" length="" precision="" scale="" name="*_DTM" jdbcType="java.sql.Types.TIMESTAMP" javaType="java.time.LocalDateTime"/>
+        <mapping databaseType="DATE" notNull="" length="" precision="" scale="" name="*_TM" jdbcType="java.sql.Types.TIME" javaType="java.time.LocalTime"/>
+
+        //defaults
+        <mapping databaseType="VARCHAR2" notNull="" length="" precision="" scale="" name="" jdbcType="java.sql.Types.VARCHAR" javaType="java.lang.String"/>
+        <mapping databaseType="RAW" notNull="" length="" precision="" scale="" name="" jdbcType="java.sql.Types.VARBINARY" javaType="byte[]" />
+        <mapping databaseType="DATE" notNull="" length="" precision="" scale="" name="" jdbcType="java.sql.Types.TIMESTAMP" javaType="java.time.LocalDateTime"/>
+    </database>
+
+    <database name="sqlite">
+        <mapping databaseType="TEXT" notNull="" length="" precision="" scale="" name="" jdbcType="java.sql.Types.VARCHAR" javaType="java.lang.String"/>
+    </database>
+</databases>
+
+//used to rename/override mappings
+<tables>
+    <table name="CONTACT" catalog="" schema="" javaName="PersonContact" exclude="false">
+        <column name="FNAME" jdbcType="java.sql.Types.VARCHAR" javaType="java.lang.String" javaName="firstName" exclude="false">
+
+</tables>
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://www.mgabelmann.ca/reveng/1.0"
+           targetNamespace="http://www.mgabelmann.ca/reveng/1.0"
+           elementFormDefault="qualified"
+           version="1.0"
+           xmlns:jxb="https://jakarta.ee/xml/ns/jaxb"
+           jxb:version="3.0">
+
+    <xs:element name="reverse-engineering">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="databases"/>
+                <xs:element minOccurs="0" ref="tables"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="databases">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="database"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="database">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="mapping"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="mapping">
+        <xs:complexType>
+            <xs:attribute name="database-type" type="xs:string" use="required"/>
+            <xs:attribute name="not-null">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true"/>
+                        <xs:enumeration value="false"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="length" type="xs:int"/>
+            <xs:attribute name="precision" type="xs:int"/>
+            <xs:attribute name="scale" type="xs:int"/>
+            <!-- regex value can be used, .*_DT$ -->
+            <xs:attribute name="name" type="xs:string"/>
+            <xs:attribute name="jdbc-type" type="xs:string" use="required"/>
+            <xs:attribute name="java-type" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="tables">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="table"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="table">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="column"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="catalog" type="xs:string"/>
+            <xs:attribute name="schema" type="xs:string"/>
+            <xs:attribute name="java-name" type="xs:string"/>
+            <xs:attribute name="exclude" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true"/>
+                        <xs:enumeration value="false"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="column">
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="jdbc-type" type="xs:string" use="required"/>
+            <xs:attribute name="java-type" type="xs:string" use="required"/>
+            <xs:attribute name="java-name" type="xs:string"/>
+            <xs:attribute name="exclude" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true"/>
+                        <xs:enumeration value="false"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
