@@ -44,7 +44,7 @@ public class App {
      */
     public static void main(final String[] args) throws Exception {
 
-        List<Mapping> mappings = new ArrayList<>();
+        ColumnMatcher columnMatcher = new ColumnMatcher();
         {
             JAXBContext jc = JAXBContext.newInstance(ReverseEngineering.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -54,13 +54,13 @@ public class App {
             for (Database db : re.getDatabases().getDatabase()) {
                 if ("SQLITE".equalsIgnoreCase(db.getName())) {
                     LOG.debug("adding SQLITE mappings");
-                    mappings.addAll(db.getMapping());
+                    columnMatcher.addMappings(db.getMapping());
                 }
             }
             for (Database db : re.getDatabases().getDatabase()) {
                 if ("ALL".equalsIgnoreCase(db.getName())) {
                     LOG.debug("adding ALL mappings");
-                    mappings.addAll(db.getMapping());
+                    columnMatcher.addMappings(db.getMapping());
                 }
             }
             LOG.debug("added all database mappings");
@@ -68,7 +68,7 @@ public class App {
 
         //ANTR parse file
         //Parse SQLITE DB statements
-        SQLiteFactory factory = new SQLiteFactory(mappings);
+        SQLiteFactory factory = new SQLiteFactory(columnMatcher);
         factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_1.sql")));
         //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
 

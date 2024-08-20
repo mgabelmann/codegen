@@ -1,5 +1,6 @@
 package ca.mikegabelmann.db.sqlite;
 
+import ca.mikegabelmann.db.ColumnMatcher;
 import ca.mikegabelmann.db.DatabaseFactory;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteLexer;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
@@ -25,15 +26,14 @@ public class SQLiteFactory implements DatabaseFactory {
 
 
     /** Constructor. */
-    public SQLiteFactory(List<Mapping> mappings) {
-        this.sqliteParser = new SQLiteParserImpl(mappings);
+    public SQLiteFactory(ColumnMatcher columnMatcher) {
+        this.sqliteParser = new SQLiteParserImpl(columnMatcher);
     }
 
     @Override
     public void parseStream(CharStream cs) throws IOException {
         SQLiteLexer lexer = new SQLiteLexer(cs);
         SQLiteParser parser = new SQLiteParser(new CommonTokenStream(lexer));
-
 
         parser.addErrorListener(new BaseErrorListener() {
             @Override

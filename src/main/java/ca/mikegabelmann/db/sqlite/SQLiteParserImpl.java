@@ -3,6 +3,7 @@ package ca.mikegabelmann.db.sqlite;
 import ca.mikegabelmann.codegen.java.JavaNamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.codegen.util.StringUtil;
+import ca.mikegabelmann.db.ColumnMatcher;
 import ca.mikegabelmann.db.DatabaseParser;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParserBaseListener;
@@ -19,7 +20,6 @@ import org.apache.torque.UniqueType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -30,15 +30,15 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener implements Databa
     /** List of parsed tables. */
     private final List<TableType> tableTypes;
 
-    private final List<Mapping> mappings;
+    private final ColumnMatcher columnMatcher;
 
     /** Current table, not exposed. */
     private TableType table;
 
 
-    public SQLiteParserImpl(List<Mapping> mappings) {
+    public SQLiteParserImpl(final ColumnMatcher columnMatcher) {
         this.tableTypes = new ArrayList<>();
-        this.mappings = mappings;
+        this.columnMatcher = columnMatcher;
     }
 
     @Override
@@ -85,64 +85,6 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener implements Databa
         }
     }
 
-    //<mapping database-type="VARCHAR2" length="" precision="" scale="" name="" jdbc-type="java.sql.Types.VARCHAR" java-type="java.lang.String"/>
-    private Mapping matchMapping(final String databaseType, final Integer length, final Integer precision, final Integer scale, final String name) {
-        for (Mapping mapping : mappings) {
-            boolean databaseTypeMatch = false;
-            boolean lengthMatch = false;
-            boolean precisionMatch = false;
-            boolean scaleMatch = false;
-            boolean regexMatch = false;
-
-            if (StringUtil.isNotBlankOrNull(mapping.getDatabaseType())) {
-                if (databaseType != null && databaseType.equals(mapping.getDatabaseType())) {
-                    databaseTypeMatch = true;
-                }
-            } else {
-                databaseTypeMatch = true;
-            }
-
-            if (mapping.getLength() != null) {
-                if (length != null && length.equals(mapping.getLength())) {
-                    lengthMatch = true;
-                }
-            } else {
-                lengthMatch = true;
-            }
-
-            if (mapping.getPrecision() != null) {
-                if (precision != null && precision.equals(mapping.getPrecision())) {
-                    precisionMatch = true;
-                }
-            } else {
-                precisionMatch = true;
-            }
-
-            if (mapping.getScale() != null) {
-                if (scale != null && scale.equals(mapping.getScale())) {
-                    scaleMatch = true;
-                }
-            } else {
-                scaleMatch = true;
-            }
-
-            if (StringUtil.isNotBlankOrNull(mapping.getName())) {
-                if (name != null && name.toUpperCase().matches(mapping.getName().toUpperCase())) {
-                    regexMatch = true;
-                }
-            } else {
-                regexMatch = true;
-            }
-
-            if (databaseTypeMatch && lengthMatch && precisionMatch && scaleMatch && regexMatch) {
-                return mapping;
-            }
-        }
-
-        return null;
-    }
-
-
     @Override
     public void exitColumn_def(SQLiteParser.Column_defContext ctx) {
         String columnName = ctx.column_name().getText();
@@ -168,7 +110,7 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener implements Databa
         //TODO: precision
         Integer precision = null;
         Integer scale = null;
-        Mapping mapping = this.matchMapping(typeName, length, precision, scale, columnName);
+        Mapping mapping = columnMatcher.matchMapping(typeName, length, precision, scale, columnName);
 
         if (mapping != null) {
             column.setType(SqlDataType.valueOf(mapping.getJdbcType()));
@@ -223,7 +165,7 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener implements Databa
         for (SQLiteParser.Column_constraintContext constraint : ctx.column_constraint()) {
             String key = constraint.getText();
 
-            LOG.debug("\tconstraint={}", key);
+            //LOG.debug("\tconstraint={}", key);
 
             if ("PRIMARYKEY".equals(key)) {
                 column.setPrimaryKey(Boolean.TRUE);
