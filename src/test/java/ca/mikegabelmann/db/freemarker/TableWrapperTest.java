@@ -8,9 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 /**
  *
  * @author mgabe
@@ -19,7 +16,6 @@ class TableWrapperTest {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(TableWrapperTest.class);
 
-    private Map<String, String> sqlMappings;
     private ColumnType ct1;
     private ColumnType ct2;
     private ReferenceType rt1;
@@ -31,9 +27,6 @@ class TableWrapperTest {
 
     @BeforeEach
     void beforeEach() {
-        sqlMappings = new TreeMap<>();
-        sqlMappings.put("INTEGER", "java.lang.Integer");
-
         //primary key column
         ct1 = new ColumnType();
         ct1.setName("CONTACT_ID");
@@ -64,7 +57,7 @@ class TableWrapperTest {
         tt1.getColumn().add(ct2);
         tt1.getForeignKeyOrIndexOrUnique().add(fkt1);
 
-        tw1 = new TableWrapper(sqlMappings, tt1);
+        tw1 = new TableWrapper(tt1);
     }
 
     @Test

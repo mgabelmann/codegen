@@ -2,9 +2,7 @@ package ca.mikegabelmann.db;
 
 import ca.mikegabelmann.db.freemarker.TableWrapper;
 import ca.mikegabelmann.db.mapping.Database;
-import ca.mikegabelmann.db.mapping.Mapping;
 import ca.mikegabelmann.db.mapping.ReverseEngineering;
-import ca.mikegabelmann.db.oracle.OracleFactory;
 import ca.mikegabelmann.db.sqlite.SQLiteFactory;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.*;
@@ -18,9 +16,13 @@ import org.apache.logging.log4j.Logger;
 import org.apache.torque.TableType;
 
 import javax.xml.namespace.QName;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +46,34 @@ public class App {
      */
     public static void main(final String[] args) throws Exception {
 
+        /*{
+            //How to write a XML file using JAXB
+            JAXBContext context = JAXBContext.newInstance(ReverseEngineering.class);
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+            ReverseEngineering reverseEngineering = new ReverseEngineering();
+            Databases databases = new Databases();
+            Database database = new Database();
+            database.setName("TEST");
+            databases.getDatabase().add(database);
+            reverseEngineering.setDatabases(databases);
+            Mapping mapping = new Mapping();
+            mapping.setName("COLUMN");
+            mapping.setJdbcType("VARCHAR");
+            mapping.setDatabaseType("VARCHAR2");
+            mapping.setJavaType("java.lang.String");
+            database.getMapping().add(mapping);
+
+            StringWriter sw = new StringWriter();
+            JAXBElement<ReverseEngineering> je = new JAXBElement<>(new QName("", "reverse-engineering"), ReverseEngineering.class, reverseEngineering);
+            marshaller.marshal(je, sw);
+
+            String xml = sw.toString();
+            LOG.debug(xml);
+        }*/
+
+
         ColumnMatcher columnMatcher = new ColumnMatcher();
         {
             JAXBContext jc = JAXBContext.newInstance(ReverseEngineering.class);
@@ -53,16 +83,15 @@ public class App {
             //TODO: add user custom mappings
             for (Database db : re.getDatabases().getDatabase()) {
                 if ("SQLITE".equalsIgnoreCase(db.getName())) {
-                    LOG.debug("adding SQLITE mappings");
+                    LOG.trace("adding SQLITE mappings");
                     columnMatcher.addMappings(db.getMapping());
                 }
-            }
-            for (Database db : re.getDatabases().getDatabase()) {
                 if ("ALL".equalsIgnoreCase(db.getName())) {
-                    LOG.debug("adding ALL mappings");
+                    LOG.trace("adding ALL mappings");
                     columnMatcher.addMappings(db.getMapping());
                 }
             }
+
             LOG.debug("added all database mappings");
         }
 
@@ -84,19 +113,21 @@ public class App {
 
         TableType table = tables.get(0);
 
-        //JAXB - print XML tree
-        JAXBContext context = JAXBContext.newInstance(TableType.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        {
+            //JAXB - print XML tree
+            JAXBContext context = JAXBContext.newInstance(TableType.class);
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-        StringWriter sw = new StringWriter();
-        JAXBElement<TableType> je = new JAXBElement<>(new QName("http://db.apache.org/torque/5.0/templates/database", "table"), TableType.class, table);
-        marshaller.marshal(je, sw);
+            StringWriter sw = new StringWriter();
+            JAXBElement<TableType> je = new JAXBElement<>(new QName("http://db.apache.org/torque/5.0/templates/database", "table"), TableType.class, table);
+            marshaller.marshal(je, sw);
 
-        String xml = sw.toString();
-        LOG.debug(xml);
+            String xml = sw.toString();
+            LOG.debug(xml);
+        }
 
-        Map<String, String> sqlMappings = App.getMappings("/sqldatatype.properties");
+//        Map<String, String> sqlMappings = App.getMappings("/sqldatatype.properties");
 
         //FreeMarker - process templates
         Version version = new Version(2, 3, 20);
@@ -121,7 +152,7 @@ public class App {
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
 
-            TableWrapper tw = new TableWrapper(sqlMappings, table);
+            TableWrapper tw = new TableWrapper(table);
             tw.setPackageName("ca.mgabelmann.persistence.dao");
             inputTemplate.put("tableWrapper", tw);
 
@@ -135,7 +166,7 @@ public class App {
             Map<String, Object> inputTemplate = new HashMap<>();
             inputTemplate.putAll(input);
 
-            TableWrapper tw = new TableWrapper(sqlMappings, table);
+            TableWrapper tw = new TableWrapper(table);
             tw.setPackageName("ca.mgabelmann.persistence.model");
             inputTemplate.put("tableWrapper", tw);
 

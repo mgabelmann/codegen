@@ -425,6 +425,26 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+
+        <!-- NOTE: modified to add my own type -->
+        <!-- CHANGES - BEGIN -->
+        <xs:attribute name="dbSqlType" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    The type as defined in the source database, may not align with sqlDataType (java.sql.Types)
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="javaSqlType" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    The mapped type to use in Java JPA objects. May be object or primitive.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <!-- CHANGES - END -->
+
         <xs:attribute name="size" type="xs:decimal" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">

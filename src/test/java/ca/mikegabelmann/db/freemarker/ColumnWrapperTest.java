@@ -9,8 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.time.LocalDate;
 
 /**
  *
@@ -20,7 +19,6 @@ class ColumnWrapperTest {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(ColumnWrapperTest.class);
 
-    private Map<String, String> sqlMappings;
     private ColumnType ct1;
     private ColumnType ct2;
     private ColumnWrapper cw1;
@@ -28,10 +26,6 @@ class ColumnWrapperTest {
 
     @BeforeEach
     void beforeEach() {
-        sqlMappings = new TreeMap<>();
-        sqlMappings.put("DATE", "java.time.LocalDate");
-        sqlMappings.put("INTEGER", "java.lang.Integer");
-
         //date column
         ct1 = new ColumnType();
 
@@ -41,8 +35,9 @@ class ColumnWrapperTest {
         ct1.setAutoIncrement(Boolean.FALSE);
         ct1.setRequired(Boolean.FALSE);
         ct1.setJavaName("birthDt");
+        ct1.setJavaSqlType(LocalDate.class.getCanonicalName());
 
-        cw1 = new ColumnWrapper(sqlMappings, ct1);
+        cw1 = new ColumnWrapper(ct1);
 
         //primary key column
         ct2 = new ColumnType();
@@ -53,8 +48,9 @@ class ColumnWrapperTest {
         ct2.setAutoIncrement(Boolean.FALSE);
         ct2.setRequired(Boolean.TRUE);
         ct2.setJavaName("contactId");
+        ct2.setJavaSqlType(Integer.class.getCanonicalName());
 
-        cw2 = new ColumnWrapper(sqlMappings, ct2);
+        cw2 = new ColumnWrapper(ct2);
     }
 
     @Test

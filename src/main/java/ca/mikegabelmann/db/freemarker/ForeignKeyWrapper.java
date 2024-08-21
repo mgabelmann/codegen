@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -26,14 +25,11 @@ public class ForeignKeyWrapper extends AbstractWrapper {
 
     /**
      *
-     * @param sqlMappings
      * @param foreignKeyType
      */
     public ForeignKeyWrapper(
-        @NotNull final Map<String, String> sqlMappings,
         @NotNull final ForeignKeyType foreignKeyType) {
 
-        super(sqlMappings);
         this.foreignKeyType = foreignKeyType;
         this.columns = new ArrayList<>();
     }

@@ -2,9 +2,6 @@
 <!--<!DOCTYPE reverse-engineering SYSTEM "dbmapping.dtd">-->
 <reverse-engineering>
     <databases>
-        <database name="ALL">
-
-        </database>
 
         <database name="ORACLE">
             <!-- determine UUID type -->
@@ -31,8 +28,40 @@
             <mapping database-type="NUMERIC" name="" jdbc-type="NUMERIC" java-type="java.math.BigDecimal"/>
         </database>
 
+        <!-- must be last, in case not found above. Defaults for all java.sql.Types values -->
+        <database name="ALL">
+            <mapping database-type="BIT" name="" jdbc-type="BIT" java-type="java.lang.Boolean"/>
+            <mapping database-type="TINYINT" name="" jdbc-type="TINYINT" java-type="java.lang.Byte"/>
+            <mapping database-type="SMALLINT" name="" jdbc-type="SMALLINT" java-type="java.lang.Short"/>
+            <mapping database-type="INTEGER" name="" jdbc-type="INTEGER" java-type="java.lang.Integer"/>
+            <mapping database-type="BIGINT" name="" jdbc-type="BIGINT" java-type="java.lang.Long"/>
+            <mapping database-type="FLOAT" name="" jdbc-type="FLOAT" java-type="java.lang.Double"/>
+            <mapping database-type="REAL" name="" jdbc-type="REAL" java-type="java.lang.Float"/>
+            <mapping database-type="NUMERIC" name="" jdbc-type="NUMERIC" java-type="java.math.BigDecimal"/>
+            <mapping database-type="DECIMAL" name="" jdbc-type="DECIMAL" java-type="java.math.BigDecimal"/>
+            <mapping database-type="CHAR" name="" jdbc-type="CHAR" java-type="java.lang.String"/>
+            <mapping database-type="VARCHAR" name="" jdbc-type="VARCHAR" java-type="java.lang.String"/>
+            <mapping database-type="LONGVARCHAR" name="" jdbc-type="LONGVARCHAR" java-type="java.lang.String"/>
+            <mapping database-type="DATE" name="" jdbc-type="DATE" java-type="java.time.LocalDate"/>
+            <mapping database-type="TIME" name="" jdbc-type="TIME" java-type="java.time.LocalTime"/>
+            <mapping database-type="TIMESTAMP" name="" jdbc-type="TIMESTAMP" java-type="java.time.Instant"/>
+            <mapping database-type="BINARY" name="" jdbc-type="BINARY" java-type="byte[]"/>
+            <mapping database-type="VARBINARY" name="" jdbc-type="VARBINARY" java-type="byte[]"/>
+            <mapping database-type="LONGVARBINARY" name="" jdbc-type="LONGVARBINARY" java-type="byte[]"/>
+            <mapping database-type="OTHER" name="" jdbc-type="OTHER" java-type="java.lang.String"/>
+            <mapping database-type="JAVA_OBJECT" name="" jdbc-type="JAVA_OBJECT" java-type="java.lang.Object"/>
+            <mapping database-type="STRUCT" name="" jdbc-type="STRUCT" java-type="java.sql.Struct"/>
+            <mapping database-type="ARRAY" name="" jdbc-type="ARRAY" java-type="java.sql.Array"/>
+            <mapping database-type="BLOB" name="" jdbc-type="BLOB" java-type="java.sql.Blob"/>
+            <mapping database-type="CLOB" name="" jdbc-type="CLOB" java-type="java.sql.Clob"/>
+            <mapping database-type="REF" name="" jdbc-type="REF" java-type="java.sql.Ref"/>
+            <mapping database-type="DOUBLE" name="" jdbc-type="DOUBLE" java-type="java.lang.Double"/>
+
+            <!-- NULL, DISTINCT, BOOLEANINT, BOOLEANCHAR -->
+        </database>
+
     </databases>
     <tables>
-        <table name="PERSON" exclude="true"/>
+
     </tables>
 </reverse-engineering>

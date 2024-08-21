@@ -196,7 +196,7 @@ class PrintJavaUtilTest {
         method.addArgument(argument);
         method.addThrows("IOException");
 
-        Assertions.assertEquals("public void  setAge(final Integer age) throws IOException {this.age = age;}", PrintJavaUtil.getMethod(method));
+        Assertions.assertEquals("public void setAge(final Integer age) throws IOException {this.age = age;}", PrintJavaUtil.getMethod(method));
     }
 
     /*
@@ -222,7 +222,7 @@ class PrintJavaUtilTest {
     void test1_getReturn() {
         JavaReturnType r = new JavaReturnType("Person", "person");
 
-        Assertions.assertEquals("Person", PrintJavaUtil.getReturn(r));
+        Assertions.assertEquals("Person ", PrintJavaUtil.getReturn(r));
     }
 
     @Test

@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.torque.SqlDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -18,9 +17,6 @@ public abstract class AbstractWrapper implements JavaClass {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(AbstractWrapper.class);
 
-    /** SQL mappings. */
-    protected final Map<String, String> sqlMappings;
-
     /** Java classes to import. */
     protected final Set<String> imports;
 
@@ -28,18 +24,10 @@ public abstract class AbstractWrapper implements JavaClass {
     protected String packageName;
 
 
-    /**
-     * Constructor.
-     * @param sqlMappings mappings
-     */
-    public AbstractWrapper(@NotNull Map<String, String> sqlMappings) {
-        this.sqlMappings = sqlMappings;
+    /** Constructor. */
+    public AbstractWrapper() {
         this.imports = new TreeSet<>();
         this.packageName = "";
-    }
-
-    public final Map<String, String> getSqlMappings() {
-        return sqlMappings;
     }
 
     public final Set<String> getImports() {
@@ -52,14 +40,6 @@ public abstract class AbstractWrapper implements JavaClass {
 
     public final void setPackageName(@NotNull final String packageName) {
         this.packageName = packageName;
-    }
-
-    public final String getSqlMapping(@NotNull String type) {
-        return sqlMappings.get(type);
-    }
-
-    public final String getSqlMapping(@NotNull final SqlDataType sqlDataType) {
-        return sqlMappings.get(sqlDataType.name());
     }
 
     /**
@@ -109,11 +89,11 @@ public abstract class AbstractWrapper implements JavaClass {
 
     /**
      *
-     * @param sqlDataType
-     * @return
+     * @param sqlDataType type to find
+     * @return class
      */
     protected Class<?> getClass(@NotNull final SqlDataType sqlDataType) {
-        return getClass(getSqlMapping(sqlDataType));
+        return getClass(sqlDataType);
     }
 
     /**

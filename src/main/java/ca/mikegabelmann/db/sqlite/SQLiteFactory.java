@@ -4,7 +4,6 @@ import ca.mikegabelmann.db.ColumnMatcher;
 import ca.mikegabelmann.db.DatabaseFactory;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteLexer;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
-import ca.mikegabelmann.db.mapping.Mapping;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;

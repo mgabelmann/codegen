@@ -2,7 +2,6 @@ package ca.mikegabelmann.db.sqlite;
 
 import ca.mikegabelmann.codegen.java.JavaNamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
-import ca.mikegabelmann.codegen.util.StringUtil;
 import ca.mikegabelmann.db.ColumnMatcher;
 import ca.mikegabelmann.db.DatabaseParser;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
@@ -36,6 +35,10 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener implements Databa
     private TableType table;
 
 
+    /**
+     * Constructor.
+     * @param columnMatcher
+     */
     public SQLiteParserImpl(final ColumnMatcher columnMatcher) {
         this.tableTypes = new ArrayList<>();
         this.columnMatcher = columnMatcher;
@@ -116,51 +119,15 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener implements Databa
             column.setType(SqlDataType.valueOf(mapping.getJdbcType()));
             column.setDbSqlType(typeName);
             column.setJavaSqlType(mapping.getJavaType());
+
         } else {
             LOG.warn("unable to find mapping for column '{}' and type '{}'", columnName, typeName);
-        }
-
-        /*//1s----------------------------------
-        //FIXME: we need a mapper to/from for each DB/Java type
-        //FIXME: use hibernate reveng file for each DB type and process in order, map to types as found
-
-        //SQLite does not have a VARCHAR type
-        if ("TEXT".equals(typeName)) {
-            typeName = "VARCHAR";
-        }
-
-        //FIXME: handle Oracle types, only here for testing purposes
-        if ("NUMBER".equals(typeName)) {
-            typeName = "NUMERIC";
-        } else if ("VARCHAR2".equals(typeName)) {
-            typeName = "VARCHAR";
-        } else if ("RAW".equals(typeName)) {
-            //NOTE: if RAW(16) then this is an UUID
-            typeName = "VARCHAR";
-        }
-
-        column.setType(SqlDataType.valueOf(typeName));
-
-        if (SqlDataType.VARCHAR.name().equals(typeName)
-                || SqlDataType.REAL.name().equals(typeName)
-                || SqlDataType.INTEGER.name().equals(typeName)) {
-
-            if (columnName.toUpperCase().endsWith("_DT")) {
-                column.setType(SqlDataType.DATE);
-
-            } else if (columnName.toUpperCase().endsWith("_DTM")) {
-                column.setType(SqlDataType.TIMESTAMP);
-
-            } else if (columnName.toUpperCase().endsWith("_TM")) {
-                column.setType(SqlDataType.TIME);
-            }
+            //FIXME: use fallback from sqldatatype.properties, is this necessary?!? could be defined as ALL
         }
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("columnName={}, type={}, typeName={}", columnName, column.getType().name(), typeName);
         }
-
-        //1e----------------------------------*/
 
         for (SQLiteParser.Column_constraintContext constraint : ctx.column_constraint()) {
             String key = constraint.getText();

@@ -2,14 +2,14 @@ package ca.mikegabelmann.db.freemarker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.torque.*;
+import org.apache.torque.ColumnType;
+import org.apache.torque.ForeignKeyType;
+import org.apache.torque.ReferenceType;
+import org.apache.torque.SqlDataType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  *
@@ -19,7 +19,6 @@ class ForeignKeyWrapperTest {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(ForeignKeyWrapperTest.class);
 
-    private Map<String, String> sqlMappings;
     private ColumnType ct1;
     private ColumnWrapper cw1;
     private ReferenceType rt1;
@@ -29,9 +28,6 @@ class ForeignKeyWrapperTest {
 
     @BeforeEach
     void beforeEach() {
-        sqlMappings = new TreeMap<>();
-        sqlMappings.put("INTEGER", "java.lang.Integer");
-
         //primary key column
         ct1 = new ColumnType();
 
@@ -42,7 +38,7 @@ class ForeignKeyWrapperTest {
         ct1.setRequired(Boolean.TRUE);
         ct1.setJavaName("contactId");
 
-        cw1 = new ColumnWrapper(sqlMappings, ct1);
+        cw1 = new ColumnWrapper(ct1);
 
         rt1 = new ReferenceType();
         rt1.setForeign("CONTACT_ID");
@@ -53,7 +49,7 @@ class ForeignKeyWrapperTest {
         fkt1.setName("CNTCT_FK");
         fkt1.getReference().add(rt1);
 
-        fkw1 = new ForeignKeyWrapper(sqlMappings, fkt1);
+        fkw1 = new ForeignKeyWrapper(fkt1);
         fkw1.addColumn(cw1);
     }
 
@@ -73,7 +69,7 @@ class ForeignKeyWrapperTest {
     @Test
     @DisplayName("addColumn")
     void test1_addColumn() {
-        fkw1.addColumn(new ColumnWrapper(sqlMappings, new ColumnType()));
+        fkw1.addColumn(new ColumnWrapper(new ColumnType()));
         Assertions.assertEquals(2, fkw1.getColumns().size());
     }
 

@@ -3,7 +3,6 @@ package ca.mikegabelmann.db.freemarker;
 import org.apache.torque.ColumnType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -17,14 +16,11 @@ public class ColumnWrapper extends AbstractWrapper {
 
     /**
      * Constructor.
-     * @param sqlMappings SQL mappings
      * @param columnType column
      */
     public ColumnWrapper(
-        @NotNull final Map<String, String> sqlMappings,
         @NotNull final ColumnType columnType) {
 
-        super(sqlMappings);
         this.columnType = columnType;
     }
 
@@ -57,12 +53,13 @@ public class ColumnWrapper extends AbstractWrapper {
 
     @Override
     public String getCanonicalName() {
-        return super.getClass(columnType.getType()).getCanonicalName();
+        return columnType.getJavaSqlType();
     }
 
     @Override
     public String getSimpleName() {
-        return super.getClass(columnType.getType()).getSimpleName();
+        final String type = columnType.getJavaSqlType();
+        return !type.contains(".") ? type : type.substring(type.lastIndexOf(".") + 1);
     }
 
     @Override

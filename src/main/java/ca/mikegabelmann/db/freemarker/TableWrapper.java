@@ -40,19 +40,16 @@ public class TableWrapper extends AbstractWrapper {
 
     /**
      * Constructor.
-     * @param sqlMappings
      * @param tableType
      */
     public TableWrapper(
-        @NotNull Map<String, String> sqlMappings,
         @NotNull TableType tableType) {
 
-        super(sqlMappings);
         this.tableType = tableType;
 
         //collection of all columns by column name
         Map<String, ColumnWrapper> columns = tableType.getColumn().stream()
-                .map(c -> new ColumnWrapper(sqlMappings, c))
+                .map(c -> new ColumnWrapper(c))
                 .collect(Collectors.toMap(c -> c.getName(), Function.identity()));
 
         //collection of all keys (primary or composite) that identify this table
@@ -64,7 +61,7 @@ public class TableWrapper extends AbstractWrapper {
         Map<String, ForeignKeyWrapper> foreignKeys = tableType.getForeignKeyOrIndexOrUnique().stream()
                 .filter(c -> c instanceof ForeignKeyType)
                 .map(c -> (ForeignKeyType) c)
-                .map(c -> new ForeignKeyWrapper(sqlMappings, c))
+                .map(c -> new ForeignKeyWrapper(c))
                 .collect(Collectors.toMap(c -> c.getForeignKeyType().getForeignTable(), Function.identity()));
 
         {
@@ -90,7 +87,7 @@ public class TableWrapper extends AbstractWrapper {
 
         this.columnsNonKey = columns;
         this.columnsForeignKey = foreignKeys;
-        this.localKey = new LocalKeyWrapper(sqlMappings, this.getName());
+        this.localKey = new LocalKeyWrapper(this.getName());
 
         for (ColumnWrapper column : keys.values()) {
             localKey.addColumn(column);
