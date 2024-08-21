@@ -149,8 +149,7 @@ public class App {
 
         {
             //Java JPA DAO/Repository
-            Map<String, Object> inputTemplate = new HashMap<>();
-            inputTemplate.putAll(input);
+            Map<String, Object> inputTemplate = new HashMap<>(input);
 
             TableWrapper tw = new TableWrapper(table);
             tw.setPackageName("ca.mgabelmann.persistence.dao");
@@ -163,8 +162,7 @@ public class App {
 
         {
             //Java JPA Table/Entity
-            Map<String, Object> inputTemplate = new HashMap<>();
-            inputTemplate.putAll(input);
+            Map<String, Object> inputTemplate = new HashMap<>(input);
 
             TableWrapper tw = new TableWrapper(table);
             tw.setPackageName("ca.mgabelmann.persistence.model");

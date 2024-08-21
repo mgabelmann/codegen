@@ -5,7 +5,7 @@ package ca.mikegabelmann.codegen.java.lang;
  * @author mgabelmann
  */
 public final class JavaTokens {
-	public static final String NEWLINE = System.getProperty("line.separator");
+	public static final String NEWLINE = System.lineSeparator();
 	
 	public static final String QUOTE_DOUBLE = "\"";
 	public static final String QUOTE_DOUBLES = "\"\"";

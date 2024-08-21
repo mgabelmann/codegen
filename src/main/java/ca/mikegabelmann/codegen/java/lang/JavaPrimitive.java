@@ -27,8 +27,8 @@ public enum JavaPrimitive implements JavaType {
         this.type = type;
     }
 
-    private Class clazz;
-    private String type;
+    private final Class clazz;
+    private final String type;
 
     public Class getClazz() {
         return clazz;

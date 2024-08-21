@@ -172,8 +172,8 @@ public class AnnotationUtilTest {
 	//HELPER OBJECTS
 
 
-	class TestObject {
-		String name;
+	static class TestObject {
+		final String name;
 
 		TestObject(String name) {
 			this.name = name;

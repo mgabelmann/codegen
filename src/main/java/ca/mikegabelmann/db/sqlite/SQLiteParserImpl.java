@@ -24,7 +24,7 @@ import java.util.List;
 
 public class SQLiteParserImpl extends SQLiteParserBaseListener implements DatabaseParser {
     /** Logger. */
-    private static final Logger LOG = LogManager.getLogger(SQLiteFactory.class);
+    private static final Logger LOG = LogManager.getLogger(SQLiteParserImpl.class);
 
     /** List of parsed tables. */
     private final List<TableType> tableTypes;

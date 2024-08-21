@@ -48,9 +48,9 @@ public final class NameUtil {
 				sb.append(value);
 				break;
 
-			default:
 			case LOWER_CAMEL_CASE:
 			case UPPER_CAMEL_CASE:
+			default:
 				String[] tokens = value.replaceAll("\s", JavaTokens.UNDERSCORE).toLowerCase().split(JavaTokens.UNDERSCORE);
 
 				for (String token : tokens) {
@@ -62,7 +62,7 @@ public final class NameUtil {
 					}
 				}
 
-				if (JavaNamingType.LOWER_CAMEL_CASE.equals(namingMethodType) && sb.length() > 0) {
+				if (JavaNamingType.LOWER_CAMEL_CASE.equals(namingMethodType) && !sb.isEmpty()) {
 					sb.replace(0, 1, sb.substring(0, 1).toLowerCase());
 				}
 
@@ -84,10 +84,10 @@ public final class NameUtil {
 		final Object o) {
 		
 		if (o != null) {
-			values.put(key, Arrays.asList(o));
+			values.put(key, List.of(o));
 			
 		} else {
-			logger.info("key=" + key + " object is null, skipping addition");
+			logger.info("key={} object is null, skipping addition", key);
 		}
 	}
 	
