@@ -1,6 +1,7 @@
 package ca.mikegabelmann.codegen.util;
 
 import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
+import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.classbody.*;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
@@ -84,7 +85,7 @@ public class PrintJavaUtil {
         //  +plot()
         //  +move(x : int, y : int)
 
-        String annotationList = constructor.getAnnotations().stream().map(PrintJavaUtil::getAnnotation).collect(Collectors.joining());
+        String annotationList = constructor.getAnnotations().stream().map(PrintJavaUtil::getAnnotation).collect(Collectors.joining(JavaTokens.NEWLINE));
         sb.append(annotationList);
 
         String modifiersList = constructor.getModifiers().stream().map(Object::toString).collect(Collectors.joining(JavaTokens.SPACE));
@@ -159,8 +160,12 @@ public class PrintJavaUtil {
     public static String getMethod(@NotNull final JavaMethod method) {
         StringBuilder sb = new StringBuilder();
 
-        String annotationList = method.getAnnotations().stream().map(PrintJavaUtil::getAnnotation).collect(Collectors.joining());
+        String annotationList = method.getAnnotations().stream().map(PrintJavaUtil::getAnnotation).collect(Collectors.joining(JavaTokens.NEWLINE));
         sb.append(annotationList);
+
+        if (StringUtil.isNotBlankOrNull(annotationList)) {
+            sb.append(JavaTokens.NEWLINE);
+        }
 
         String modifiers = method.getModifiers().stream().map(Object::toString).collect(Collectors.joining(JavaTokens.SPACE));
         sb.append(modifiers);
@@ -169,7 +174,10 @@ public class PrintJavaUtil {
 
         sb.append(PrintJavaUtil.getReturn(returnType));
 
-        sb.append(method.getNamePrefix());
+        JavaMethodNamePrefix jmnp = method.getNamePrefix();
+        if (jmnp != null) {
+            sb.append(method.getNamePrefix());
+        }
         sb.append(method.getName());
         sb.append(JavaTokens.BRACKET_LEFT);
 
@@ -197,7 +205,11 @@ public class PrintJavaUtil {
             sb.append(JavaTokens.SEMICOLON);
         }
 
-        if (returnType != null) {
+        String body = method.getBody();
+        if (StringUtil.isNotBlankOrNull(body)) {
+            sb.append(body);
+
+        } else if (returnType != null) {
             sb.append(JavaKeywords.RETURN);
             sb.append(JavaKeywords.THIS_DOT);
             sb.append(returnType.getName());

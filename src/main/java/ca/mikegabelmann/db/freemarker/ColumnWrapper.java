@@ -87,4 +87,10 @@ public class ColumnWrapper extends AbstractWrapper {
         return imports;
     }
 
+    @Override
+    public String toString() {
+        return "ColumnWrapper{" +
+                "columnType=" + columnType +
+                '}';
+    }
 }

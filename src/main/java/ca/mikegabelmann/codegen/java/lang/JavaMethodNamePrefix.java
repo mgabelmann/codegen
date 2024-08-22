@@ -1,5 +1,7 @@
 package ca.mikegabelmann.codegen.java.lang;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  *
  * @author mgabe
@@ -17,7 +19,7 @@ public enum JavaMethodNamePrefix {
      * Constructor.
      * @param prefix method prefix
      */
-    JavaMethodNamePrefix(final String prefix) {
+    JavaMethodNamePrefix(@NotNull final String prefix) {
         this.prefix = prefix;
     }
 

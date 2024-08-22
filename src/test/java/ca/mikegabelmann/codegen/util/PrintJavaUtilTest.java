@@ -199,6 +199,39 @@ class PrintJavaUtilTest {
         Assertions.assertEquals("public void setAge(final Integer age) throws IOException {this.age = age;}", PrintJavaUtil.getMethod(method));
     }
 
+    @Test
+    @DisplayName("method with annotation")
+    void test3_getMethod() {
+        JavaAnnotation annotation = new JavaAnnotation("A");
+
+        JavaMethod method = new JavaMethod("Age");
+        method.addModifier(JavaMethodModifier.PUBLIC);
+        method.setJavaReturnType(new JavaReturnType("Integer", "age"));
+        method.setNamePrefix(JavaMethodNamePrefix.GET);
+        method.addAnnotation(annotation);
+
+        String expected = StringUtil.replaceLinefeeds("@A\npublic Integer getAge() {return this.age;}");
+        Assertions.assertEquals(expected, PrintJavaUtil.getMethod(method));
+    }
+
+    @Test
+    @DisplayName("method with multiple annotations")
+    void test4_getMethod() {
+        JavaAnnotation annotation = new JavaAnnotation("A");
+        JavaAnnotation annotation2 = new JavaAnnotation("B");
+        annotation2.add("name", "value");
+
+        JavaMethod method = new JavaMethod("Age");
+        method.addModifier(JavaMethodModifier.PUBLIC);
+        method.setJavaReturnType(new JavaReturnType("Integer", "age"));
+        method.setNamePrefix(JavaMethodNamePrefix.GET);
+        method.addAnnotation(annotation);
+        method.addAnnotation(annotation2);
+
+        String expected = StringUtil.replaceLinefeeds("@A\n@B(name = \"value\")\npublic Integer getAge() {return this.age;}");
+        Assertions.assertEquals(expected, PrintJavaUtil.getMethod(method));
+    }
+
     /*
     if (method.getThrows().size() > 0) {
             sb.append(JavaKeywords.THROWS);

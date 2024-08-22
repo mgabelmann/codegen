@@ -19,12 +19,6 @@ public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName {
     private final Set<JavaMethodModifier> modifiers;
 
     /**  */
-    private JavaReturnType javaReturnType;
-
-    /**  */
-    private JavaMethodNamePrefix namePrefix;
-
-    /**  */
     private final Set<JavaArgument> javaArguments;
 
     /**  */
@@ -33,6 +27,15 @@ public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName {
     /**  */
     private final String name;
 
+    /**  */
+    private JavaMethodNamePrefix namePrefix;
+
+    /**  */
+    private String body;
+
+    /**  */
+    private JavaReturnType javaReturnType;
+
 
     /**
      * Constructor.
@@ -40,10 +43,14 @@ public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName {
      */
     public JavaMethod(@NotNull String name) {
         super();
-        this.name = name;
         this.modifiers = new LinkedHashSet<>();
         this.javaArguments = new LinkedHashSet<>();
         this.javaThrows = new LinkedHashSet<>();
+
+        this.name = name;
+        this.namePrefix = JavaMethodNamePrefix.NONE;
+        this.body = null;
+        this.javaReturnType = null;
     }
 
     public Set<JavaMethodModifier> getModifiers() {
@@ -98,6 +105,14 @@ public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName {
         return this.javaThrows.remove(javaThrows);
     }
 
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
     public List<JavaMethodModifier> getOrderedModifiers() {
         List<JavaMethodModifier> ordered = new ArrayList<>(modifiers);
         ordered.sort(Comparator.comparingInt(JavaMethodModifier::getOrder));
@@ -112,14 +127,15 @@ public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("JavaMethod{");
-        //sb.append("type='").append(type).append('\'');
         sb.append("name='").append(name).append('\'');
+        sb.append(", body='").append(body).append('\'');
         sb.append(", annotations=").append(annotations);
         sb.append(", modifiers=").append(modifiers);
         sb.append(", javaReturnType=").append(javaReturnType);
         sb.append(", namePrefix=").append(namePrefix);
         sb.append(", javaArguments=").append(javaArguments);
         sb.append(", javaThrows=").append(javaThrows);
+
         sb.append('}');
         return sb.toString();
     }

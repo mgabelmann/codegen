@@ -413,4 +413,24 @@ public class Entity {
         return PrintJavaUtil.getConstructor(con);
     }
 
+    //FIXME: JavaMethod does not currently allow custom method bodies
+    public static String toStringGenerator(@NotNull final TableWrapper table) {
+        JavaAnnotation ja1 = new JavaAnnotation("Override");
+
+        JavaMethod jm1 = new JavaMethod("toString");
+        jm1.addModifier(JavaMethodModifier.PUBLIC);
+        jm1.setJavaReturnType(new JavaReturnType("String", "sb"));
+        jm1.addAnnotation(ja1);
+
+        return PrintJavaUtil.getMethod(jm1);
+/*
+    @Override
+    public String toString() {
+        return "ColumnWrapper{" +
+                "columnType=" + columnType +
+                '}';
+    }
+ */
+    }
+
 }

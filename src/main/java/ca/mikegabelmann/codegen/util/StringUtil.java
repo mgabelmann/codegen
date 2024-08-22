@@ -85,4 +85,18 @@ public class StringUtil {
         }
     }
 
+    /**
+     * Replace all hard-coded line feeds with the system dependant type. Mac/Linux/Windows
+     * all use different line terminators, and for unit tests this can be an issue.
+     * @param value value
+     * @return value with line feeds fixed
+     */
+    public static String replaceLinefeeds(final String value) {
+        if (value == null) {
+            return null;
+        } else {
+            return value.replaceAll("\\n|\\r\\n", System.lineSeparator());
+        }
+    }
+
 }
