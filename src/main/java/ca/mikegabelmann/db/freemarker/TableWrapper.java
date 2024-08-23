@@ -49,19 +49,19 @@ public class TableWrapper extends AbstractWrapper {
 
         //collection of all columns by column name
         Map<String, ColumnWrapper> columns = tableType.getColumn().stream()
-                .map(c -> new ColumnWrapper(c))
-                .collect(Collectors.toMap(c -> c.getName(), Function.identity()));
+                .map(ColumnWrapper::new)
+                .collect(Collectors.toMap(ColumnWrapper::getName, Function.identity()));
 
         //collection of all keys (primary or composite) that identify this table
         Map<String, ColumnWrapper> keys = columns.values().stream()
                 .filter(c -> c.getColumnType().isPrimaryKey())
-                .collect(Collectors.toMap(c -> c.getName(), Function.identity()));
+                .collect(Collectors.toMap(ColumnWrapper::getName, Function.identity()));
 
         //collection of foreign keys
         Map<String, ForeignKeyWrapper> foreignKeys = tableType.getForeignKeyOrIndexOrUnique().stream()
                 .filter(c -> c instanceof ForeignKeyType)
                 .map(c -> (ForeignKeyType) c)
-                .map(c -> new ForeignKeyWrapper(c))
+                .map(ForeignKeyWrapper::new)
                 .collect(Collectors.toMap(c -> c.getForeignKeyType().getForeignTable(), Function.identity()));
 
         {

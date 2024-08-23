@@ -28,10 +28,10 @@ public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName {
     private final String name;
 
     /**  */
-    private JavaMethodNamePrefix namePrefix;
+    private final StringBuilder body;
 
     /**  */
-    private String body;
+    private JavaMethodNamePrefix namePrefix;
 
     /**  */
     private JavaReturnType javaReturnType;
@@ -41,16 +41,15 @@ public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName {
      * Constructor.
      * @param name field or variable name
      */
-    public JavaMethod(@NotNull String name) {
+    public JavaMethod(@NotNull final String name) {
         super();
         this.modifiers = new LinkedHashSet<>();
         this.javaArguments = new LinkedHashSet<>();
         this.javaThrows = new LinkedHashSet<>();
-
         this.name = name;
+        this.body = new StringBuilder();
         this.namePrefix = JavaMethodNamePrefix.NONE;
-        this.body = null;
-        this.javaReturnType = null;
+        this.javaReturnType = new JavaReturnType();
     }
 
     public Set<JavaMethodModifier> getModifiers() {
@@ -105,12 +104,8 @@ public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName {
         return this.javaThrows.remove(javaThrows);
     }
 
-    public String getBody() {
+    public StringBuilder getBody() {
         return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
     }
 
     public List<JavaMethodModifier> getOrderedModifiers() {

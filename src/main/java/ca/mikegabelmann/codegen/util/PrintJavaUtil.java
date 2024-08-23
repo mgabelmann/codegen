@@ -3,7 +3,14 @@ package ca.mikegabelmann.codegen.util;
 import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
-import ca.mikegabelmann.codegen.java.lang.classbody.*;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaConstructor;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaField;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaImport;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaPackage;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -112,11 +119,7 @@ public class PrintJavaUtil {
         sb.append(JavaTokens.BRACE_LEFT);
 
         for (JavaArgument argument : arguments) {
-            sb.append(JavaKeywords.THIS_DOT);
-            sb.append(argument.getName());
-            sb.append(JavaTokens.EQUALS_WITH_SPACES);
-            sb.append(argument.getName());
-            sb.append(JavaTokens.SEMICOLON);
+            sb.append(PrintJavaUtil.getFieldAssignment(argument.getName(), true));
         }
 
         sb.append(JavaTokens.BRACE_RIGHT);
@@ -147,6 +150,34 @@ public class PrintJavaUtil {
         sb.append(JavaTokens.SPACE);
         sb.append(field.getName());
 
+        sb.append(JavaTokens.SEMICOLON);
+
+        return sb.toString();
+    }
+
+    public static String getFieldAssignment(@NotNull final String name, boolean includeThis) {
+        StringBuilder sb = new StringBuilder();
+
+        if (includeThis) {
+            sb.append(JavaKeywords.THIS_DOT);
+        }
+
+        sb.append(name);
+        sb.append(JavaTokens.EQUALS_WITH_SPACES);
+        sb.append(name);
+        sb.append(JavaTokens.SEMICOLON);
+
+        return sb.toString();
+    }
+
+    public static String getFieldReturnValue(@NotNull final String name, boolean includeThis) {
+        StringBuilder sb = new StringBuilder(JavaKeywords.RETURN);
+
+        if (includeThis) {
+            sb.append(JavaKeywords.THIS_DOT);
+        }
+
+        sb.append(name);
         sb.append(JavaTokens.SEMICOLON);
 
         return sb.toString();
@@ -197,24 +228,8 @@ public class PrintJavaUtil {
 
         sb.append(JavaTokens.BRACE_LEFT);
 
-        for (JavaArgument argument : arguments) {
-            sb.append(JavaKeywords.THIS_DOT);
-            sb.append(argument.getName());
-            sb.append(JavaTokens.EQUALS_WITH_SPACES);
-            sb.append(argument.getName());
-            sb.append(JavaTokens.SEMICOLON);
-        }
-
-        String body = method.getBody();
-        if (StringUtil.isNotBlankOrNull(body)) {
-            sb.append(body);
-
-        } else if (returnType != null) {
-            sb.append(JavaKeywords.RETURN);
-            sb.append(JavaKeywords.THIS_DOT);
-            sb.append(returnType.getName());
-            sb.append(JavaTokens.SEMICOLON);
-        }
+        //add method body
+        sb.append(method.getBody());
 
         sb.append(JavaTokens.BRACE_RIGHT);
 

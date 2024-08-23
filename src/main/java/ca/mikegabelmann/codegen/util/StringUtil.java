@@ -60,7 +60,7 @@ public class StringUtil {
                 sb.append(token.toUpperCase());
 
             } else if (token.length() > 1) {
-                sb.append(token.substring(0,1).toUpperCase() + token.substring(1).toLowerCase());
+                sb.append(token.substring(0, 1).toUpperCase()).append(token.substring(1).toLowerCase());
                 sb.append(JavaTokens.SPACE);
             }
         }

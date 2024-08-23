@@ -22,7 +22,7 @@ public enum JavaPrimitive implements JavaType {
      * Constructor.
      * @param type primitive type
      */
-    JavaPrimitive(final Class clazz, final String type) {
+    JavaPrimitive(final Class<?> clazz, final String type) {
         this.clazz = clazz;
         this.type = type;
     }

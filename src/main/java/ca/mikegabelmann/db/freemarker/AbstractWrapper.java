@@ -93,7 +93,7 @@ public abstract class AbstractWrapper implements JavaClass {
      * @return class
      */
     protected Class<?> getClass(@NotNull final SqlDataType sqlDataType) {
-        return getClass(sqlDataType);
+        return getClass(sqlDataType.name());
     }
 
     /**

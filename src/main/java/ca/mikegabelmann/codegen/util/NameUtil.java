@@ -1,6 +1,5 @@
 package ca.mikegabelmann.codegen.util;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
@@ -58,7 +57,7 @@ public final class NameUtil {
 						sb.append(token.toUpperCase());
 
 					} else if (token.length() > 1) {
-						sb.append(token.substring(0, 1).toUpperCase() + token.substring(1).toLowerCase());
+						sb.append(token.substring(0, 1).toUpperCase()).append(token.substring(1).toLowerCase());
 					}
 				}
 

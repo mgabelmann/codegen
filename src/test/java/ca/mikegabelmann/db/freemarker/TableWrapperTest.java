@@ -2,7 +2,11 @@ package ca.mikegabelmann.db.freemarker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.torque.*;
+import org.apache.torque.ColumnType;
+import org.apache.torque.ForeignKeyType;
+import org.apache.torque.ReferenceType;
+import org.apache.torque.SqlDataType;
+import org.apache.torque.TableType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

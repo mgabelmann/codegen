@@ -2,7 +2,14 @@ package ca.mikegabelmann.db.freemarker;
 
 import ca.mikegabelmann.codegen.java.JavaNamingType;
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
-import ca.mikegabelmann.codegen.java.lang.classbody.*;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaConstructor;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaField;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaImport;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaPackage;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
@@ -138,7 +145,7 @@ public class Entity {
             ja = new JavaAnnotation("jakarta.persistence.JoinColumns");
 
             //TODO: @JoinColumns, @JoinColumn
-            Map<String, ColumnWrapper> hashedColumns = fkw.getColumns().stream().collect(Collectors.toMap(c -> c.getName(), Function.identity()));
+            Map<String, ColumnWrapper> hashedColumns = fkw.getColumns().stream().collect(Collectors.toMap(ColumnWrapper::getName, Function.identity()));
 
             List<JavaAnnotation> jaList = new ArrayList<>();
 
@@ -225,8 +232,6 @@ public class Entity {
      */
     public static JavaAnnotation getTemporalAnnotation(@NotNull ColumnWrapper cw) {
         JavaAnnotation a = new JavaAnnotation("jakarta.persistence.Temporal");
-
-
 
         if (cw.getColumnType().getType().equals(SqlDataType.DATE)) {
             a.add("value", TemporalType.DATE);
@@ -348,7 +353,7 @@ public class Entity {
      * @return
      */
     public static String getter(@NotNull final AbstractWrapper wrapper) {
-        JavaReturnType returnType = new JavaReturnType(wrapper.getSimpleName(), wrapper.getVariableName());
+        JavaReturnType returnType = new JavaReturnType(wrapper.getSimpleName());
 
         //TODO: determine annotations to add
 
@@ -356,6 +361,8 @@ public class Entity {
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(returnType);
         method.setNamePrefix(JavaMethodNamePrefix.GET);
+
+        method.getBody().append(PrintJavaUtil.getFieldReturnValue(wrapper.getVariableName(), true));
 
         return PrintJavaUtil.getMethod(method);
     }
@@ -371,6 +378,7 @@ public class Entity {
         method.setJavaReturnType(null);
         method.setNamePrefix(JavaMethodNamePrefix.SET);
         method.addArgument(new JavaArgument(wrapper.getSimpleName(), wrapper.getVariableName(), true));
+        method.getBody().append(PrintJavaUtil.getFieldAssignment(wrapper.getVariableName(), true));
 
         return PrintJavaUtil.getMethod(method);
     }
@@ -419,8 +427,10 @@ public class Entity {
 
         JavaMethod jm1 = new JavaMethod("toString");
         jm1.addModifier(JavaMethodModifier.PUBLIC);
-        jm1.setJavaReturnType(new JavaReturnType("String", "sb"));
+        jm1.setJavaReturnType(new JavaReturnType("java.lang.String"));
         jm1.addAnnotation(ja1);
+
+
 
         return PrintJavaUtil.getMethod(jm1);
 /*

@@ -97,7 +97,7 @@ public final class AnnotationUtil {
 			
 		} else if (o instanceof Integer) {
 			Integer i = (Integer) o;
-			value = "" + i.intValue();
+			value = "" + i;
 			
 		} else if (o instanceof String) {
 			String s = (String) o;
@@ -128,7 +128,7 @@ public final class AnnotationUtil {
 			//some recursion here for a special case since we don't want to alter the existing toString()
 			value = PrintJavaUtil.getAnnotation((JavaAnnotation) o);
 
-		} else if (o instanceof Object) {
+		} else if (o != null) {
 			value = o.toString();	
 			
 		} else {

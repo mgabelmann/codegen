@@ -85,7 +85,7 @@ public class ForeignKeyWrapper extends AbstractWrapper {
 
     @Override
     public boolean isRequired() {
-        return isCompositeKey() ? true : columns.get(0).isRequired();
+        return isCompositeKey() || columns.get(0).isRequired();
     }
 
     @Override

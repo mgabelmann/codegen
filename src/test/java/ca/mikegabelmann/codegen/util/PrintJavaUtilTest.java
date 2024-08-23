@@ -3,7 +3,14 @@ package ca.mikegabelmann.codegen.util;
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
 import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
-import ca.mikegabelmann.codegen.java.lang.classbody.*;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaConstructor;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaField;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaImport;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaPackage;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
@@ -179,36 +186,24 @@ class PrintJavaUtilTest {
     void test1_getMethod() {
         JavaMethod method = new JavaMethod("Age");
         method.addModifier(JavaMethodModifier.PUBLIC);
-        method.setJavaReturnType(new JavaReturnType("Integer", "age"));
+        method.setJavaReturnType(new JavaReturnType("Integer"));
         method.setNamePrefix(JavaMethodNamePrefix.GET);
+        method.getBody().append(PrintJavaUtil.getFieldReturnValue("age", true));
 
         Assertions.assertEquals("public Integer getAge() {return this.age;}", PrintJavaUtil.getMethod(method));
     }
 
     @Test
-    @DisplayName("set method")
-    void test2_getMethod() {
-        JavaArgument argument = new JavaArgument("Integer", "age", true);
-
-        JavaMethod method = new JavaMethod("Age");
-        method.addModifier(JavaMethodModifier.PUBLIC);
-        method.setNamePrefix(JavaMethodNamePrefix.SET);
-        method.addArgument(argument);
-        method.addThrows("IOException");
-
-        Assertions.assertEquals("public void setAge(final Integer age) throws IOException {this.age = age;}", PrintJavaUtil.getMethod(method));
-    }
-
-    @Test
     @DisplayName("method with annotation")
-    void test3_getMethod() {
+    void test2_getMethod() {
         JavaAnnotation annotation = new JavaAnnotation("A");
 
         JavaMethod method = new JavaMethod("Age");
         method.addModifier(JavaMethodModifier.PUBLIC);
-        method.setJavaReturnType(new JavaReturnType("Integer", "age"));
+        method.setJavaReturnType(new JavaReturnType("Integer"));
         method.setNamePrefix(JavaMethodNamePrefix.GET);
         method.addAnnotation(annotation);
+        method.getBody().append(PrintJavaUtil.getFieldReturnValue("age", true));
 
         String expected = StringUtil.replaceLinefeeds("@A\npublic Integer getAge() {return this.age;}");
         Assertions.assertEquals(expected, PrintJavaUtil.getMethod(method));
@@ -216,20 +211,36 @@ class PrintJavaUtilTest {
 
     @Test
     @DisplayName("method with multiple annotations")
-    void test4_getMethod() {
+    void test3_getMethod() {
         JavaAnnotation annotation = new JavaAnnotation("A");
         JavaAnnotation annotation2 = new JavaAnnotation("B");
         annotation2.add("name", "value");
 
         JavaMethod method = new JavaMethod("Age");
         method.addModifier(JavaMethodModifier.PUBLIC);
-        method.setJavaReturnType(new JavaReturnType("Integer", "age"));
+        method.setJavaReturnType(new JavaReturnType("Integer"));
         method.setNamePrefix(JavaMethodNamePrefix.GET);
         method.addAnnotation(annotation);
         method.addAnnotation(annotation2);
+        method.getBody().append(PrintJavaUtil.getFieldReturnValue("age", true));
 
         String expected = StringUtil.replaceLinefeeds("@A\n@B(name = \"value\")\npublic Integer getAge() {return this.age;}");
         Assertions.assertEquals(expected, PrintJavaUtil.getMethod(method));
+    }
+
+    @Test
+    @DisplayName("set method")
+    void test1_setMethod() {
+        JavaArgument argument = new JavaArgument("Integer", "age", true);
+
+        JavaMethod method = new JavaMethod("Age");
+        method.addModifier(JavaMethodModifier.PUBLIC);
+        method.setNamePrefix(JavaMethodNamePrefix.SET);
+        method.addArgument(argument);
+        method.addThrows("IOException");
+        method.getBody().append(PrintJavaUtil.getFieldAssignment("age", true));
+
+        Assertions.assertEquals("public void setAge(final Integer age) throws IOException {this.age = age;}", PrintJavaUtil.getMethod(method));
     }
 
     /*
@@ -253,7 +264,7 @@ class PrintJavaUtilTest {
 
     @Test
     void test1_getReturn() {
-        JavaReturnType r = new JavaReturnType("Person", "person");
+        JavaReturnType r = new JavaReturnType("Person");
 
         Assertions.assertEquals("Person ", PrintJavaUtil.getReturn(r));
     }

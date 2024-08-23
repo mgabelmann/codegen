@@ -54,6 +54,8 @@ public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedI
 </#list>
 
     //TODO: toString
+    ${Entity.toStringGenerator(tableWrapper)}
+
     //TODO: hashCode
     //TODO: equals
 
