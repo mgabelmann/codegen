@@ -1,5 +1,6 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
+import ca.mikegabelmann.codegen.Printable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ import java.util.TreeMap;
  *
  * @author mgabe
  */
-public class JavaAnnotation implements JavaType {
+public class JavaAnnotation implements JavaType, Printable {
     /** Logger. */
     private static final Logger logger = LogManager.getLogger(JavaAnnotation.class);
 

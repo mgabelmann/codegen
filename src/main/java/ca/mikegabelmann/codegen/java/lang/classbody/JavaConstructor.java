@@ -1,5 +1,6 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
+import ca.mikegabelmann.codegen.Printable;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +14,7 @@ import java.util.Set;
  *
  * @author mgabe
  */
-public class JavaConstructor extends AbstractJavaTypeAnnotated implements JavaName {
+public class JavaConstructor extends AbstractJavaTypeAnnotated implements JavaName, Printable {
     /** Constructor modifiers. */
     private final Set<JavaConstructorModifier> modifiers;
 

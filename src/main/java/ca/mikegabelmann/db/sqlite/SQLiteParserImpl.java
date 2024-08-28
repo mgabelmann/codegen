@@ -1,6 +1,6 @@
 package ca.mikegabelmann.db.sqlite;
 
-import ca.mikegabelmann.codegen.java.JavaNamingType;
+import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.db.ColumnMatcher;
 import ca.mikegabelmann.db.DatabaseParser;
@@ -76,7 +76,7 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener implements Databa
         String tableName = ctx.table_name().getText();
 
         table.setName(tableName);
-        table.setJavaName(NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, tableName));
+        table.setJavaName(NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, tableName));
         table.setDescription("");
         table.setBaseClass("");
         table.setAbstract(Boolean.FALSE);
@@ -106,7 +106,7 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener implements Databa
             column.setSize(new BigDecimal(sn.getText()));
         }
 
-        column.setJavaName(NameUtil.getJavaName(JavaNamingType.LOWER_CAMEL_CASE, columnName));
+        column.setJavaName(NameUtil.getJavaName(NamingType.LOWER_CAMEL_CASE, columnName));
         column.setDescription("");
 
         Integer length = column.getSize() == null ? null : column.getSize().intValue();

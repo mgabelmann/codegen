@@ -1,9 +1,10 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
+import ca.mikegabelmann.codegen.Printable;
 import org.jetbrains.annotations.NotNull;
 
 
-public class JavaPackage {
+public class JavaPackage implements Printable {
 
     private final String packageName;
 

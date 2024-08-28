@@ -1,10 +1,15 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
+import ca.mikegabelmann.codegen.NamingType;
+import ca.mikegabelmann.codegen.Printable;
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
+import ca.mikegabelmann.codegen.util.NameUtil;
+import ca.mikegabelmann.codegen.java.JavaClassPrintFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -14,7 +19,7 @@ import java.util.Set;
  *
  * @author mgabelmann
  */
-public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName {
+public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName, Printable {
     /** Method modifiers. */
     private final Set<JavaMethodModifier> modifiers;
 
@@ -133,6 +138,42 @@ public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName {
 
         sb.append('}');
         return sb.toString();
+    }
+
+    public static JavaMethod getGetter(
+            @NotNull final String name,
+            @NotNull final String canonicalName,
+            @NotNull final JavaMethodModifier... modifiers) {
+
+        String methName = NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, name);
+        String varName = NameUtil.getJavaName(NamingType.LOWER_CAMEL_CASE, name);
+
+        JavaMethod jm = new JavaMethod(methName);
+        jm.setNamePrefix(JavaMethodNamePrefix.GET);
+        jm.setJavaReturnType(new JavaReturnType(canonicalName));
+        jm.getBody().append(JavaClassPrintFactory.printFieldReturnValue(varName, true));
+
+        Arrays.stream(modifiers).forEach(jm::addModifier);
+
+        return jm;
+    }
+
+    public static JavaMethod getSetter(
+            @NotNull final String name,
+            @NotNull final String canonicalName,
+            @NotNull final JavaMethodModifier... modifiers) {
+
+        String methName = NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, name);
+        String varName = NameUtil.getJavaName(NamingType.LOWER_CAMEL_CASE, name);
+
+        JavaMethod jm = new JavaMethod(methName);
+        jm.setNamePrefix(JavaMethodNamePrefix.SET);
+        jm.addArgument(new JavaArgument(canonicalName, varName, true));
+        jm.getBody().append(JavaClassPrintFactory.printFieldAssignment(varName, true));
+
+        Arrays.stream(modifiers).forEach(jm::addModifier);
+
+        return jm;
     }
 
 }

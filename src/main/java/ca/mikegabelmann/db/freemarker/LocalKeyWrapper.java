@@ -1,6 +1,6 @@
 package ca.mikegabelmann.db.freemarker;
 
-import ca.mikegabelmann.codegen.java.JavaNamingType;
+import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,17 +53,17 @@ public class LocalKeyWrapper extends AbstractWrapper {
 
     @Override
     public String getCanonicalName() {
-        return isCompositeKey() ? NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, this.getName()) : columns.get(0).getCanonicalName();
+        return isCompositeKey() ? NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, this.getName()) : columns.get(0).getCanonicalName();
     }
 
     @Override
     public String getSimpleName() {
-        return isCompositeKey() ? NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, this.getName()) : columns.get(0).getSimpleName();
+        return isCompositeKey() ? NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, this.getName()) : columns.get(0).getSimpleName();
     }
 
     @Override
     public String getVariableName() {
-        return isCompositeKey() ? NameUtil.getJavaName(JavaNamingType.LOWER_CAMEL_CASE, this.getName()) : columns.get(0).getVariableName();
+        return isCompositeKey() ? NameUtil.getJavaName(NamingType.LOWER_CAMEL_CASE, this.getName()) : columns.get(0).getVariableName();
     }
 
     @Override

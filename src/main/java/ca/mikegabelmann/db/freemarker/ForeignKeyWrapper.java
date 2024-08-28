@@ -1,6 +1,6 @@
 package ca.mikegabelmann.db.freemarker;
 
-import ca.mikegabelmann.codegen.java.JavaNamingType;
+import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import org.apache.torque.ForeignKeyType;
 import org.jetbrains.annotations.NotNull;
@@ -60,17 +60,17 @@ public class ForeignKeyWrapper extends AbstractWrapper {
 
     @Override
     public String getCanonicalName() {
-        return NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, foreignKeyType.getForeignTable());
+        return NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, foreignKeyType.getForeignTable());
     }
 
     @Override
     public String getSimpleName() {
-        return NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, foreignKeyType.getForeignTable());
+        return NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, foreignKeyType.getForeignTable());
     }
 
     @Override
     public String getVariableName() {
-        return NameUtil.getJavaName(JavaNamingType.LOWER_CAMEL_CASE, foreignKeyType.getForeignTable());
+        return NameUtil.getJavaName(NamingType.LOWER_CAMEL_CASE, foreignKeyType.getForeignTable());
     }
 
     @Override

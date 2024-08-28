@@ -1,6 +1,7 @@
 package ca.mikegabelmann.db.freemarker;
 
-import ca.mikegabelmann.codegen.java.JavaNamingType;
+import ca.mikegabelmann.codegen.NamingType;
+import ca.mikegabelmann.codegen.java.AbstractJavaPrintFactory;
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
@@ -14,7 +15,7 @@ import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import ca.mikegabelmann.codegen.util.NameUtil;
-import ca.mikegabelmann.codegen.util.PrintJavaUtil;
+import ca.mikegabelmann.codegen.java.JavaClassPrintFactory;
 import ca.mikegabelmann.codegen.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,12 +34,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ * NOTE: this is a facade as it hides the complexity of underlying operations from the client.
  *
  * @author mgabe
  */
 public class Entity {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(Entity.class);
+
+    private static AbstractJavaPrintFactory factory = new JavaClassPrintFactory();
 
     /** Do not instantiate this class. */
     private Entity() {}
@@ -67,7 +71,7 @@ public class Entity {
 
         JavaAnnotation ann = Entity.getTableAnnotation(tw, type, schema);
 
-        return PrintJavaUtil.getAnnotation(ann);
+        return factory.print(ann);
     }
 
 
@@ -249,7 +253,7 @@ public class Entity {
     }
 
     public static String printPackage(@NotNull final TableWrapper table) {
-        return PrintJavaUtil.getPackage(new JavaPackage(table.getPackageName()));
+        return factory.print(new JavaPackage(table.getPackageName()));
     }
 
     /**
@@ -260,7 +264,7 @@ public class Entity {
     public static String printImports(@NotNull final TableWrapper table) {
         Set<String> imports = table.getAllImports();
 
-        return imports.stream().map(a -> PrintJavaUtil.getImport(new JavaImport(a))).collect(Collectors.joining(System.lineSeparator()));
+        return imports.stream().map(a -> factory.print(new JavaImport(a))).collect(Collectors.joining(System.lineSeparator()));
     }
 
     /**
@@ -269,7 +273,7 @@ public class Entity {
      * @return Java annotation
      */
     public static String annotation(@NotNull final JavaAnnotation annotation) {
-        return PrintJavaUtil.getAnnotation(annotation);
+        return factory.print(annotation);
     }
 
     /**
@@ -278,7 +282,7 @@ public class Entity {
      * @return
      */
     public static String field(@NotNull final AbstractWrapper column) {
-        JavaField field = new JavaField(column.getSimpleName(), column.getVariableName());
+        JavaField field = new JavaField(column.getSimpleName(), column.getVariableName(), false);
         field.addModifier(JavaFieldModifier.PRIVATE);
 
         //TODO: determine annotations to add
@@ -344,7 +348,7 @@ public class Entity {
             column.addImport(ann.getCanonicalName());
         }
 
-        return PrintJavaUtil.getField(field);
+        return factory.print(field);
     }
 
     /**
@@ -357,14 +361,14 @@ public class Entity {
 
         //TODO: determine annotations to add
 
-        JavaMethod method = new JavaMethod(NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, wrapper.getId()));
+        JavaMethod method = new JavaMethod(NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, wrapper.getId()));
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(returnType);
         method.setNamePrefix(JavaMethodNamePrefix.GET);
 
-        method.getBody().append(PrintJavaUtil.getFieldReturnValue(wrapper.getVariableName(), true));
+        method.getBody().append(JavaClassPrintFactory.printFieldReturnValue(wrapper.getVariableName(), true));
 
-        return PrintJavaUtil.getMethod(method);
+        return factory.print(method);
     }
 
     /**
@@ -373,14 +377,14 @@ public class Entity {
      * @return
      */
     public static String setter(@NotNull final AbstractWrapper wrapper) {
-        JavaMethod method = new JavaMethod(NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, wrapper.getId()));
+        JavaMethod method = new JavaMethod(NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, wrapper.getId()));
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(null);
         method.setNamePrefix(JavaMethodNamePrefix.SET);
         method.addArgument(new JavaArgument(wrapper.getSimpleName(), wrapper.getVariableName(), true));
-        method.getBody().append(PrintJavaUtil.getFieldAssignment(wrapper.getVariableName(), true));
+        method.getBody().append(JavaClassPrintFactory.printFieldAssignment(wrapper.getVariableName(), true));
 
-        return PrintJavaUtil.getMethod(method);
+        return factory.print(method);
     }
 
     /**
@@ -392,7 +396,7 @@ public class Entity {
         JavaConstructor con = new JavaConstructor(table.getCanonicalName());
         con.addModifier(JavaConstructorModifier.PUBLIC);
 
-        return PrintJavaUtil.getConstructor(con);
+        return factory.print(con);
     }
 
     /**
@@ -418,7 +422,7 @@ public class Entity {
             }
         }
 
-        return PrintJavaUtil.getConstructor(con);
+        return factory.print(con);
     }
 
     //FIXME: JavaMethod does not currently allow custom method bodies
@@ -430,17 +434,9 @@ public class Entity {
         jm1.setJavaReturnType(new JavaReturnType("java.lang.String"));
         jm1.addAnnotation(ja1);
 
+        //TODO:
 
-
-        return PrintJavaUtil.getMethod(jm1);
-/*
-    @Override
-    public String toString() {
-        return "ColumnWrapper{" +
-                "columnType=" + columnType +
-                '}';
-    }
- */
+        return factory.print(jm1);
     }
 
 }

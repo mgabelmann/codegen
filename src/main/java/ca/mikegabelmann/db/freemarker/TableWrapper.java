@@ -1,6 +1,6 @@
 package ca.mikegabelmann.db.freemarker;
 
-import ca.mikegabelmann.codegen.java.JavaNamingType;
+import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -163,17 +163,17 @@ public class TableWrapper extends AbstractWrapper {
 
     @Override
     public final String getCanonicalName() {
-        return NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, tableType.getName());
+        return NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, tableType.getName());
     }
 
     @Override
     public final String getSimpleName() {
-        return NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, tableType.getName());
+        return NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, tableType.getName());
     }
 
     @Override
     public final String getVariableName() {
-        return NameUtil.getJavaName(JavaNamingType.LOWER_CAMEL_CASE, tableType.getName());
+        return NameUtil.getJavaName(NamingType.LOWER_CAMEL_CASE, tableType.getName());
     }
 
     @Override

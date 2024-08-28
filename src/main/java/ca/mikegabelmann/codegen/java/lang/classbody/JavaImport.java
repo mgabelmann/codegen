@@ -1,11 +1,20 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
+import ca.mikegabelmann.codegen.Printable;
 import org.jetbrains.annotations.NotNull;
 
 
-public class JavaImport implements JavaType {
+public class JavaImport implements JavaType, Printable {
 
     private final String type;
+
+    /**
+     * Constructor.
+     * @param clazz
+     */
+    public JavaImport(@NotNull Class<?> clazz) {
+        this(clazz.getSimpleName());
+    }
 
     /**
      * Constructor.

@@ -1,8 +1,13 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaClassModifier;
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -10,6 +15,7 @@ import java.util.TreeSet;
 public class JavaClass extends AbstractJavaTypeAnnotated implements JavaType, JavaName {
     private final JavaPackage javaPackage;
     private final Set<String> javaImports;
+    private final Set<JavaClassModifier> javaModifiers;
     private final Set<JavaField> javaFields;
     private final Set<JavaConstructor> constructors;
     private final Set<JavaMethod> methods;
@@ -23,10 +29,13 @@ public class JavaClass extends AbstractJavaTypeAnnotated implements JavaType, Ja
      * @param name
      * @param javaPackage
      */
-    public JavaClass(@NotNull final String type, @NotNull final String name, @NotNull final JavaPackage javaPackage) {
+    public JavaClass(@NotNull final String type,
+                     @NotNull final String name,
+                     @NotNull final JavaPackage javaPackage) {
         super();
         this.javaPackage = javaPackage;
         this.javaImports = new HashSet<>();
+        this.javaModifiers = new HashSet<>();
         this.javaFields = new HashSet<>();
         this.constructors = new HashSet<>();
         this.methods = new HashSet<>();
@@ -50,10 +59,13 @@ public class JavaClass extends AbstractJavaTypeAnnotated implements JavaType, Ja
         return javaPackage;
     }
 
+    public Set<JavaClassModifier> getJavaModifiers() {
+        return javaModifiers;
+    }
+
     public Set<JavaMethod> getMethods() {
         return methods;
     }
-
 
     public void addJavaImport(@NotNull final String javaImport) {
         this.javaImports.add(javaImport);
@@ -61,6 +73,10 @@ public class JavaClass extends AbstractJavaTypeAnnotated implements JavaType, Ja
 
     public void addJavaField(@NotNull final JavaField javaField) {
         this.javaFields.add(javaField);
+    }
+
+    public void addJavaClassModifier(@NotNull final JavaClassModifier javaClassModifier) {
+        this.javaModifiers.add(javaClassModifier);
     }
 
     public void addConstructor(@NotNull final JavaConstructor javaConstructor) {
@@ -84,6 +100,12 @@ public class JavaClass extends AbstractJavaTypeAnnotated implements JavaType, Ja
     @Override
     public String getSimpleName() {
         return !type.contains(".") ? type : type.substring(type.lastIndexOf(".") + 1);
+    }
+
+    public List<JavaClassModifier> getOrderedModifiers() {
+        List<JavaClassModifier> ordered = new ArrayList<>(javaModifiers);
+        ordered.sort(Comparator.comparingInt(JavaClassModifier::getOrder));
+        return ordered;
     }
 
     public Set<String> getAllImports() {
