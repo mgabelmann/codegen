@@ -4,6 +4,7 @@ import ca.mikegabelmann.db.freemarker.TableWrapper;
 import ca.mikegabelmann.db.mapping.Database;
 import ca.mikegabelmann.db.mapping.ReverseEngineering;
 import ca.mikegabelmann.db.sqlite.SQLiteFactory;
+import com.google.googlejavaformat.java.Formatter;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -21,8 +22,10 @@ import org.apache.torque.TableType;
 
 import javax.xml.namespace.QName;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -185,9 +188,18 @@ public class App {
             inputTemplate.put("Entity", staticObjectUtil2);
 
             Template entity = cfg.getTemplate("entity.ftl");
-            Writer cw2 = new OutputStreamWriter(System.out);
+
+            OutputStream baos = new ByteArrayOutputStream();
+            Writer cw2 = new OutputStreamWriter(baos);
+
+            //Writer cw2 = new OutputStreamWriter(System.out);
             entity.process(inputTemplate, cw2);
+
+            //Use Google formatter to pretty print the class file
+            String formattedSource = new Formatter().formatSource(baos.toString());
+            LOG.debug(formattedSource);
         }
+
     }
 
     /**
@@ -204,8 +216,8 @@ public class App {
 
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith("#") && !line.isEmpty()) {
-                    String[] keyvalue = line.split("=");
-                    map.put(keyvalue[0].trim(), keyvalue[1].trim());
+                    String[] keyValue = line.split("=");
+                    map.put(keyValue[0].trim(), keyValue[1].trim());
 
                 } else if (LOG.isTraceEnabled()) {
                     LOG.trace("skipping comment or empty line");

@@ -3,6 +3,7 @@ package ca.mikegabelmann.db.freemarker;
 import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.java.AbstractJavaPrintFactory;
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
+import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaConstructor;
@@ -425,16 +426,39 @@ public class Entity {
         return factory.print(con);
     }
 
-    //FIXME: JavaMethod does not currently allow custom method bodies
+    /**
+     *
+     * @param table
+     * @return
+     */
     public static String toStringGenerator(@NotNull final TableWrapper table) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(JavaTokens.NEWLINE);
+        sb.append("return \"").append(table.getSimpleName()).append("{\" +").append(JavaTokens.NEWLINE);
+
+        Collection<ColumnWrapper> columns = table.getColumnsNonKeyList();
+        int i = 0;
+
+        LocalKeyWrapper lkw = table.getLocalKey();
+        for (ColumnWrapper column : lkw.getColumns()) {
+            sb.append(i++ > 0 ? "\", " : "\"");
+            sb.append(column.getVariableName()).append("='\" + ").append(column.getVariableName()).append(" + '\\'' +").append(JavaTokens.NEWLINE);
+        }
+
+        for (ColumnWrapper column : columns) {
+            sb.append(i++ > 0 ? "\", " : "\"");
+            sb.append(column.getVariableName()).append("='\" + ").append(column.getVariableName()).append(" + '\\'' +").append(JavaTokens.NEWLINE);
+        }
+
+        sb.append("'}';").append(JavaTokens.NEWLINE);
+
         JavaAnnotation ja1 = new JavaAnnotation("Override");
 
         JavaMethod jm1 = new JavaMethod("toString");
         jm1.addModifier(JavaMethodModifier.PUBLIC);
         jm1.setJavaReturnType(new JavaReturnType("java.lang.String"));
         jm1.addAnnotation(ja1);
-
-        //TODO:
+        jm1.getBody().append(sb);
 
         return factory.print(jm1);
     }

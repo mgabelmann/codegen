@@ -52,8 +52,7 @@ public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedI
     ${Entity.getter(column)}
 
 </#list>
-
-    //TODO: toString
+    //OBJECT overrides
     ${Entity.toStringGenerator(tableWrapper)}
 
     //TODO: hashCode
