@@ -5,30 +5,22 @@ import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
 import org.jetbrains.annotations.NotNull;
 
 
-public class JavaReturnType implements JavaType {
-    private final String type;
-
+public class JavaReturnType extends AbstractJavaType {
 
     public JavaReturnType(@NotNull final JavaPrimitive primitive) {
         this(primitive.getCanonicalName());
     }
 
+    public JavaReturnType(@NotNull final Class<?> clazz) {
+        this(clazz.getCanonicalName());
+    }
+
     public JavaReturnType(@NotNull final String type) {
-        this.type = type;
+        super(type, "");
     }
 
     public JavaReturnType() {
-        this.type = JavaKeywords.VOID.trim();
-    }
-
-    @Override
-    public String getCanonicalName() {
-        return type;
-    }
-
-    @Override
-    public String getSimpleName() {
-        return !type.contains(".") ? type : type.substring(type.lastIndexOf(".") + 1);
+        super(JavaKeywords.VOID.trim(), "");
     }
 
     @Override

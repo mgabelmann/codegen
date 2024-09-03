@@ -30,7 +30,7 @@ import java.util.List;
  *
  * @author mgabe
  */
-class PrintJavaFacadeTest {
+class JavaClassPrintFactoryTest {
 
     private AbstractJavaPrintFactory printFactory;
 
@@ -322,7 +322,7 @@ class PrintJavaFacadeTest {
         clazz.addAnnotation(new JavaAnnotation("A"));
         clazz.addMethod(m1);
         clazz.addJavaField(f1);
-        Assertions.assertEquals(StringUtil.replaceLinefeeds("package a.b.c;\nimport java.io.IOException;\n@A\npublic class Person {\npublic Person() {}\n}"), printFactory.printClass(clazz));
+        Assertions.assertEquals(StringUtil.replaceLinefeeds("package a.b.c;\nimport java.io.IOException;\nimport java.lang.String;\n@A\npublic class Person {\npublic final String name;\npublic Person(final String name) {this.name = name;}\npublic  final String getFirstName() {return this.firstName;}\n}"), printFactory.printClass(clazz));
     }
 
 }

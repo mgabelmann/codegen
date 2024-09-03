@@ -1,27 +1,19 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
-import ca.mikegabelmann.codegen.Printable;
-import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
 import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
-import ca.mikegabelmann.codegen.java.lang.JavaTokens;
-import ca.mikegabelmann.codegen.java.JavaClassPrintFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**
  *
  * @author mgabe
  */
-public class JavaArgument extends AbstractJavaTypeAnnotated implements JavaType, JavaName, Printable {
+public class JavaArgument extends AbstractJavaTypeAnnotated {
     /** Is the argument final. */
     private final boolean required;
 
-    private final String name;
-
-    private final String type;
-
 
     /**
-     *
+     * Constructor.
      * @param type
      * @param name
      * @param required
@@ -31,30 +23,24 @@ public class JavaArgument extends AbstractJavaTypeAnnotated implements JavaType,
     }
 
     /**
-     *
+     * Constructor.
+     * @param clazz
+     * @param name
+     * @param required
+     */
+    public JavaArgument(@NotNull final Class<?> clazz, @NotNull final String name, final boolean required) {
+        this(clazz.getCanonicalName(), name, required);
+    }
+
+    /**
+     * Constructor.
      * @param type
      * @param name
      * @param required
      */
     public JavaArgument(@NotNull final String type, @NotNull final String name, final boolean required) {
-        this.type = type;
-        this.name = name;
+        super(type, name);
         this.required = required;
-    }
-
-    @Override
-    public String getCanonicalName() {
-        return type;
-    }
-
-    @Override
-    public String getSimpleName() {
-        return !type.contains(".") ? type : type.substring(type.lastIndexOf(".") + 1);
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     public boolean isRequired() {

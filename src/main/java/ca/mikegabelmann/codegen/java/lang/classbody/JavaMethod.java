@@ -1,9 +1,9 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
 import ca.mikegabelmann.codegen.NamingType;
-import ca.mikegabelmann.codegen.Printable;
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaOrderedModifier;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.codegen.java.JavaClassPrintFactory;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author mgabelmann
  */
-public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName, Printable {
+public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaOrderedModifier<JavaMethodModifier> {
     /** Method modifiers. */
     private final Set<JavaMethodModifier> modifiers;
 
@@ -28,9 +28,6 @@ public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName, P
 
     /**  */
     private final Set<String> javaThrows;
-
-    /**  */
-    private final String name;
 
     /**  */
     private final StringBuilder body;
@@ -47,26 +44,13 @@ public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName, P
      * @param name field or variable name
      */
     public JavaMethod(@NotNull final String name) {
-        super();
+        super("", name);
         this.modifiers = new LinkedHashSet<>();
         this.javaArguments = new LinkedHashSet<>();
         this.javaThrows = new LinkedHashSet<>();
-        this.name = name;
         this.body = new StringBuilder();
         this.namePrefix = JavaMethodNamePrefix.NONE;
         this.javaReturnType = new JavaReturnType();
-    }
-
-    public Set<JavaMethodModifier> getModifiers() {
-        return modifiers;
-    }
-
-    public void addModifier(@NotNull JavaMethodModifier modifier) {
-        this.modifiers.add(modifier);
-    }
-
-    public boolean removeModifier(@NotNull JavaMethodModifier modifier) {
-        return this.modifiers.remove(modifier);
     }
 
     public JavaReturnType getJavaReturnType() {
@@ -113,15 +97,31 @@ public class JavaMethod extends AbstractJavaTypeAnnotated implements JavaName, P
         return body;
     }
 
+    @Override
+    public Set<JavaMethodModifier> getModifiers() {
+        return modifiers;
+    }
+
+    @Override
+    public void addModifier(@NotNull JavaMethodModifier modifier) {
+        this.modifiers.add(modifier);
+    }
+
+    @Override
+    public void addModifiers(@NotNull JavaMethodModifier... modifiers) {
+        this.modifiers.addAll(Arrays.asList(modifiers));
+    }
+
+    @Override
+    public boolean removeModifier(@NotNull JavaMethodModifier modifier) {
+        return this.modifiers.remove(modifier);
+    }
+
+    @Override
     public List<JavaMethodModifier> getOrderedModifiers() {
         List<JavaMethodModifier> ordered = new ArrayList<>(modifiers);
         ordered.sort(Comparator.comparingInt(JavaMethodModifier::getOrder));
         return ordered;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override

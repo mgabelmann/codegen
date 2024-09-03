@@ -42,11 +42,11 @@ public class Entity {
     /** Logger. */
     private static final Logger LOG = LogManager.getLogger(Entity.class);
 
-    private static AbstractJavaPrintFactory factory = new JavaClassPrintFactory();
+    private static final AbstractJavaPrintFactory factory = new JavaClassPrintFactory();
+
 
     /** Do not instantiate this class. */
     private Entity() {}
-
 
     /**
      *

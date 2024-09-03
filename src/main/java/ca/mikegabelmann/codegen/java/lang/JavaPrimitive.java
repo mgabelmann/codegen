@@ -35,8 +35,14 @@ public enum JavaPrimitive implements JavaType {
         return clazz;
     }
 
+    @Override
     public String getType() {
         return type;
+    }
+
+    @Override
+    public String getName() {
+        return "";
     }
 
     @Override

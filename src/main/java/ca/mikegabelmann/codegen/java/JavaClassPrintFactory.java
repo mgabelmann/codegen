@@ -277,12 +277,12 @@ public class JavaClassPrintFactory extends AbstractJavaPrintFactory {
      * @return package statement
      */
     String printPackage(@NotNull final JavaPackage value) {
-        if (value.getPackageName().isEmpty()) {
+        if (value.getName().isEmpty()) {
             //default package
             return "";
         }
 
-        return JavaKeywords.PACKAGE + value.getPackageName() + JavaTokens.SEMICOLON;
+        return JavaKeywords.PACKAGE + value.getName() + JavaTokens.SEMICOLON;
     }
 
     /**
