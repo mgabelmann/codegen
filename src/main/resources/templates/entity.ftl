@@ -55,9 +55,9 @@ public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedI
     //OBJECT overrides
     ${Entity.toStringGenerator(tableWrapper)}
 
-    //TODO: hashCode
-    //TODO: equals
+    ${Entity.equalsGenerator(tableWrapper)}
 
+    ${Entity.hashCodeGenerator(tableWrapper)}
 }
 </#assign>
 

@@ -2,6 +2,12 @@
 <!--<!DOCTYPE reverse-engineering SYSTEM "dbmapping.dtd">-->
 <reverse-engineering>
     <databases>
+        <!-- always loaded first -->
+        <database name="CUSTOM">
+            <mapping database-type="" name=".*_DT$" jdbc-type="DATE" java-type="java.time.LocalDate"/>
+            <mapping database-type="" name=".*_TM$" jdbc-type="TIME" java-type="java.time.LocalTime"/>
+            <mapping database-type="" name=".*_DTM$" jdbc-type="TIMESTAMP" java-type="java.time.LocalDateTime"/>
+        </database>
 
         <database name="ORACLE">
             <!-- determine UUID type -->
@@ -12,14 +18,9 @@
             <mapping database-type="NUMBER" name="" jdbc-type="NUMERIC" java-type="java.math.BigDecimal"/>
             <mapping database-type="DATE" name="" jdbc-type="TIMESTAMP" java-type="java.time.LocalDateTime"/>
             <mapping database-type="RAW" name="" jdbc-type="VARBINARY" java-type="byte[]"/>
-
         </database>
 
         <database name="SQLITE">
-            <mapping database-type="" name=".*_DT$" jdbc-type="DATE" java-type="java.time.LocalDate"/>
-            <mapping database-type="" name=".*_TM$" jdbc-type="TIME" java-type="java.time.LocalTime"/>
-            <mapping database-type="" name=".*_DTM$" jdbc-type="TIMESTAMP" java-type="java.time.LocalDateTime"/>
-
             <!-- defaults -->
             <mapping database-type="INTEGER" name="" jdbc-type="INTEGER" java-type="java.lang.Integer"/>
             <mapping database-type="TEXT" name="" jdbc-type="VARCHAR" java-type="java.lang.String"/>
@@ -28,8 +29,8 @@
             <mapping database-type="NUMERIC" name="" jdbc-type="NUMERIC" java-type="java.math.BigDecimal"/>
         </database>
 
-        <!-- must be last, in case not found above. Defaults for all java.sql.Types values -->
-        <database name="ALL">
+        <!-- always loaded last, in case not found above. Defaults for all java.sql.Types values -->
+        <database name="ANY">
             <mapping database-type="BIT" name="" jdbc-type="BIT" java-type="java.lang.Boolean"/>
             <mapping database-type="TINYINT" name="" jdbc-type="TINYINT" java-type="java.lang.Byte"/>
             <mapping database-type="SMALLINT" name="" jdbc-type="SMALLINT" java-type="java.lang.Short"/>

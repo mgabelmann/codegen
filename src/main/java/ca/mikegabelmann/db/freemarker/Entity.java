@@ -3,6 +3,7 @@ package ca.mikegabelmann.db.freemarker;
 import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.java.AbstractJavaPrintFactory;
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
+import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
@@ -423,7 +424,18 @@ public class Entity {
             }
         }
 
-        return factory.print(con);
+        String conStr = factory.print(con);
+
+        //try and avoid required and all being same which would be an error
+        if (!allArgs) {
+            String conStrAll = constructorArgs(table, true);
+            if (conStr.equals(conStrAll)) {
+                LOG.warn("required args constructor is the same as all args constructor, ignoring");
+                conStr = "//required args constructor is the same as all args constructor";
+            }
+        }
+
+        return conStr;
     }
 
     /**
@@ -458,6 +470,86 @@ public class Entity {
         jm1.addModifier(JavaMethodModifier.PUBLIC);
         jm1.setJavaReturnType(new JavaReturnType("java.lang.String"));
         jm1.addAnnotation(ja1);
+        jm1.getBody().append(sb);
+
+        return factory.print(jm1);
+    }
+
+//    @Override
+//    public final boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof Contact)) return false;
+//
+//        Contact contact = (Contact) o;
+//        return Objects.equals(contactId, contact.contactId) && Objects.equals(quantity, contact.quantity) && Objects.equals(phone, contact.phone) && Objects.equals(lastName, contact.lastName) && Objects.equals(createDtm, contact.createDtm) && Objects.equals(firstName, contact.firstName) && Objects.equals(birthDt, contact.birthDt) && Objects.equals(email, contact.email);
+//    }
+
+    public static String equalsGenerator(@NotNull final TableWrapper table) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(JavaTokens.NEWLINE);
+        sb.append("if (this == o) return true;").append(JavaTokens.NEWLINE);
+        sb.append("if (!(o instanceof Contact)) return false;").append(JavaTokens.NEWLINE);
+        sb.append(table.getSimpleName()).append(" ").append(table.getVariableName()).append(" = (").append(table.getSimpleName()).append(") o;").append(JavaTokens.NEWLINE);
+        sb.append("return ");
+
+        List<ColumnWrapper> keyCols = table.getLocalKey().getColumns();
+        Collection<ColumnWrapper> valCols = table.getColumnsNonKeyList();
+        int i = keyCols.size() + valCols.size();
+
+        for (ColumnWrapper column : keyCols) {
+            sb.append("Objects.equals(").append(column.getVariableName()).append(", ").append(table.getVariableName()).append(".").append(column.getVariableName()).append(")");
+            sb.append(--i > 0 ? " && " : ";" + JavaTokens.NEWLINE);
+        }
+
+        for (ColumnWrapper column : valCols) {
+            sb.append("Objects.equals(").append(column.getVariableName()).append(", ").append(table.getVariableName()).append(".").append(column.getVariableName()).append(")");
+            sb.append(--i > 0 ? " && " : ";" + JavaTokens.NEWLINE);
+        }
+
+        table.addImport("java.util.Objects");
+
+        JavaMethod jm1 = new JavaMethod("equals");
+        jm1.addModifier(JavaMethodModifier.PUBLIC);
+        jm1.setJavaReturnType(new JavaReturnType(JavaPrimitive.BOOLEAN));
+        jm1.addArgument(new JavaArgument(Object.class, "o", true));
+        jm1.addAnnotation(new JavaAnnotation("Override"));
+        jm1.getBody().append(sb);
+
+        return factory.print(jm1);
+    }
+
+    public static String hashCodeGenerator(@NotNull final TableWrapper table) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(JavaTokens.NEWLINE);
+
+        List<ColumnWrapper> keyCols = table.getLocalKey().getColumns();
+        Collection<ColumnWrapper> valCols = table.getColumnsNonKeyList();
+        int i = 0;
+
+        for (ColumnWrapper column : keyCols) {
+            if (i++ == 0) {
+                sb.append("int result = Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
+            } else {
+                sb.append("result = 31 * result + Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
+            }
+        }
+
+        for (ColumnWrapper column : valCols) {
+            if (i++ == 0) {
+                sb.append("int result = Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
+            } else {
+                sb.append("result = 31 * result + Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
+            }
+        }
+
+        sb.append("return result;").append(JavaTokens.NEWLINE);
+
+        table.addImport("java.util.Objects");
+
+        JavaMethod jm1 = new JavaMethod("hashCode");
+        jm1.addModifier(JavaMethodModifier.PUBLIC);
+        jm1.setJavaReturnType(new JavaReturnType(JavaPrimitive.INT));
+        jm1.addAnnotation(new JavaAnnotation("Override"));
         jm1.getBody().append(sb);
 
         return factory.print(jm1);

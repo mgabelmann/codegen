@@ -80,7 +80,6 @@ public class App {
             LOG.debug(xml);
         }*/
 
-
         ColumnMatcher columnMatcher = new ColumnMatcher();
         {
             JAXBContext jc = JAXBContext.newInstance(ReverseEngineering.class);
@@ -89,11 +88,15 @@ public class App {
 
             //TODO: add user custom mappings
             for (Database db : re.getDatabases().getDatabase()) {
+                if ("CUSTOM".equalsIgnoreCase(db.getName())) {
+                    LOG.trace("adding CUSTOM mappings");
+                    columnMatcher.addMappings(db.getMapping());
+                }
                 if ("SQLITE".equalsIgnoreCase(db.getName())) {
                     LOG.trace("adding SQLITE mappings");
                     columnMatcher.addMappings(db.getMapping());
                 }
-                if ("ALL".equalsIgnoreCase(db.getName())) {
+                if ("ANY".equalsIgnoreCase(db.getName())) {
                     LOG.trace("adding ALL mappings");
                     columnMatcher.addMappings(db.getMapping());
                 }
@@ -105,7 +108,7 @@ public class App {
         //ANTR parse file
         //Parse SQLITE DB statements
         SQLiteFactory factory = new SQLiteFactory(columnMatcher);
-        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_1.sql")));
+        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_6.sql")));
         //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
 
         //Parse ORACLE DB statements
