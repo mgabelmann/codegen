@@ -7,6 +7,7 @@ import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaClass;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaConstructor;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaField;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaImport;
@@ -289,9 +290,7 @@ public class Entity {
 
         //TODO: determine annotations to add
 
-        if (column instanceof LocalKeyWrapper) {
-            LocalKeyWrapper lkw = (LocalKeyWrapper) column;
-
+        if (column instanceof LocalKeyWrapper lkw) {
             if (!lkw.isCompositeKey()) {
                 //get @Id
                 field.addAnnotation(new JavaAnnotation("jakarta.persistence.Id"));
@@ -310,9 +309,7 @@ public class Entity {
                 field.addAnnotation(new JavaAnnotation("jakarta.persistence.EmbeddedId"));
             }
 
-        } else if (column instanceof ForeignKeyWrapper) {
-            ForeignKeyWrapper fkw = (ForeignKeyWrapper) column;
-
+        } else if (column instanceof ForeignKeyWrapper fkw) {
             //NOTE: need a better way to detect OneToOne, ManyToOne, ManyToMany
             if (!fkw.isCompositeKey() && fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
                 //get @OneToOne
@@ -330,9 +327,7 @@ public class Entity {
             //get @JoinColumns if > 1 column with @JoinColumn, otherwise @JoinColumn
             field.addAnnotation(Entity.getJoinColumn(fkw));
 
-        } else if (column instanceof ColumnWrapper) {
-            ColumnWrapper cw = (ColumnWrapper) column;
-
+        } else if (column instanceof ColumnWrapper cw) {
             //get @Temporal
             //only applies to packages java.util.* or java.sql.*
             if (cw.isTemporal() && !cw.getCanonicalName().contains("java.time")) {
@@ -445,114 +440,90 @@ public class Entity {
      */
     public static String toStringGenerator(@NotNull final TableWrapper table) {
         StringBuilder sb = new StringBuilder();
-        sb.append(JavaTokens.NEWLINE);
-        sb.append("return \"").append(table.getSimpleName()).append("{\" +").append(JavaTokens.NEWLINE);
+        sb.append("@Override").append(JavaTokens.NEWLINE);
+        sb.append("public String toString() {").append(JavaTokens.NEWLINE);
 
-        Collection<ColumnWrapper> columns = table.getColumnsNonKeyList();
+        List<AbstractWrapper> cols = table.getNonFkColumns();
+
+        sb.append("return \"").append(table.getSimpleName()).append("{\" +").append(JavaTokens.NEWLINE);
         int i = 0;
 
-        LocalKeyWrapper lkw = table.getLocalKey();
-        for (ColumnWrapper column : lkw.getColumns()) {
-            sb.append(i++ > 0 ? "\", " : "\"");
-            sb.append(column.getVariableName()).append("='\" + ").append(column.getVariableName()).append(" + '\\'' +").append(JavaTokens.NEWLINE);
-        }
-
-        for (ColumnWrapper column : columns) {
+        for (AbstractWrapper column : cols) {
             sb.append(i++ > 0 ? "\", " : "\"");
             sb.append(column.getVariableName()).append("='\" + ").append(column.getVariableName()).append(" + '\\'' +").append(JavaTokens.NEWLINE);
         }
 
         sb.append("'}';").append(JavaTokens.NEWLINE);
+        sb.append("}").append(JavaTokens.NEWLINE);
 
-        JavaAnnotation ja1 = new JavaAnnotation("Override");
-
-        JavaMethod jm1 = new JavaMethod("toString");
-        jm1.addModifier(JavaMethodModifier.PUBLIC);
-        jm1.setJavaReturnType(new JavaReturnType("java.lang.String"));
-        jm1.addAnnotation(ja1);
-        jm1.getBody().append(sb);
-
-        return factory.print(jm1);
+        return sb.toString();
     }
 
-//    @Override
-//    public final boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (!(o instanceof Contact)) return false;
-//
-//        Contact contact = (Contact) o;
-//        return Objects.equals(contactId, contact.contactId) && Objects.equals(quantity, contact.quantity) && Objects.equals(phone, contact.phone) && Objects.equals(lastName, contact.lastName) && Objects.equals(createDtm, contact.createDtm) && Objects.equals(firstName, contact.firstName) && Objects.equals(birthDt, contact.birthDt) && Objects.equals(email, contact.email);
-//    }
-
     public static String equalsGenerator(@NotNull final TableWrapper table) {
+        table.addImport("java.util.Objects");
+
         StringBuilder sb = new StringBuilder();
-        sb.append(JavaTokens.NEWLINE);
+        sb.append("@Override").append(JavaTokens.NEWLINE);
+        sb.append("public boolean equals(final Object o) {").append(JavaTokens.NEWLINE);
         sb.append("if (this == o) return true;").append(JavaTokens.NEWLINE);
-        sb.append("if (!(o instanceof Contact)) return false;").append(JavaTokens.NEWLINE);
+        sb.append("if (!(o instanceof ").append(table.getSimpleName()).append(")) return false;").append(JavaTokens.NEWLINE);
         sb.append(table.getSimpleName()).append(" ").append(table.getVariableName()).append(" = (").append(table.getSimpleName()).append(") o;").append(JavaTokens.NEWLINE);
         sb.append("return ");
 
-        List<ColumnWrapper> keyCols = table.getLocalKey().getColumns();
-        Collection<ColumnWrapper> valCols = table.getColumnsNonKeyList();
-        int i = keyCols.size() + valCols.size();
+        List<AbstractWrapper> cols = new ArrayList<>();
+        LocalKeyWrapper lkw = table.getLocalKey();
 
-        for (ColumnWrapper column : keyCols) {
+        if (lkw.isCompositeKey()) {
+            cols.add(lkw);
+        } else {
+            cols.addAll(lkw.getColumns());
+        }
+
+        cols.addAll(table.getColumnsNonKeyList());
+        int i = cols.size();
+
+        for (AbstractWrapper column : cols) {
             sb.append("Objects.equals(").append(column.getVariableName()).append(", ").append(table.getVariableName()).append(".").append(column.getVariableName()).append(")");
             sb.append(--i > 0 ? " && " : ";" + JavaTokens.NEWLINE);
         }
 
-        for (ColumnWrapper column : valCols) {
-            sb.append("Objects.equals(").append(column.getVariableName()).append(", ").append(table.getVariableName()).append(".").append(column.getVariableName()).append(")");
-            sb.append(--i > 0 ? " && " : ";" + JavaTokens.NEWLINE);
-        }
+        sb.append("}").append(JavaTokens.NEWLINE);
 
-        table.addImport("java.util.Objects");
-
-        JavaMethod jm1 = new JavaMethod("equals");
-        jm1.addModifier(JavaMethodModifier.PUBLIC);
-        jm1.setJavaReturnType(new JavaReturnType(JavaPrimitive.BOOLEAN));
-        jm1.addArgument(new JavaArgument(Object.class, "o", true));
-        jm1.addAnnotation(new JavaAnnotation("Override"));
-        jm1.getBody().append(sb);
-
-        return factory.print(jm1);
+        return sb.toString();
     }
 
     public static String hashCodeGenerator(@NotNull final TableWrapper table) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(JavaTokens.NEWLINE);
-
-        List<ColumnWrapper> keyCols = table.getLocalKey().getColumns();
-        Collection<ColumnWrapper> valCols = table.getColumnsNonKeyList();
-        int i = 0;
-
-        for (ColumnWrapper column : keyCols) {
-            if (i++ == 0) {
-                sb.append("int result = Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
-            } else {
-                sb.append("result = 31 * result + Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
-            }
-        }
-
-        for (ColumnWrapper column : valCols) {
-            if (i++ == 0) {
-                sb.append("int result = Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
-            } else {
-                sb.append("result = 31 * result + Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
-            }
-        }
-
-        sb.append("return result;").append(JavaTokens.NEWLINE);
-
         table.addImport("java.util.Objects");
 
-        JavaMethod jm1 = new JavaMethod("hashCode");
-        jm1.addModifier(JavaMethodModifier.PUBLIC);
-        jm1.setJavaReturnType(new JavaReturnType(JavaPrimitive.INT));
-        jm1.addAnnotation(new JavaAnnotation("Override"));
-        jm1.getBody().append(sb);
+        StringBuilder sb = new StringBuilder();
+        sb.append("@Override").append(JavaTokens.NEWLINE);
+        sb.append("public int hashCode() {").append(JavaTokens.NEWLINE);
 
-        return factory.print(jm1);
+        List<AbstractWrapper> cols = new ArrayList<>();
+        LocalKeyWrapper lkw = table.getLocalKey();
+
+        if (lkw.isCompositeKey()) {
+            cols.add(lkw);
+        } else {
+            cols.addAll(lkw.getColumns());
+        }
+
+        cols.addAll(table.getColumnsNonKeyList());
+        int i = 0;
+
+        for (AbstractWrapper column : cols) {
+            if (i++ == 0) {
+                sb.append("int result = Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
+            } else {
+                sb.append("result = 31 * result + Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
+            }
+        }
+
+
+        sb.append("return result;").append(JavaTokens.NEWLINE);
+        sb.append("}").append(JavaTokens.NEWLINE);
+
+        return sb.toString();
     }
 
 }

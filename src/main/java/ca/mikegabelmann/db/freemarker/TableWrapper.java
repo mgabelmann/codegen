@@ -147,6 +147,20 @@ public class TableWrapper extends AbstractWrapper {
         return columns;
     }
 
+    public List<AbstractWrapper> getNonFkColumns() {
+        List<AbstractWrapper> cols = new ArrayList<>();
+
+        if (localKey.isCompositeKey()) {
+            cols.add(localKey);
+        } else {
+            cols.addAll(localKey.getColumns());
+        }
+
+        cols.addAll(this.getColumnsNonKeyList());
+
+        return cols;
+    }
+
     //FIXME: move to AbstractWrapper?
     public final String addTypedImport(@NotNull String importString) {
         this.addImport(importString);

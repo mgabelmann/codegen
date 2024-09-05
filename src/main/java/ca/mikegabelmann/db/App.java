@@ -201,6 +201,8 @@ public class App {
             //Use Google formatter to pretty print the class file
             String formattedSource = new Formatter().formatSource(baos.toString());
             LOG.debug(formattedSource);
+
+            //System.out.println(baos);
         }
 
     }
