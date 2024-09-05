@@ -470,16 +470,7 @@ public class Entity {
         sb.append(table.getSimpleName()).append(" ").append(table.getVariableName()).append(" = (").append(table.getSimpleName()).append(") o;").append(JavaTokens.NEWLINE);
         sb.append("return ");
 
-        List<AbstractWrapper> cols = new ArrayList<>();
-        LocalKeyWrapper lkw = table.getLocalKey();
-
-        if (lkw.isCompositeKey()) {
-            cols.add(lkw);
-        } else {
-            cols.addAll(lkw.getColumns());
-        }
-
-        cols.addAll(table.getColumnsNonKeyList());
+        List<AbstractWrapper> cols = table.getNonFkColumns();
         int i = cols.size();
 
         for (AbstractWrapper column : cols) {
@@ -499,16 +490,7 @@ public class Entity {
         sb.append("@Override").append(JavaTokens.NEWLINE);
         sb.append("public int hashCode() {").append(JavaTokens.NEWLINE);
 
-        List<AbstractWrapper> cols = new ArrayList<>();
-        LocalKeyWrapper lkw = table.getLocalKey();
-
-        if (lkw.isCompositeKey()) {
-            cols.add(lkw);
-        } else {
-            cols.addAll(lkw.getColumns());
-        }
-
-        cols.addAll(table.getColumnsNonKeyList());
+        List<AbstractWrapper> cols = table.getNonFkColumns();
         int i = 0;
 
         for (AbstractWrapper column : cols) {
