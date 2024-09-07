@@ -1,5 +1,6 @@
 package ca.mikegabelmann.db;
 
+import ca.mikegabelmann.db.freemarker.LocalKeyWrapper;
 import ca.mikegabelmann.db.freemarker.TableWrapper;
 import ca.mikegabelmann.db.mapping.Database;
 import ca.mikegabelmann.db.mapping.ReverseEngineering;
@@ -22,13 +23,19 @@ import org.apache.torque.TableType;
 
 import javax.xml.namespace.QName;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -108,7 +115,7 @@ public class App {
         //ANTR parse file
         //Parse SQLITE DB statements
         SQLiteFactory factory = new SQLiteFactory(columnMatcher);
-        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_6.sql")));
+        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_3.sql")));
         //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
 
         //Parse ORACLE DB statements
@@ -184,10 +191,8 @@ public class App {
             //allow template to access static classes
             BeansWrapperBuilder wrapper = new BeansWrapperBuilder(version);
             TemplateHashModel staticModels = wrapper.build().getStaticModels();
-            //TemplateHashModel staticObjectUtil1 = (TemplateHashModel) staticModels.get("ca.mikegabelmann.codegen.util.ObjectUtil");
             TemplateHashModel staticObjectUtil2 = (TemplateHashModel) staticModels.get("ca.mikegabelmann.db.freemarker.Entity");
 
-            //inputTemplate.put("ObjectUtil", staticObjectUtil1);
             inputTemplate.put("Entity", staticObjectUtil2);
 
             Template entity = cfg.getTemplate("entity.ftl");
@@ -202,7 +207,56 @@ public class App {
             String formattedSource = new Formatter().formatSource(baos.toString());
             LOG.debug(formattedSource);
 
-            //System.out.println(baos);
+            writeFile("target/generated-sources/", tw.getPackageName(), tw.getSimpleName(), formattedSource);
+
+            //does this table require a composite id?
+
+
+            if (tw.getLocalKey().isCompositeKey()) {
+                LocalKeyWrapper lkw = new LocalKeyWrapper(tw.getLocalKey().getTableName(), tw.getLocalKey().getColumns());
+                lkw.setPackageName("ca.mgabelmann.persistence.model");
+                //lkw.getColumns().addAll(tw.getLocalKey().getColumns());
+
+                //allow template to access static classes
+                BeansWrapperBuilder wrapper2 = new BeansWrapperBuilder(version);
+                TemplateHashModel staticModels2 = wrapper2.build().getStaticModels();
+                TemplateHashModel staticObjectUtil3 = (TemplateHashModel) staticModels2.get("ca.mikegabelmann.db.freemarker.Id");
+
+                Map<String, Object> input2Template = new HashMap<>(input);
+                input2Template.put("keyWrapper", lkw);
+                input2Template.put("tableName", tw.getTableType().getName());
+                input2Template.put("tableSimpleName", tw.getSimpleName());
+                input2Template.put("Id", staticObjectUtil3);
+
+                Template id = cfg.getTemplate("id.ftl");
+
+                OutputStream baos2 = new ByteArrayOutputStream();
+                Writer cw3 = new OutputStreamWriter(baos2);
+
+                id.process(input2Template, cw3);
+
+                //Use Google formatter to pretty print the class file
+                //String source = baos2.toString();
+                //LOG.debug(source);
+                String formattedSource2 = new Formatter().formatSource(baos2.toString());
+                LOG.debug(formattedSource2);
+            }
+
+
+        }
+
+    }
+
+    private static void writeFile(String basePath, String packageName, String className, String contents) throws IOException {
+        String fullClassName = packageName + "." + className;
+        String fileName = basePath + fullClassName.replaceAll("\\.", "/") + ".java";
+
+        Path path = Paths.get(fileName);
+        Files.createDirectories(path.getParent());
+
+        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            writer.write(contents);
+            LOG.debug("created file: {}", fileName);
         }
 
     }

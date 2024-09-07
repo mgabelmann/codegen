@@ -63,6 +63,16 @@ public abstract class AbstractWrapper implements JavaClass {
     }
 
     /**
+     *
+     * @param importString
+     * @return
+     */
+    public final String addTypedImport(@NotNull String importString) {
+        this.addImport(importString);
+        return importString.substring(importString.lastIndexOf('.') + 1);
+    }
+
+    /**
      * Get name of object. Unique for a Table, Unique for a Column within a Table, Unique for a Foreign Key.
      * or Unique Constraint.
      * @return name

@@ -8,7 +8,7 @@
  *
  * @author ${author}
  * @version ${version}
- * @see ${basePackagePath}.model.${tableWrapper.getSimpleName()}
+ * @see ${tableWrapper.packageName}.${tableWrapper.getSimpleName()}
  */
 </#if>
 @${tableWrapper.addTypedImport("javax.annotation.processing.Generated")}(
@@ -25,7 +25,7 @@ public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedI
     private static final long serialVersionUID = 1L;
 
     //PROPERTIES
-<#list tableWrapper.getColumns() as column>
+<#list tableWrapper.getAllColumns() as column>
     <#if javadoc>/** Column ${column.id}. */</#if>
     ${Entity.field(column)}
 
@@ -44,7 +44,7 @@ public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedI
     //TODO: associations, collections
 
     //GETTERS & SETTERS
-<#list tableWrapper.getColumns() as column>
+<#list tableWrapper.getAllColumns() as column>
     <#if javadoc>/** Set ${column.id}. */</#if>
     ${Entity.setter(column)}
 

@@ -90,7 +90,10 @@ public class ColumnWrapper extends AbstractWrapper {
     @Override
     public String toString() {
         return "ColumnWrapper{" +
-                "columnType=" + columnType +
+                "name=" + columnType.getName() +
+                ", PK=" + columnType.isPrimaryKey() +
+                ", type=" + columnType.getType() +
+                ", required=" + columnType.isRequired() +
                 '}';
     }
 }

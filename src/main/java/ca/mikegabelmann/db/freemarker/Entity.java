@@ -42,24 +42,28 @@ import java.util.stream.Collectors;
  * @author mgabe
  */
 public class Entity {
-    /** Logger. */
+    /**
+     * Logger.
+     */
     private static final Logger LOG = LogManager.getLogger(Entity.class);
 
     private static final AbstractJavaPrintFactory factory = new JavaClassPrintFactory();
 
 
-    /** Do not instantiate this class. */
-    private Entity() {}
+    /**
+     * Do not instantiate this class.
+     */
+    private Entity() {
+    }
 
     /**
-     *
      * @param tw
      * @param schema
      * @return
      */
     public static JavaAnnotation getTableAnnotation(@NotNull TableWrapper tw, @NotNull String type, String schema) {
         JavaAnnotation ann = new JavaAnnotation(type);
-        ann.add("name", tw.getTableType().getName());
+        ann.add("name", tw.getName());
 
         if (StringUtil.isNotBlankOrNull(schema)) {
             ann.add("schema", schema);
@@ -79,7 +83,6 @@ public class Entity {
 
 
     /**
-     *
      * @param cw
      * @return
      */
@@ -99,7 +102,6 @@ public class Entity {
     }
 
     /**
-     *
      * @return
      */
     public static JavaAnnotation getManyToOne() {
@@ -110,7 +112,6 @@ public class Entity {
     }
 
     /**
-     *
      * @return
      */
     public static JavaAnnotation getOneToMany() {
@@ -126,7 +127,6 @@ public class Entity {
     }
 
     /**
-     *
      * @return
      */
     public static JavaAnnotation getManyToMany() {
@@ -141,7 +141,6 @@ public class Entity {
     }
 
     /**
-     *
      * @param fkw
      * @return
      */
@@ -178,7 +177,6 @@ public class Entity {
     }
 
     /**
-     *
      * @param referenceType
      * @param columnWrapper
      * @return
@@ -199,7 +197,6 @@ public class Entity {
     }
 
     /**
-     *
      * @param cw
      * @return
      */
@@ -224,16 +221,15 @@ public class Entity {
         a.add("columnDefinition", cw.getColumnType().getType().value());
 
         //TODO: sizes
-            //TODO: precision/scale,
-            //TODO: size
-            //TODO: length
+        //TODO: precision/scale,
+        //TODO: size
+        //TODO: length
         //TODO: table
 
         return a;
     }
 
     /**
-     *
      * @param cw
      * @return
      */
@@ -261,6 +257,7 @@ public class Entity {
 
     /**
      * Get all imports for use in Java code.
+     *
      * @param table
      * @return
      */
@@ -272,6 +269,7 @@ public class Entity {
 
     /**
      * Get Java annotation formatted for use in Java code.
+     *
      * @param annotation annotation
      * @return Java annotation
      */
@@ -280,7 +278,6 @@ public class Entity {
     }
 
     /**
-     *
      * @param column
      * @return
      */
@@ -302,7 +299,7 @@ public class Entity {
                 }*/
 
                 //get @Column
-                field.addAnnotation(Entity.getColumnAnnotation(lkw.getColumns().get(0)));
+                field.addAnnotation(Entity.getColumnAnnotation((ColumnWrapper) lkw.getColumnValues().get(0)));
 
             } else {
                 //get @EmbeddedId
@@ -310,12 +307,13 @@ public class Entity {
             }
 
         } else if (column instanceof ForeignKeyWrapper fkw) {
+            //FIXME: this is not working as expected, in most cases should be @ManyToOne instead of @OneToOne
             //NOTE: need a better way to detect OneToOne, ManyToOne, ManyToMany
             if (!fkw.isCompositeKey() && fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
                 //get @OneToOne
                 field.addAnnotation(Entity.getOneToOne(fkw.getColumns().get(0)));
 
-            } else if (fkw.isCompositeKey() && ! fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
+            } else if (fkw.isCompositeKey() && !fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
                 //get @ManyToOne
                 field.addAnnotation(Entity.getManyToOne());
 
@@ -349,7 +347,6 @@ public class Entity {
     }
 
     /**
-     *
      * @param wrapper
      * @return
      */
@@ -369,7 +366,6 @@ public class Entity {
     }
 
     /**
-     *
      * @param wrapper
      * @return
      */
@@ -385,7 +381,6 @@ public class Entity {
     }
 
     /**
-     *
      * @param table
      * @return
      */
@@ -397,7 +392,6 @@ public class Entity {
     }
 
     /**
-     *
      * @param table
      * @return
      */
@@ -405,7 +399,7 @@ public class Entity {
         JavaConstructor con = new JavaConstructor(table.getCanonicalName());
         con.addModifier(JavaConstructorModifier.PUBLIC);
 
-        Collection<AbstractWrapper> columns = table.getColumns();
+        Collection<AbstractWrapper> columns = table.getAllColumns();
 
         for (AbstractWrapper column : columns) {
             if (allArgs || column.isRequired()) {
@@ -434,18 +428,19 @@ public class Entity {
     }
 
     /**
-     *
      * @param table
      * @return
      */
     public static String toStringGenerator(@NotNull final TableWrapper table) {
+        return toStringGenerator(table.getNonFkColumns(), table.getSimpleName());
+    }
+
+    public static String toStringGenerator(@NotNull final List<AbstractWrapper> cols, @NotNull final String simpleName) {
         StringBuilder sb = new StringBuilder();
         sb.append("@Override").append(JavaTokens.NEWLINE);
         sb.append("public String toString() {").append(JavaTokens.NEWLINE);
 
-        List<AbstractWrapper> cols = table.getNonFkColumns();
-
-        sb.append("return \"").append(table.getSimpleName()).append("{\" +").append(JavaTokens.NEWLINE);
+        sb.append("return \"").append(simpleName).append("{\" +").append(JavaTokens.NEWLINE);
         int i = 0;
 
         for (AbstractWrapper column : cols) {
@@ -462,19 +457,22 @@ public class Entity {
     public static String equalsGenerator(@NotNull final TableWrapper table) {
         table.addImport("java.util.Objects");
 
+        return equalsGenerator(table.getNonFkColumns(), table.getSimpleName(), table.getVariableName());
+    }
+
+    public static String equalsGenerator(@NotNull final List<AbstractWrapper> cols, @NotNull final String simpleName, @NotNull final String variableName) {
         StringBuilder sb = new StringBuilder();
         sb.append("@Override").append(JavaTokens.NEWLINE);
         sb.append("public boolean equals(final Object o) {").append(JavaTokens.NEWLINE);
         sb.append("if (this == o) return true;").append(JavaTokens.NEWLINE);
-        sb.append("if (!(o instanceof ").append(table.getSimpleName()).append(")) return false;").append(JavaTokens.NEWLINE);
-        sb.append(table.getSimpleName()).append(" ").append(table.getVariableName()).append(" = (").append(table.getSimpleName()).append(") o;").append(JavaTokens.NEWLINE);
+        sb.append("if (!(o instanceof ").append(simpleName).append(")) return false;").append(JavaTokens.NEWLINE);
+        sb.append(simpleName).append(" ").append(variableName).append(" = (").append(simpleName).append(") o;").append(JavaTokens.NEWLINE);
         sb.append("return ");
 
-        List<AbstractWrapper> cols = table.getNonFkColumns();
         int i = cols.size();
 
         for (AbstractWrapper column : cols) {
-            sb.append("Objects.equals(").append(column.getVariableName()).append(", ").append(table.getVariableName()).append(".").append(column.getVariableName()).append(")");
+            sb.append("Objects.equals(").append(column.getVariableName()).append(", ").append(variableName).append(".").append(column.getVariableName()).append(")");
             sb.append(--i > 0 ? " && " : ";" + JavaTokens.NEWLINE);
         }
 
@@ -486,13 +484,15 @@ public class Entity {
     public static String hashCodeGenerator(@NotNull final TableWrapper table) {
         table.addImport("java.util.Objects");
 
+        return hashCodeGenerator(table.getNonFkColumns(), table.getSimpleName(), table.getVariableName());
+    }
+
+    public static String hashCodeGenerator(@NotNull final List<AbstractWrapper> cols, @NotNull final String simpleName, @NotNull final String variableName) {
         StringBuilder sb = new StringBuilder();
         sb.append("@Override").append(JavaTokens.NEWLINE);
         sb.append("public int hashCode() {").append(JavaTokens.NEWLINE);
 
-        List<AbstractWrapper> cols = table.getNonFkColumns();
         int i = 0;
-
         for (AbstractWrapper column : cols) {
             if (i++ == 0) {
                 sb.append("int result = Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
@@ -500,7 +500,6 @@ public class Entity {
                 sb.append("result = 31 * result + Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
             }
         }
-
 
         sb.append("return result;").append(JavaTokens.NEWLINE);
         sb.append("}").append(JavaTokens.NEWLINE);

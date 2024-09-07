@@ -9,7 +9,7 @@ import ${basePackagePath}.model.${tableWrapper.getSimpleName()};
 
 <#if javadoc>
 /**
- * <p>Data Access Object (DAO) for <em>${tableWrapper.tableType.name}</em>.</p>
+ * <p>Data Access Object (DAO) for <em>${tableWrapper.name}</em>.</p>
  * <p><b>NOTE:</b>if this class is re-generated any changes will be lost, extend this interface if you wish to
  * add functionality</p>
  *

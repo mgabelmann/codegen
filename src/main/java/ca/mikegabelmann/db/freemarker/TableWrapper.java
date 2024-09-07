@@ -4,6 +4,7 @@ import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.torque.ColumnType;
 import org.apache.torque.ForeignKeyType;
 import org.apache.torque.ReferenceType;
 import org.apache.torque.TableType;
@@ -11,9 +12,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -29,10 +32,13 @@ public class TableWrapper extends AbstractWrapper {
     private final TableType tableType;
 
     /**  */
-    private final Map<String, ColumnWrapper> columnsNonKey;
+    private final Map<String, ForeignKeyWrapper> columnsFk;
 
     /**  */
-    private final Map<String, ForeignKeyWrapper> columnsForeignKey;
+    private final Map<String, ColumnWrapper> columns;
+
+    /**  */
+    private final Map<String, AbstractWrapper> keys;
 
     /**  */
     private final LocalKeyWrapper localKey;
@@ -46,53 +52,54 @@ public class TableWrapper extends AbstractWrapper {
         @NotNull TableType tableType) {
 
         this.tableType = tableType;
+        this.columnsFk = new TreeMap<>();
+        this.columns = new TreeMap<>();
+        this.keys = new TreeMap<>();
 
-        //collection of all columns by column name
-        Map<String, ColumnWrapper> columns = tableType.getColumn().stream()
-                .map(ColumnWrapper::new)
-                .collect(Collectors.toMap(ColumnWrapper::getName, Function.identity()));
-
-        //collection of all keys (primary or composite) that identify this table
-        Map<String, ColumnWrapper> keys = columns.values().stream()
-                .filter(c -> c.getColumnType().isPrimaryKey())
-                .collect(Collectors.toMap(ColumnWrapper::getName, Function.identity()));
-
-        //collection of foreign keys
-        Map<String, ForeignKeyWrapper> foreignKeys = tableType.getForeignKeyOrIndexOrUnique().stream()
+        //collection of foreign keys by column name (not part of key)
+        Map<String, ForeignKeyWrapper> foreignKeysTmp = tableType.getForeignKeyOrIndexOrUnique().stream()
                 .filter(c -> c instanceof ForeignKeyType)
                 .map(c -> (ForeignKeyType) c)
                 .map(ForeignKeyWrapper::new)
                 .collect(Collectors.toMap(c -> c.getForeignKeyType().getForeignTable(), Function.identity()));
 
-        {
-            //cleanup
-            for (ForeignKeyWrapper fkw : foreignKeys.values()) {
-                for (ReferenceType rt : fkw.getForeignKeyType().getReference()) {
-                    ColumnWrapper c = columns.remove(rt.getLocal());
+        //collection of columns that are not part of primary or composite key
+        Map<String, ColumnWrapper> columnsNonKeyTmp = tableType.getColumn().stream()
+                .filter(c -> !c.isPrimaryKey())
+                .map(ColumnWrapper::new)
+                .collect(Collectors.toMap(ColumnWrapper::getName, Function.identity()));
 
-                    if (c != null) {
-                        //NOTE: should never be null
-                        fkw.addColumn(c);
-                    }
+        //collection of all keys (primary or composite) that identify this table
+        Map<String, ColumnWrapper> columnsKeyTmp = tableType.getColumn().stream()
+                .filter(ColumnType::isPrimaryKey)
+                .map(ColumnWrapper::new)
+                .collect(Collectors.toMap(ColumnWrapper::getName, Function.identity()));
+
+        //remove columns that are a fk
+        for (ForeignKeyWrapper fkw : foreignKeysTmp.values()) {
+            for (ReferenceType rt : fkw.getForeignKeyType().getReference()) {
+                String localKey = rt.getLocal();
+
+                if (columnsNonKeyTmp.containsKey(localKey)) {
+                    ColumnWrapper cw = columnsNonKeyTmp.remove(localKey);
+                    fkw.addColumn(cw);
+                    columnsFk.put(fkw.getForeignKeyType().getForeignTable(), fkw);
+
+                } else if (columnsKeyTmp.containsKey(localKey)) {
+                    ColumnWrapper cw = columnsKeyTmp.remove(localKey);
+                    fkw.addColumn(cw);
+                    keys.put(fkw.getForeignKeyType().getForeignTable(), fkw);
                 }
             }
-
-            for (String key : keys.keySet()) {
-                columns.remove(key);
-            }
         }
 
+        columns.putAll(columnsNonKeyTmp);
+        keys.putAll(columnsKeyTmp);
+        localKey = new LocalKeyWrapper(this.getName(), keys);
+
+        /*
         //TODO: process index
         //TODO: process unique
-
-        this.columnsNonKey = columns;
-        this.columnsForeignKey = foreignKeys;
-        this.localKey = new LocalKeyWrapper(this.getName());
-
-        for (ColumnWrapper column : keys.values()) {
-            localKey.addColumn(column);
-        }
-
 
         if (localKey.isCompositeKey()) {
             //TODO:
@@ -107,43 +114,27 @@ public class TableWrapper extends AbstractWrapper {
         if (!foreignKeys.isEmpty()) {
             //TODO: detect OneToOne, OneToMany, ManyToOne, ManyToMany
         }
+        */
 
     }
 
-    /**
-     * Return underlying object.
-     * @return table
-     */
-    public final TableType getTableType() {
+    public TableType getTableType() {
         return tableType;
-    }
-
-    public Map<String, ColumnWrapper> getColumnsNonKey() {
-        return columnsNonKey;
-    }
-
-    public Map<String, ForeignKeyWrapper> getColumnsForeignKey() {
-        return columnsForeignKey;
-    }
-
-    public Collection<ColumnWrapper> getColumnsNonKeyList() {
-        return columnsNonKey.values();
-    }
-
-    public Collection<ForeignKeyWrapper> getColumnsForeignKeyList() {
-        return columnsForeignKey.values();
     }
 
     public LocalKeyWrapper getLocalKey() {
         return localKey;
     }
 
-    public List<AbstractWrapper> getColumns() {
-        List<AbstractWrapper> columns = new ArrayList<>();
-        columns.add(localKey);
-        columns.addAll(columnsNonKey.values());
-        columns.addAll(columnsForeignKey.values());
+    public Map<String, AbstractWrapper> getKeys() {
+        return keys;
+    }
 
+    public Map<String, ForeignKeyWrapper> getColumnsFk() {
+        return columnsFk;
+    }
+
+    public Map<String, ColumnWrapper> getColumns() {
         return columns;
     }
 
@@ -153,24 +144,24 @@ public class TableWrapper extends AbstractWrapper {
         if (localKey.isCompositeKey()) {
             cols.add(localKey);
         } else {
-            cols.addAll(localKey.getColumns());
+            cols.addAll(localKey.getColumnValues());
         }
 
-        cols.addAll(this.getColumnsNonKeyList());
+        cols.addAll(columns.values());
 
         return cols;
     }
 
-    //FIXME: move to AbstractWrapper?
-    public final String addTypedImport(@NotNull String importString) {
-        this.addImport(importString);
-        return importString.substring(importString.lastIndexOf('.') + 1);
+    public List<AbstractWrapper> getAllColumns() {
+        List<AbstractWrapper> cols = new ArrayList<>(this.getNonFkColumns());
+        cols.addAll(columns.values());
+        return cols;
     }
 
     @Override
     public Set<String> getAllImports() {
-        this.imports.addAll(columnsForeignKey.values().stream().map(ForeignKeyWrapper::getAllImports).flatMap(Collection::stream).toList());
-        this.imports.addAll(columnsNonKey.values().stream().map(ColumnWrapper::getAllImports).flatMap(Collection::stream).toList());
+        this.imports.addAll(columnsFk.values().stream().map(ForeignKeyWrapper::getAllImports).flatMap(Collection::stream).toList());
+        this.imports.addAll(columns.values().stream().map(ColumnWrapper::getAllImports).flatMap(Collection::stream).toList());
         this.imports.addAll(localKey.getAllImports());
         return this.imports;
     }

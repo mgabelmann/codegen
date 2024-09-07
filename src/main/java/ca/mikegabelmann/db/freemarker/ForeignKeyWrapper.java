@@ -94,4 +94,11 @@ public class ForeignKeyWrapper extends AbstractWrapper {
         return imports;
     }
 
+    @Override
+    public String toString() {
+        return "ForeignKeyWrapper{" +
+                "name=" + foreignKeyType.getForeignTable() +
+                ", columns=" + columns +
+                '}';
+    }
 }
