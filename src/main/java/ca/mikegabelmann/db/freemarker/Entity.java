@@ -457,10 +457,11 @@ public class Entity {
     public static String equalsGenerator(@NotNull final TableWrapper table) {
         table.addImport("java.util.Objects");
 
-        return equalsGenerator(table.getNonFkColumns(), table.getSimpleName(), table.getVariableName());
+        return equalsGenerator(table.getNonFkColumns(), table.getSimpleName(), "that");
     }
 
     public static String equalsGenerator(@NotNull final List<AbstractWrapper> cols, @NotNull final String simpleName, @NotNull final String variableName) {
+        //NOTE: technically a JPA object with the same key (PK or Composite) is equal
         StringBuilder sb = new StringBuilder();
         sb.append("@Override").append(JavaTokens.NEWLINE);
         sb.append("public boolean equals(final Object o) {").append(JavaTokens.NEWLINE);
@@ -484,10 +485,10 @@ public class Entity {
     public static String hashCodeGenerator(@NotNull final TableWrapper table) {
         table.addImport("java.util.Objects");
 
-        return hashCodeGenerator(table.getNonFkColumns(), table.getSimpleName(), table.getVariableName());
+        return hashCodeGenerator(table.getNonFkColumns());
     }
 
-    public static String hashCodeGenerator(@NotNull final List<AbstractWrapper> cols, @NotNull final String simpleName, @NotNull final String variableName) {
+    public static String hashCodeGenerator(@NotNull final List<AbstractWrapper> cols) {
         StringBuilder sb = new StringBuilder();
         sb.append("@Override").append(JavaTokens.NEWLINE);
         sb.append("public int hashCode() {").append(JavaTokens.NEWLINE);

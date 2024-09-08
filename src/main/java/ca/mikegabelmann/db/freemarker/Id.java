@@ -84,12 +84,12 @@ public class Id {
 
     public static String equalsGenerator(@NotNull final LocalKeyWrapper lkw) {
         lkw.addImport("java.util.Objects");
-        return Entity.equalsGenerator(lkw.getColumnValues(), lkw.getSimpleName(), lkw.getVariableName());
+        return Entity.equalsGenerator(lkw.getColumnValues(), lkw.getSimpleName(), "that");
     }
 
     public static String hashCodeGenerator(@NotNull final LocalKeyWrapper lkw) {
         lkw.addImport("java.util.Objects");
-        return Entity.hashCodeGenerator(lkw.getColumnValues(), lkw.getSimpleName(), lkw.getVariableName());
+        return Entity.hashCodeGenerator(lkw.getColumnValues());
     }
 
     public static String printPackage(@NotNull final LocalKeyWrapper lkw) {

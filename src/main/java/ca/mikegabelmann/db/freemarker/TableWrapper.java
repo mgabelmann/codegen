@@ -154,7 +154,6 @@ public class TableWrapper extends AbstractWrapper {
 
     public List<AbstractWrapper> getAllColumns() {
         List<AbstractWrapper> cols = new ArrayList<>(this.getNonFkColumns());
-        cols.addAll(columns.values());
         return cols;
     }
 

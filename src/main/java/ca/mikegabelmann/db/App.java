@@ -115,7 +115,7 @@ public class App {
         //ANTR parse file
         //Parse SQLITE DB statements
         SQLiteFactory factory = new SQLiteFactory(columnMatcher);
-        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_3.sql")));
+        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_1.sql")));
         //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
 
         //Parse ORACLE DB statements
@@ -215,7 +215,6 @@ public class App {
             if (tw.getLocalKey().isCompositeKey()) {
                 LocalKeyWrapper lkw = new LocalKeyWrapper(tw.getLocalKey().getTableName(), tw.getLocalKey().getColumns());
                 lkw.setPackageName("ca.mgabelmann.persistence.model");
-                //lkw.getColumns().addAll(tw.getLocalKey().getColumns());
 
                 //allow template to access static classes
                 BeansWrapperBuilder wrapper2 = new BeansWrapperBuilder(version);
@@ -240,6 +239,8 @@ public class App {
                 //LOG.debug(source);
                 String formattedSource2 = new Formatter().formatSource(baos2.toString());
                 LOG.debug(formattedSource2);
+
+                writeFile("target/generated-sources/", lkw.getPackageName(), lkw.getSimpleName(), formattedSource2);
             }
 
 
