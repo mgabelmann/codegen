@@ -25,7 +25,6 @@ import javax.xml.namespace.QName;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -115,7 +114,7 @@ public class App {
         //ANTR parse file
         //Parse SQLITE DB statements
         SQLiteFactory factory = new SQLiteFactory(columnMatcher);
-        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_1.sql")));
+        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_5.sql")));
         //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
 
         //Parse ORACLE DB statements
@@ -195,16 +194,15 @@ public class App {
 
             inputTemplate.put("Entity", staticObjectUtil2);
 
-            Template entity = cfg.getTemplate("entity.ftl");
-
             OutputStream baos = new ByteArrayOutputStream();
             Writer cw2 = new OutputStreamWriter(baos);
 
-            //Writer cw2 = new OutputStreamWriter(System.out);
+            Template entity = cfg.getTemplate("entity.ftl");
             entity.process(inputTemplate, cw2);
 
             //Use Google formatter to pretty print the class file
             String formattedSource = new Formatter().formatSource(baos.toString());
+            //String formattedSource = baos.toString();
             LOG.debug(formattedSource);
 
             writeFile("target/generated-sources/", tw.getPackageName(), tw.getSimpleName(), formattedSource);

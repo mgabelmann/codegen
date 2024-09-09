@@ -134,7 +134,7 @@ public final class AnnotationUtil {
 			
 		} else {
 			value = "";	
-			logger.warn("invalid escape value={}, using \"\"", o);
+			logger.warn("invalid escape value=null, using \"\"");
 		}
 		
 		return value;

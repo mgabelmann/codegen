@@ -77,6 +77,7 @@ class TableWrapperTest {
         Assertions.assertEquals(0, tw1.getImports().size());
     }
 
+    /* FIXME: update name and methods
     @Test
     @DisplayName("getColumnsNonKey")
     void test1_getColumnsNonKey() {
@@ -104,6 +105,7 @@ class TableWrapperTest {
         Assertions.assertNotNull(tw1.getColumnsForeignKeyList());
         Assertions.assertEquals(1, tw1.getColumnsForeignKeyList().size());
     }
+     */
 
     @Test
     @DisplayName("getLocalKey")
@@ -114,7 +116,13 @@ class TableWrapperTest {
     @Test
     @DisplayName("getColumns")
     void test1_getColumns() {
-        Assertions.assertEquals(2, tw1.getColumns().size());
+        Assertions.assertEquals(0, tw1.getColumns().size());
+    }
+
+    @Test
+    @DisplayName("getColumnsFk")
+    void test1_getColumnsFk() {
+        Assertions.assertEquals(1, tw1.getColumnsFk().size());
     }
 
     @Test

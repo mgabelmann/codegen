@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -154,6 +153,7 @@ public class TableWrapper extends AbstractWrapper {
 
     public List<AbstractWrapper> getAllColumns() {
         List<AbstractWrapper> cols = new ArrayList<>(this.getNonFkColumns());
+        cols.addAll(columnsFk.values());
         return cols;
     }
 

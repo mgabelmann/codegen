@@ -39,7 +39,7 @@ class LocalKeyWrapperTest {
         cw1 = new ColumnWrapper(ct1);
 
         lkw = new LocalKeyWrapper("PERSON");
-        lkw.addColumn(cw1);
+        lkw.addColumn("CONTACT_ID", cw1);
     }
 
     @Test
@@ -52,14 +52,14 @@ class LocalKeyWrapperTest {
     @Test
     @DisplayName("addColumn")
     void test1_addColumn() {
-        lkw.addColumn(new ColumnWrapper(new ColumnType()));
+        lkw.addColumn("TEST", new ColumnWrapper(new ColumnType()));
         Assertions.assertEquals(2, lkw.getColumns().size());
     }
 
     @Test
     @DisplayName("removeColumn")
     void test1_removeColumn() {
-        lkw.removeColumn(cw1);
+        lkw.removeColumn("CONTACT_ID");
         Assertions.assertEquals(0, lkw.getColumns().size());
     }
 
@@ -72,7 +72,7 @@ class LocalKeyWrapperTest {
     @Test
     @DisplayName("isCompositeKey - 2 columns")
     void test2_isCompositeKey() {
-        lkw.addColumn(new ColumnWrapper(new ColumnType()));
+        lkw.addColumn("TEST", new ColumnWrapper(new ColumnType()));
         Assertions.assertTrue(lkw.isCompositeKey());
     }
 
@@ -85,7 +85,7 @@ class LocalKeyWrapperTest {
     @Test
     @DisplayName("getName - 2 columns")
     void test2_getName() {
-        lkw.addColumn(new ColumnWrapper(new ColumnType()));
+        lkw.addColumn("TEST", new ColumnWrapper(new ColumnType()));
         Assertions.assertEquals("PERSON_ID", lkw.getName());
     }
 
@@ -98,7 +98,7 @@ class LocalKeyWrapperTest {
     @Test
     @DisplayName("getId - 2 column")
     void test2_getId() {
-        lkw.addColumn(new ColumnWrapper(new ColumnType()));
+        lkw.addColumn("TEST", new ColumnWrapper(new ColumnType()));
         Assertions.assertEquals("PERSON_ID", lkw.getId());
     }
 
@@ -111,7 +111,7 @@ class LocalKeyWrapperTest {
     @Test
     @DisplayName("getCanonicalName - 2 columns")
     void test2_getCanonicalName() {
-        lkw.addColumn(new ColumnWrapper(new ColumnType()));
+        lkw.addColumn("TEST", new ColumnWrapper(new ColumnType()));
         Assertions.assertEquals("PersonId", lkw.getCanonicalName());
     }
 
@@ -124,7 +124,7 @@ class LocalKeyWrapperTest {
     @Test
     @DisplayName("getSimpleName - 2 columns")
     void test2_getSimpleName() {
-        lkw.addColumn(new ColumnWrapper(new ColumnType()));
+        lkw.addColumn("TEST", new ColumnWrapper(new ColumnType()));
         Assertions.assertEquals("PersonId", lkw.getSimpleName());
     }
 
@@ -137,7 +137,7 @@ class LocalKeyWrapperTest {
     @Test
     @DisplayName("getVariableName - 2 columns")
     void test2_getVariableName() {
-        lkw.addColumn(new ColumnWrapper(new ColumnType()));
+        lkw.addColumn("TEST", new ColumnWrapper(new ColumnType()));
         Assertions.assertEquals("personId", lkw.getVariableName());
     }
 
@@ -150,7 +150,7 @@ class LocalKeyWrapperTest {
     @Test
     @DisplayName("isRequired - 2 columns")
     void test2_isRequired() {
-        lkw.addColumn(new ColumnWrapper(new ColumnType()));
+        lkw.addColumn("TEST", new ColumnWrapper(new ColumnType()));
         Assertions.assertTrue(lkw.isRequired());
     }
 

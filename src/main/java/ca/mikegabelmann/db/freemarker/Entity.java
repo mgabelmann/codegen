@@ -3,11 +3,9 @@ package ca.mikegabelmann.db.freemarker;
 import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.java.AbstractJavaPrintFactory;
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
-import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
-import ca.mikegabelmann.codegen.java.lang.classbody.JavaClass;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaConstructor;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaField;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaImport;
@@ -104,9 +102,11 @@ public class Entity {
     /**
      * @return
      */
-    public static JavaAnnotation getManyToOne() {
-        JavaAnnotation ann = new JavaAnnotation("ManyToOne");
+    public static JavaAnnotation getManyToOne(@NotNull AbstractWrapper aw) {
+        JavaAnnotation ann = new JavaAnnotation("jakarta.persistence.ManyToOne");
         ann.add("fetch", FetchType.LAZY);
+
+        aw.addImport("jakarta.persistence.FetchType");
 
         return ann;
     }
@@ -308,7 +308,12 @@ public class Entity {
 
         } else if (column instanceof ForeignKeyWrapper fkw) {
             //FIXME: this is not working as expected, in most cases should be @ManyToOne instead of @OneToOne
-            //NOTE: need a better way to detect OneToOne, ManyToOne, ManyToMany
+            //the difference between ManyToOne and OneToOne is OneToOne have unique on FK
+            //NOTE: need a better way to detect OneToOne, ManyToOne, @OneToMany, ManyToMany
+
+            field.addAnnotation(Entity.getManyToOne(fkw));
+
+            /*
             if (!fkw.isCompositeKey() && fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
                 //get @OneToOne
                 field.addAnnotation(Entity.getOneToOne(fkw.getColumns().get(0)));
@@ -321,6 +326,7 @@ public class Entity {
                 //TODO: detect @ManyToMany
 
             }
+            */
 
             //get @JoinColumns if > 1 column with @JoinColumn, otherwise @JoinColumn
             field.addAnnotation(Entity.getJoinColumn(fkw));
@@ -399,7 +405,7 @@ public class Entity {
         JavaConstructor con = new JavaConstructor(table.getCanonicalName());
         con.addModifier(JavaConstructorModifier.PUBLIC);
 
-        Collection<AbstractWrapper> columns = table.getAllColumns();
+        List<AbstractWrapper> columns = table.getAllColumns();
 
         for (AbstractWrapper column : columns) {
             if (allArgs || column.isRequired()) {
