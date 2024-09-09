@@ -80,21 +80,11 @@ public class Entity {
     }
 
 
-    /**
-     * @param cw
-     * @return
-     */
-    public static JavaAnnotation getOneToOne(@NotNull ColumnWrapper cw) {
+    public static JavaAnnotation getOneToOne(@NotNull final AbstractWrapper aw, final boolean eager) {
         JavaAnnotation ann = new JavaAnnotation("jakarta.persistence.OneToOne");
+        ann.add("fetch", eager ? FetchType.EAGER : FetchType.LAZY);
 
-        if (cw.getId().toUpperCase().endsWith("_CODE")) {
-            ann.add("fetch", FetchType.EAGER);
-
-        } else {
-            ann.add("fetch", FetchType.LAZY);
-        }
-
-        cw.addImport("jakarta.persistence.FetchType");
+        aw.addImport("jakarta.persistence.FetchType");
 
         return ann;
     }
@@ -311,7 +301,13 @@ public class Entity {
             //the difference between ManyToOne and OneToOne is OneToOne have unique on FK
             //NOTE: need a better way to detect OneToOne, ManyToOne, @OneToMany, ManyToMany
 
-            field.addAnnotation(Entity.getManyToOne(fkw));
+            //NOTE: if the column is FK AND is UNIQUE then it's OneToOne, else ManyToOne. How to detect OneToMany and ManyToMany?!?
+
+            if (fkw.getColumns().stream().anyMatch(ColumnWrapper::isUnique)) {
+                field.addAnnotation(Entity.getOneToOne(fkw, fkw.getSimpleName().endsWith("CODE")));
+            } else {
+                field.addAnnotation(Entity.getManyToOne(fkw));
+            }
 
             /*
             if (!fkw.isCompositeKey() && fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {

@@ -114,7 +114,7 @@ public class App {
         //ANTR parse file
         //Parse SQLITE DB statements
         SQLiteFactory factory = new SQLiteFactory(columnMatcher);
-        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_5.sql")));
+        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_8.sql")));
         //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
 
         //Parse ORACLE DB statements

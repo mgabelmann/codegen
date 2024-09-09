@@ -13,6 +13,8 @@ public class ColumnWrapper extends AbstractWrapper {
     /**  */
     private final ColumnType columnType;
 
+    /**  */
+    private boolean unique;
 
     /**
      * Constructor.
@@ -22,6 +24,7 @@ public class ColumnWrapper extends AbstractWrapper {
         @NotNull final ColumnType columnType) {
 
         this.columnType = columnType;
+        this.unique = false;
     }
 
     /**
@@ -49,6 +52,14 @@ public class ColumnWrapper extends AbstractWrapper {
      */
     public ColumnType getColumnType() {
         return columnType;
+    }
+
+    public boolean isUnique() {
+        return unique;
+    }
+
+    public void setUnique(boolean unique) {
+        this.unique = unique;
     }
 
     @Override
@@ -94,6 +105,7 @@ public class ColumnWrapper extends AbstractWrapper {
                 ", PK=" + columnType.isPrimaryKey() +
                 ", type=" + columnType.getType() +
                 ", required=" + columnType.isRequired() +
+                ", unique=" + unique +
                 '}';
     }
 }

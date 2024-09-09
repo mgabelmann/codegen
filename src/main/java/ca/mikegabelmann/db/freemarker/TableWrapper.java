@@ -6,12 +6,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.torque.ColumnType;
 import org.apache.torque.ForeignKeyType;
+import org.apache.torque.IdMethodParameterType;
+import org.apache.torque.IndexType;
 import org.apache.torque.ReferenceType;
 import org.apache.torque.TableType;
+import org.apache.torque.UniqueColumnType;
+import org.apache.torque.UniqueType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,8 +41,8 @@ public class TableWrapper extends AbstractWrapper {
     /**  */
     private final Map<String, ColumnWrapper> columns;
 
-    /**  */
-    private final Map<String, AbstractWrapper> keys;
+//    /**  */
+//    private final Map<String, AbstractWrapper> keys;
 
     /**  */
     private final LocalKeyWrapper localKey;
@@ -53,7 +58,10 @@ public class TableWrapper extends AbstractWrapper {
         this.tableType = tableType;
         this.columnsFk = new TreeMap<>();
         this.columns = new TreeMap<>();
-        this.keys = new TreeMap<>();
+//        this.keys = new TreeMap<>();
+
+        Map<String, ColumnWrapper> allCols = new TreeMap<>();
+        Map<String, AbstractWrapper> keys = new TreeMap<>();
 
         //collection of foreign keys by column name (not part of key)
         Map<String, ForeignKeyWrapper> foreignKeysTmp = tableType.getForeignKeyOrIndexOrUnique().stream()
@@ -74,6 +82,10 @@ public class TableWrapper extends AbstractWrapper {
                 .map(ColumnWrapper::new)
                 .collect(Collectors.toMap(ColumnWrapper::getName, Function.identity()));
 
+        //keep a record of all columns
+        allCols.putAll(columnsNonKeyTmp);
+        allCols.putAll(columnsKeyTmp);
+
         //remove columns that are a fk
         for (ForeignKeyWrapper fkw : foreignKeysTmp.values()) {
             for (ReferenceType rt : fkw.getForeignKeyType().getReference()) {
@@ -92,9 +104,23 @@ public class TableWrapper extends AbstractWrapper {
             }
         }
 
-        columns.putAll(columnsNonKeyTmp);
         keys.putAll(columnsKeyTmp);
-        localKey = new LocalKeyWrapper(this.getName(), keys);
+
+        this.columns.putAll(columnsNonKeyTmp);
+        this.localKey = new LocalKeyWrapper(this.getName(), keys);
+
+        for (Object o : tableType.getForeignKeyOrIndexOrUnique()) {
+            if (o instanceof UniqueType ut) {
+                for (UniqueColumnType uct : ut.getUniqueColumn()) {
+                    if (allCols.containsKey(uct.getName())) {
+                        ColumnWrapper cw = allCols.get(uct.getName());
+                        cw.setUnique(true);
+                    }
+                }
+            }
+        }
+
+        LOG.debug("setup {} complete", getName());
 
         /*
         //TODO: process index
@@ -125,9 +151,9 @@ public class TableWrapper extends AbstractWrapper {
         return localKey;
     }
 
-    public Map<String, AbstractWrapper> getKeys() {
-        return keys;
-    }
+//    public Map<String, AbstractWrapper> getKeys() {
+//        return keys;
+//    }
 
     public Map<String, ForeignKeyWrapper> getColumnsFk() {
         return columnsFk;

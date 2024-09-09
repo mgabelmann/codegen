@@ -4,9 +4,11 @@
 CREATE TABLE PRODUCT (
     id INTEGER PRIMARY KEY,
     shipment_id INTEGER,
+    --shipment_id INTEGER UNIQUE,
     create_dtm TEXT NOT NULL,
 
-    UNIQUE(shipment_id),
+
+    --UNIQUE(shipment_id),
     FOREIGN KEY (shipment_id) REFERENCES SHIPMENT (id)
 );
 

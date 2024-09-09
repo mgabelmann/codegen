@@ -180,10 +180,27 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener implements Databa
 
         //primary key columns
         if (!ctx.indexed_column().isEmpty()) {
-            LOG.debug("primary key");
+            if (ctx.UNIQUE_() != null) {
+                LOG.debug("UNIQUE constraint");
 
-            for (SQLiteParser.Indexed_columnContext record : ctx.indexed_column()) {
-                LOG.debug("\tcolumn={}", record.getText());
+                UniqueType ut = new UniqueType();
+
+                for (SQLiteParser.Indexed_columnContext record : ctx.indexed_column()) {
+                    UniqueColumnType uct = new UniqueColumnType();
+                    uct.setName(record.getText());
+
+                    ut.getUniqueColumn().add(uct);
+
+                    LOG.debug("  unique column={}", record.getText());
+                }
+
+                table.getForeignKeyOrIndexOrUnique().add(ut);
+
+            } else if (ctx.PRIMARY_() != null) {
+                LOG.debug("PRIMARY constraint");
+
+                //TODO:
+
             }
         }
 
