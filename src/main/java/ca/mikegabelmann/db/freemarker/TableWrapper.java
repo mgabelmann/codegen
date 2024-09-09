@@ -6,8 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.torque.ColumnType;
 import org.apache.torque.ForeignKeyType;
-import org.apache.torque.IdMethodParameterType;
-import org.apache.torque.IndexType;
 import org.apache.torque.ReferenceType;
 import org.apache.torque.TableType;
 import org.apache.torque.UniqueColumnType;
@@ -16,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
