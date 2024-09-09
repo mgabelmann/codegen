@@ -62,7 +62,6 @@ public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedI
 </#assign>
 
 
-<#--package ${basePackagePath}.model-->
 ${Entity.printPackage(tableWrapper)}
 
 ${Entity.printImports(tableWrapper)}
