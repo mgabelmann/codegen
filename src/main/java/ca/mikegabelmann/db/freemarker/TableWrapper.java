@@ -38,8 +38,8 @@ public class TableWrapper extends AbstractWrapper {
     /**  */
     private final Map<String, ColumnWrapper> columns;
 
-//    /**  */
-//    private final Map<String, AbstractWrapper> keys;
+    /**  */
+    private final Map<String, AbstractWrapper> bidirectionals;
 
     /**  */
     private final LocalKeyWrapper localKey;
@@ -55,7 +55,7 @@ public class TableWrapper extends AbstractWrapper {
         this.tableType = tableType;
         this.columnsFk = new TreeMap<>();
         this.columns = new TreeMap<>();
-//        this.keys = new TreeMap<>();
+        this.bidirectionals = new TreeMap<>();
 
         Map<String, ColumnWrapper> allCols = new TreeMap<>();
         Map<String, AbstractWrapper> keys = new TreeMap<>();
@@ -174,9 +174,18 @@ public class TableWrapper extends AbstractWrapper {
         return cols;
     }
 
+    public List<AbstractWrapper> getBidirectionalColumns() {
+        return new ArrayList<>(bidirectionals.values());
+    }
+
+    public Map<String, AbstractWrapper> getBidirectionals() {
+        return bidirectionals;
+    }
+
     public List<AbstractWrapper> getAllColumns() {
         List<AbstractWrapper> cols = new ArrayList<>(this.getNonFkColumns());
         cols.addAll(columnsFk.values());
+        cols.addAll(bidirectionals.values());
         return cols;
     }
 
@@ -185,6 +194,7 @@ public class TableWrapper extends AbstractWrapper {
         this.imports.addAll(columnsFk.values().stream().map(ForeignKeyWrapper::getAllImports).flatMap(Collection::stream).toList());
         this.imports.addAll(columns.values().stream().map(ColumnWrapper::getAllImports).flatMap(Collection::stream).toList());
         this.imports.addAll(localKey.getAllImports());
+        this.imports.addAll(bidirectionals.values().stream().map(AbstractWrapper::getAllImports).flatMap(Collection::stream).toList());
         return this.imports;
     }
 

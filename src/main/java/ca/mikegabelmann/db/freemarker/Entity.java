@@ -18,6 +18,8 @@ import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.codegen.java.JavaClassPrintFactory;
 import ca.mikegabelmann.codegen.util.StringUtil;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.torque.ReferenceType;
@@ -336,8 +338,22 @@ public class Entity {
             //get @Column
             field.addAnnotation(Entity.getColumnAnnotation(cw));
 
-        } else {
+        } else if (column instanceof OneToManyWrapper omw) {
+            JavaAnnotation ann1 = new JavaAnnotation("jakarta.persistence.OneToMany");
+            ann1.add("mappedBy", omw.getMappedBy());
+            ann1.add("cascade", "CascadeType.ALL");
+            ann1.add("orphanRemoval", true);
 
+            field.addAnnotation(ann1);
+
+            //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "shipment")
+            //private List<Product> products = new ArrayList<>();
+
+            //TODO: create
+            //JavaAnnotation ann2 = Entity.
+
+        } else {
+            LOG.warn("unknown type {}", column.getClass().getCanonicalName());
         }
 
         for (JavaAnnotation ann : field.getAnnotations()) {

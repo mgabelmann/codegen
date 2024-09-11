@@ -1,6 +1,10 @@
 package ca.mikegabelmann.db;
 
+import ca.mikegabelmann.codegen.NamingType;
+import ca.mikegabelmann.codegen.util.NameUtil;
+import ca.mikegabelmann.db.freemarker.ForeignKeyWrapper;
 import ca.mikegabelmann.db.freemarker.LocalKeyWrapper;
+import ca.mikegabelmann.db.freemarker.OneToManyWrapper;
 import ca.mikegabelmann.db.freemarker.TableWrapper;
 import ca.mikegabelmann.db.mapping.Database;
 import ca.mikegabelmann.db.mapping.ReverseEngineering;
@@ -19,6 +23,7 @@ import jakarta.xml.bind.Unmarshaller;
 import org.antlr.v4.runtime.CharStreams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.torque.ForeignKeyType;
 import org.apache.torque.TableType;
 
 import javax.xml.namespace.QName;
@@ -36,11 +41,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 
 /**
@@ -114,7 +121,7 @@ public class App {
         //ANTR parse file
         //Parse SQLITE DB statements
         SQLiteFactory factory = new SQLiteFactory(columnMatcher);
-        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_3.sql")));
+        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_8.sql")));
         //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
 
         //Parse ORACLE DB statements
@@ -127,7 +134,27 @@ public class App {
             return;
         }
 
-        //TableType table = tables.get(0);
+        //detect bi-directional mappings of @OneToMany and @ManyToOne
+        //hash tables by FK tablename and table found in so we can perform OneToMany relationships
+        Map<String, List<TableType>> lookupTables = new TreeMap<>();
+        for (TableType table : tables) {
+            List<ForeignKeyType> foreignKeysTmp = table.getForeignKeyOrIndexOrUnique().stream().filter(c -> c instanceof ForeignKeyType).map(c -> (ForeignKeyType) c).toList();
+
+            for (ForeignKeyType foreignKey : foreignKeysTmp) {
+                String foreignTableName = foreignKey.getForeignTable();
+
+                if (lookupTables.containsKey(foreignTableName)) {
+                    lookupTables.get(foreignTableName).add(table);
+
+                } else {
+                    ArrayList<TableType> tableTypes = new ArrayList<>();
+                    tableTypes.add(table);
+                    lookupTables.put(foreignTableName, tableTypes);
+                }
+            }
+        }
+
+        //TODO: how to detect @ManyToMany???
 
         for (TableType table : tables) {
             {
@@ -203,6 +230,29 @@ public class App {
                 TableWrapper tw = new TableWrapper(table);
                 tw.setPackageName("ca.mgabelmann.persistence.model");
                 inputTemplate.put("tableWrapper", tw);
+
+                //check for bi-directional mappings
+                if (lookupTables.containsKey(table.getName())) {
+                    List<TableType> tableTypes = lookupTables.get(table.getName());
+                    if (!tableTypes.isEmpty()) {
+                        //String names = tableTypes.stream().map(TableType::getName).collect(Collectors.joining(", "));
+                        //LOG.info("table {} found @OneToMany relationships {}", table.getName(), names);
+
+                        //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "shipment")
+                        //private List<Product> products = new ArrayList<>();
+
+                        for (TableType tableType : tableTypes) {
+                            String javaType = "ca.mgabelmann.persistence.model" + "." + tableType.getJavaName();
+                            String mappedBy = NameUtil.getJavaName(NamingType.LOWER_CAMEL_CASE, table.getName());
+                            String name = tableType.getName() + "S";
+
+                            OneToManyWrapper otmw = new OneToManyWrapper(javaType, mappedBy, name);
+                            otmw.getImports().add("java.util.List");
+                            otmw.getImports().add("java.util.ArrayList");
+                            tw.getBidirectionals().put(table.getName(), otmw);
+                        }
+                    }
+                }
 
                 //specialized properties
                 //inputTemplate.put("schema", "SCHEMA");

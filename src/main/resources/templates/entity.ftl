@@ -26,7 +26,7 @@ public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedI
 
     //PROPERTIES
 <#list tableWrapper.getAllColumns() as column>
-    <#if javadoc>/** Column ${column.id}. */</#if>
+    <#if javadoc>/** Property ${column.getId()}. */</#if>
     ${Entity.field(column)}
 
 </#list>
