@@ -1,20 +1,24 @@
-package ca.mikegabelmann.codegen.util;
+package ca.mikegabelmann.codegen.java;
 
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
 import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaClass;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaConstructor;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaField;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaImport;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaPackage;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
+import ca.mikegabelmann.codegen.java.lang.modifiers.JavaClassModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
+import ca.mikegabelmann.codegen.util.StringUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -26,13 +30,20 @@ import java.util.List;
  *
  * @author mgabe
  */
-class PrintJavaUtilTest {
+class JavaClassPrintFactoryTest {
+
+    private AbstractJavaPrintFactory printFactory;
+
+    @BeforeEach
+    void setUp() {
+        this.printFactory = new JavaClassPrintFactory();
+    }
 
     @Test
     void test1_getAnnotation() {
         JavaAnnotation a = new JavaAnnotation("A");
 
-        Assertions.assertEquals("@A", PrintJavaUtil.getAnnotation(a));
+        Assertions.assertEquals("@A", printFactory.printAnnotation(a));
     }
 
     @Test
@@ -40,7 +51,7 @@ class PrintJavaUtilTest {
         JavaAnnotation a = new JavaAnnotation("A");
         a.add("b", Boolean.FALSE);
 
-        Assertions.assertEquals("@A(b = false)", PrintJavaUtil.getAnnotation(a));
+        Assertions.assertEquals("@A(b = false)", printFactory.printAnnotation(a));
     }
 
     @Test
@@ -48,7 +59,7 @@ class PrintJavaUtilTest {
         JavaAnnotation a = new JavaAnnotation("A");
         a.add("b", Arrays.asList("c", "d"));
 
-        Assertions.assertEquals("@A(b = {\"c\", \"d\"})", PrintJavaUtil.getAnnotation(a));
+        Assertions.assertEquals("@A(b = {\"c\", \"d\"})", printFactory.printAnnotation(a));
     }
 
     @Test
@@ -60,7 +71,7 @@ class PrintJavaUtilTest {
         JavaAnnotation a = new JavaAnnotation("A");
         a.add("value", b);
 
-        Assertions.assertEquals("@A(value = @B(name1 = \"value1\", name2 = \"value2\"))", PrintJavaUtil.getAnnotation(a));
+        Assertions.assertEquals("@A(value = @B(name1 = \"value1\", name2 = \"value2\"))", printFactory.printAnnotation(a));
     }
 
     @Test
@@ -74,21 +85,21 @@ class PrintJavaUtilTest {
         JavaAnnotation a = new JavaAnnotation("A");
         a.add("", List.of(b, c));
 
-        Assertions.assertEquals("@A({@B(name1 = \"value1\"), @C(name2 = \"value2\")})", PrintJavaUtil.getAnnotation(a));
+        Assertions.assertEquals("@A({@B(name1 = \"value1\"), @C(name2 = \"value2\")})", printFactory.printAnnotation(a));
     }
 
     @Test
     void test1_getArgument() {
         JavaArgument a = new JavaArgument("String", "str", true);
 
-        Assertions.assertEquals("final String str", PrintJavaUtil.getArgument(a));
+        Assertions.assertEquals("final String str", printFactory.printArgument(a));
     }
 
     @Test
     void test2_getArgument() {
         JavaArgument a = new JavaArgument("String", "str", false);
 
-        Assertions.assertEquals("String str", PrintJavaUtil.getArgument(a));
+        Assertions.assertEquals("String str", printFactory.printArgument(a));
     }
 
     @Test
@@ -96,7 +107,7 @@ class PrintJavaUtilTest {
         JavaArgument a = new JavaArgument("String", "str", true);
         a.addAnnotation(new JavaAnnotation("A"));
 
-        Assertions.assertEquals("@A final String str", PrintJavaUtil.getArgument(a));
+        Assertions.assertEquals("@A final String str", printFactory.printArgument(a));
     }
 
     @Test
@@ -104,7 +115,7 @@ class PrintJavaUtilTest {
         JavaArgument a = new JavaArgument("String", "str", false);
         a.addAnnotation(new JavaAnnotation("A"));
 
-        Assertions.assertEquals("@A String str", PrintJavaUtil.getArgument(a));
+        Assertions.assertEquals("@A String str", printFactory.printArgument(a));
     }
 
     @Test
@@ -113,7 +124,7 @@ class PrintJavaUtilTest {
         JavaConstructor a = new JavaConstructor("Person");
         a.addModifier(JavaConstructorModifier.PUBLIC);
 
-        Assertions.assertEquals("public Person() {}", PrintJavaUtil.getConstructor(a));
+        Assertions.assertEquals("public Person() {}", printFactory.printConstructor(a));
     }
 
     @Test
@@ -124,7 +135,7 @@ class PrintJavaUtilTest {
         a.addArgument(new JavaArgument(JavaPrimitive.INT, "age", true));
         a.addArgument(new JavaArgument("String", "firstName", false));
 
-        Assertions.assertEquals("public Person(final int age, String firstName) {this.age = age;this.firstName = firstName;}", PrintJavaUtil.getConstructor(a));
+        Assertions.assertEquals("public Person(final int age, String firstName) {this.age = age;this.firstName = firstName;}", printFactory.printConstructor(a));
     }
 
     @Test
@@ -134,37 +145,37 @@ class PrintJavaUtilTest {
         a.addModifier(JavaConstructorModifier.PUBLIC);
         a.addThrows("IOException");
 
-        Assertions.assertEquals("public Person() throws IOException {}", PrintJavaUtil.getConstructor(a));
+        Assertions.assertEquals("public Person() throws IOException {}", printFactory.printConstructor(a));
     }
 
     @Test
     @DisplayName("get field without annotation")
     void test1_getField() {
-        JavaField field = new JavaField("Integer", "age");
+        JavaField field = new JavaField("Integer", "age", false);
         field.addModifier(JavaFieldModifier.PUBLIC);
 
-        Assertions.assertEquals("public Integer age;", PrintJavaUtil.getField(field));
+        Assertions.assertEquals("public Integer age;", printFactory.printField(field));
     }
 
     @Test
     @DisplayName("get field with modifiers")
     void test2_getField() {
-        JavaField field = new JavaField("Integer", "age");
+        JavaField field = new JavaField("Integer", "age", false);
         field.addModifier(JavaFieldModifier.PUBLIC);
         field.addModifier(JavaFieldModifier.FINAL);
 
-        Assertions.assertEquals("public final Integer age;", PrintJavaUtil.getField(field));
+        Assertions.assertEquals("public final Integer age;", printFactory.printField(field));
     }
 
     @Test
     @DisplayName("get field with special modifiers ordered")
     void test3_getField() {
-        JavaField field = new JavaField("Integer", "age");
+        JavaField field = new JavaField("Integer", "age", false);
         field.addModifier(JavaFieldModifier.PRIVATE);
         field.addModifier(JavaFieldModifier.FINAL);
         field.addModifier(JavaFieldModifier.STATIC);
 
-        Assertions.assertEquals("private static final Integer age;", PrintJavaUtil.getField(field));
+        Assertions.assertEquals("private static final Integer age;", printFactory.printField(field));
     }
 
     @Test
@@ -172,11 +183,11 @@ class PrintJavaUtilTest {
     void test4_getField() {
         JavaAnnotation annotation = new JavaAnnotation("A");
 
-        JavaField field = new JavaField("Integer", "age");
+        JavaField field = new JavaField("Integer", "age", false);
         field.addModifier(JavaFieldModifier.PUBLIC);
         field.addAnnotation(annotation);
 
-        Assertions.assertEquals("@A" + JavaTokens.NEWLINE + "public Integer age;", PrintJavaUtil.getField(field));
+        Assertions.assertEquals("@A" + JavaTokens.NEWLINE + "public Integer age;", printFactory.printField(field));
     }
 
 
@@ -188,9 +199,9 @@ class PrintJavaUtilTest {
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(new JavaReturnType("Integer"));
         method.setNamePrefix(JavaMethodNamePrefix.GET);
-        method.getBody().append(PrintJavaUtil.getFieldReturnValue("age", true));
+        method.getBody().append(JavaClassPrintFactory.printFieldReturnValue("age", true));
 
-        Assertions.assertEquals("public Integer getAge() {return this.age;}", PrintJavaUtil.getMethod(method));
+        Assertions.assertEquals("public Integer getAge() {return this.age;}", printFactory.printMethod(method));
     }
 
     @Test
@@ -203,10 +214,10 @@ class PrintJavaUtilTest {
         method.setJavaReturnType(new JavaReturnType("Integer"));
         method.setNamePrefix(JavaMethodNamePrefix.GET);
         method.addAnnotation(annotation);
-        method.getBody().append(PrintJavaUtil.getFieldReturnValue("age", true));
+        method.getBody().append(JavaClassPrintFactory.printFieldReturnValue("age", true));
 
         String expected = StringUtil.replaceLinefeeds("@A\npublic Integer getAge() {return this.age;}");
-        Assertions.assertEquals(expected, PrintJavaUtil.getMethod(method));
+        Assertions.assertEquals(expected, printFactory.printMethod(method));
     }
 
     @Test
@@ -222,10 +233,10 @@ class PrintJavaUtilTest {
         method.setNamePrefix(JavaMethodNamePrefix.GET);
         method.addAnnotation(annotation);
         method.addAnnotation(annotation2);
-        method.getBody().append(PrintJavaUtil.getFieldReturnValue("age", true));
+        method.getBody().append(JavaClassPrintFactory.printFieldReturnValue("age", true));
 
         String expected = StringUtil.replaceLinefeeds("@A\n@B(name = \"value\")\npublic Integer getAge() {return this.age;}");
-        Assertions.assertEquals(expected, PrintJavaUtil.getMethod(method));
+        Assertions.assertEquals(expected, printFactory.printMethod(method));
     }
 
     @Test
@@ -238,9 +249,9 @@ class PrintJavaUtilTest {
         method.setNamePrefix(JavaMethodNamePrefix.SET);
         method.addArgument(argument);
         method.addThrows("IOException");
-        method.getBody().append(PrintJavaUtil.getFieldAssignment("age", true));
+        method.getBody().append(JavaClassPrintFactory.printFieldAssignment("age", true));
 
-        Assertions.assertEquals("public void setAge(final Integer age) throws IOException {this.age = age;}", PrintJavaUtil.getMethod(method));
+        Assertions.assertEquals("public void setAge(final Integer age) throws IOException {this.age = age;}", printFactory.printMethod(method));
     }
 
     /*
@@ -266,22 +277,52 @@ class PrintJavaUtilTest {
     void test1_getReturn() {
         JavaReturnType r = new JavaReturnType("Person");
 
-        Assertions.assertEquals("Person ", PrintJavaUtil.getReturn(r));
+        Assertions.assertEquals("Person ", printFactory.printReturn(r));
     }
 
     @Test
     void test2_getReturn() {
-        Assertions.assertEquals("void ", PrintJavaUtil.getReturn(null));
+        Assertions.assertEquals("void ", printFactory.printReturn(null));
     }
 
     @Test
     void getImport() {
-        Assertions.assertEquals("import java.io.IOException;", PrintJavaUtil.getImport(new JavaImport("java.io.IOException")));
+        Assertions.assertEquals("import java.io.IOException;", printFactory.printImport(new JavaImport("java.io.IOException")));
     }
 
     @Test
-    void getPackage() {
-        Assertions.assertEquals("package a.b.c;", PrintJavaUtil.getPackage(new JavaPackage("a.b.c")));
+    void test1_getPackage() {
+        Assertions.assertEquals("package a.b.c;", printFactory.printPackage(new JavaPackage("a.b.c")));
+    }
+
+    @Test
+    void test2_getPackage() {
+        Assertions.assertEquals("", printFactory.printPackage(new JavaPackage("")));
+    }
+
+    @Test
+    @DisplayName("print a class")
+    void test1_printClass() {
+        JavaArgument a1 = new JavaArgument(String.class.getCanonicalName(), "name", true);
+
+        JavaConstructor con = new JavaConstructor("Person");
+        con.addModifier(JavaConstructorModifier.PUBLIC);
+        con.addArgument(a1);
+
+        JavaMethod m1 = JavaMethod.getGetter("FIRST_NAME", String.class.getCanonicalName(), JavaMethodModifier.FINAL, JavaMethodModifier.PUBLIC);
+
+        JavaField f1 = new JavaField(String.class.getCanonicalName(), "name", false);
+        f1.addModifier(JavaFieldModifier.FINAL);
+        f1.addModifier(JavaFieldModifier.PUBLIC);
+
+        JavaClass clazz = new JavaClass("Person", "person", new JavaPackage("a.b.c"));
+        clazz.addJavaImport("java.io.IOException");
+        clazz.addJavaClassModifier(JavaClassModifier.PUBLIC);
+        clazz.addConstructor(con);
+        clazz.addAnnotation(new JavaAnnotation("A"));
+        clazz.addMethod(m1);
+        clazz.addJavaField(f1);
+        Assertions.assertEquals(StringUtil.replaceLinefeeds("package a.b.c;\nimport java.io.IOException;\nimport java.lang.String;\n@A\npublic class Person {\npublic final String name;\npublic Person(final String name) {this.name = name;}\npublic  final String getFirstName() {return this.firstName;}\n}"), printFactory.printClass(clazz));
     }
 
 }

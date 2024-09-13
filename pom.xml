@@ -30,10 +30,17 @@
 
     <properties>
         <antlr.version>4.13.1</antlr.version>
+        <google-java-format.version>1.23.0</google-java-format.version>
         <spotbugs-maven-plugin.version>4.8.6.2</spotbugs-maven-plugin.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.google.googlejavaformat</groupId>
+            <artifactId>google-java-format</artifactId>
+            <version>${google-java-format.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
@@ -101,6 +108,7 @@
 
     <build>
         <plugins>
+
 
             <!-- generate ANTLR java files -->
             <plugin>

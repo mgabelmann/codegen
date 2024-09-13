@@ -1,9 +1,15 @@
 package ca.mikegabelmann.db;
 
+import ca.mikegabelmann.codegen.NamingType;
+import ca.mikegabelmann.codegen.util.NameUtil;
+import ca.mikegabelmann.db.freemarker.ForeignKeyWrapper;
+import ca.mikegabelmann.db.freemarker.LocalKeyWrapper;
+import ca.mikegabelmann.db.freemarker.OneToManyWrapper;
 import ca.mikegabelmann.db.freemarker.TableWrapper;
 import ca.mikegabelmann.db.mapping.Database;
 import ca.mikegabelmann.db.mapping.ReverseEngineering;
 import ca.mikegabelmann.db.sqlite.SQLiteFactory;
+import com.google.googlejavaformat.java.Formatter;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -17,21 +23,31 @@ import jakarta.xml.bind.Unmarshaller;
 import org.antlr.v4.runtime.CharStreams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.torque.ForeignKeyType;
 import org.apache.torque.TableType;
 
 import javax.xml.namespace.QName;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 
 /**
@@ -77,7 +93,6 @@ public class App {
             LOG.debug(xml);
         }*/
 
-
         ColumnMatcher columnMatcher = new ColumnMatcher();
         {
             JAXBContext jc = JAXBContext.newInstance(ReverseEngineering.class);
@@ -86,11 +101,15 @@ public class App {
 
             //TODO: add user custom mappings
             for (Database db : re.getDatabases().getDatabase()) {
+                if ("CUSTOM".equalsIgnoreCase(db.getName())) {
+                    LOG.trace("adding CUSTOM mappings");
+                    columnMatcher.addMappings(db.getMapping());
+                }
                 if ("SQLITE".equalsIgnoreCase(db.getName())) {
                     LOG.trace("adding SQLITE mappings");
                     columnMatcher.addMappings(db.getMapping());
                 }
-                if ("ALL".equalsIgnoreCase(db.getName())) {
+                if ("ANY".equalsIgnoreCase(db.getName())) {
                     LOG.trace("adding ALL mappings");
                     columnMatcher.addMappings(db.getMapping());
                 }
@@ -102,7 +121,7 @@ public class App {
         //ANTR parse file
         //Parse SQLITE DB statements
         SQLiteFactory factory = new SQLiteFactory(columnMatcher);
-        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_1.sql")));
+        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_3.sql")));
         //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
 
         //Parse ORACLE DB statements
@@ -115,79 +134,195 @@ public class App {
             return;
         }
 
-        TableType table = tables.get(0);
+        //detect bi-directional mappings of @OneToMany and @ManyToOne
+        //hash tables by FK tablename and table found in so we can perform OneToMany relationships
+        Map<String, List<TableType>> lookupTables = new TreeMap<>();
+        for (TableType table : tables) {
+            List<ForeignKeyType> foreignKeysTmp = table.getForeignKeyOrIndexOrUnique().stream().filter(c -> c instanceof ForeignKeyType).map(c -> (ForeignKeyType) c).toList();
 
-        {
-            //JAXB - print XML tree
-            JAXBContext context = JAXBContext.newInstance(TableType.class);
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            for (ForeignKeyType foreignKey : foreignKeysTmp) {
+                String foreignTableName = foreignKey.getForeignTable();
 
-            StringWriter sw = new StringWriter();
-            JAXBElement<TableType> je = new JAXBElement<>(new QName("http://db.apache.org/torque/5.0/templates/database", "table"), TableType.class, table);
-            marshaller.marshal(je, sw);
+                if (lookupTables.containsKey(foreignTableName)) {
+                    lookupTables.get(foreignTableName).add(table);
 
-            String xml = sw.toString();
-            LOG.debug(xml);
+                } else {
+                    ArrayList<TableType> tableTypes = new ArrayList<>();
+                    tableTypes.add(table);
+                    lookupTables.put(foreignTableName, tableTypes);
+                }
+            }
         }
+
+        //TODO: how to detect @ManyToMany???
+
+        for (TableType table : tables) {
+            {
+                //JAXB - print XML tree
+                JAXBContext context = JAXBContext.newInstance(TableType.class);
+                Marshaller marshaller = context.createMarshaller();
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+                StringWriter sw = new StringWriter();
+                JAXBElement<TableType> je = new JAXBElement<>(new QName("http://db.apache.org/torque/5.0/templates/database", "table"), TableType.class, table);
+                marshaller.marshal(je, sw);
+
+                String xml = sw.toString();
+                LOG.debug(xml);
+            }
 
 //        Map<String, String> sqlMappings = App.getMappings("/sqldatatype.properties");
 
-        //FreeMarker - process templates
-        Version version = new Version(2, 3, 20);
-        Configuration cfg = new Configuration(version);
-        cfg.setClassForTemplateLoading(App.class, "/templates");
-        cfg.setIncompatibleImprovements(version);
-        cfg.setDefaultEncoding("UTF-8");
-        cfg.setLocale(Locale.US);
-        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+            //FreeMarker - process templates
+            Version version = new Version(2, 3, 20);
+            Configuration cfg = new Configuration(version);
+            cfg.setClassForTemplateLoading(App.class, "/templates");
+            cfg.setIncompatibleImprovements(version);
+            cfg.setDefaultEncoding("UTF-8");
+            cfg.setLocale(Locale.US);
+            cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 
-        //base set of parameters inherited by all
-        Map<String, Object> input = new HashMap<>();
-        input.put("basePackagePath", "ca.mgabelmann.persistence");
-        input.put("author", "codegenerator");
-        input.put("version", "1.0.0");
-        input.put("buildDtm", LocalDateTime.now());
-        input.put("javadoc", Boolean.TRUE);
-//        input.put("jpa.type", "jakarta.persistence");
+            //base set of parameters inherited by all
+            Map<String, Object> input = new HashMap<>();
+            //input.put("basePackagePath", "ca.mgabelmann.persistence");
+            input.put("author", "codegenerator");
+            input.put("version", "1.0.0");
+            input.put("buildDtm", LocalDateTime.now());
+            input.put("javadoc", Boolean.TRUE);
 
-        {
-            //Java JPA DAO/Repository
-            Map<String, Object> inputTemplate = new HashMap<>(input);
+            {
+                //Java JPA DAO/Repository
+                Map<String, Object> inputTemplate = new HashMap<>(input);
 
-            TableWrapper tw = new TableWrapper(table);
-            tw.setPackageName("ca.mgabelmann.persistence.dao");
-            inputTemplate.put("tableWrapper", tw);
+                TableWrapper tw = new TableWrapper(table);
+                tw.setPackageName("ca.mgabelmann.persistence.dao");
+                inputTemplate.put("tableWrapper", tw);
+                inputTemplate.put("entityPackageName", "ca.mgabelmann.persistence.model");
+                tw.getImports().add("ca.mgabelmann.persistence.model" + "." + tw.getSimpleName());
 
-            Template dao = cfg.getTemplate("dao.ftl");
-            Writer cw = new OutputStreamWriter(System.out);
-            dao.process(inputTemplate, cw);
+                if (tw.getLocalKey().isCompositeKey()) {
+                    tw.getImports().add("ca.mgabelmann.persistence.model" + "." + tw.getLocalKey().getSimpleName());
+                }
+
+                BeansWrapperBuilder wrapper = new BeansWrapperBuilder(version);
+                TemplateHashModel staticModels = wrapper.build().getStaticModels();
+                TemplateHashModel staticObjectUtil2 = (TemplateHashModel) staticModels.get("ca.mikegabelmann.db.freemarker.Entity");
+
+                inputTemplate.put("Entity", staticObjectUtil2);
+
+                OutputStream baos = new ByteArrayOutputStream();
+                Writer cw2 = new OutputStreamWriter(baos);
+
+                Template dao = cfg.getTemplate("dao.ftl");
+                dao.process(inputTemplate, cw2);
+
+                //Use Google formatter to pretty print the class file
+                String formattedSource = new Formatter().formatSource(baos.toString());
+                LOG.debug(formattedSource);
+
+                writeFile("target/generated-sources/", tw.getPackageName(), tw.getSimpleName() + "Repository", formattedSource);
+            }
+
+            {
+                //Java JPA Table/Entity
+                Map<String, Object> inputTemplate = new HashMap<>(input);
+
+                TableWrapper tw = new TableWrapper(table);
+                tw.setPackageName("ca.mgabelmann.persistence.model");
+                inputTemplate.put("tableWrapper", tw);
+
+                //check for bi-directional mappings
+                if (lookupTables.containsKey(table.getName())) {
+                    List<TableType> tableTypes = lookupTables.get(table.getName());
+                    if (!tableTypes.isEmpty()) {
+                        //String names = tableTypes.stream().map(TableType::getName).collect(Collectors.joining(", "));
+                        //LOG.info("table {} found @OneToMany relationships {}", table.getName(), names);
+
+                        //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "shipment")
+                        //private List<Product> products = new ArrayList<>();
+
+                        for (TableType tableType : tableTypes) {
+                            String javaType = "ca.mgabelmann.persistence.model" + "." + tableType.getJavaName();
+                            String mappedBy = NameUtil.getJavaName(NamingType.LOWER_CAMEL_CASE, table.getName());
+                            String name = tableType.getName() + "S";
+
+                            OneToManyWrapper otmw = new OneToManyWrapper(javaType, mappedBy, name);
+                            tw.getBidirectionals().put(table.getName(), otmw);
+                        }
+                    }
+                }
+
+                //specialized properties
+                //inputTemplate.put("schema", "SCHEMA");
+
+                //allow template to access static classes
+                BeansWrapperBuilder wrapper = new BeansWrapperBuilder(version);
+                TemplateHashModel staticModels = wrapper.build().getStaticModels();
+                TemplateHashModel staticObjectUtil2 = (TemplateHashModel) staticModels.get("ca.mikegabelmann.db.freemarker.Entity");
+
+                inputTemplate.put("Entity", staticObjectUtil2);
+
+                OutputStream baos = new ByteArrayOutputStream();
+                Writer cw2 = new OutputStreamWriter(baos);
+
+                Template entity = cfg.getTemplate("entity.ftl");
+                entity.process(inputTemplate, cw2);
+
+                //Use Google formatter to pretty print the class file
+                String formattedSource = new Formatter().formatSource(baos.toString());
+                //String formattedSource = baos.toString();
+                LOG.debug(formattedSource);
+
+                writeFile("target/generated-sources/", tw.getPackageName(), tw.getSimpleName(), formattedSource);
+
+                //does this table require a composite id?
+
+                if (tw.getLocalKey().isCompositeKey()) {
+                    LocalKeyWrapper lkw = new LocalKeyWrapper(tw.getLocalKey().getTableName(), tw.getLocalKey().getColumns());
+                    lkw.setPackageName("ca.mgabelmann.persistence.model");
+
+                    //allow template to access static classes
+                    BeansWrapperBuilder wrapper2 = new BeansWrapperBuilder(version);
+                    TemplateHashModel staticModels2 = wrapper2.build().getStaticModels();
+                    TemplateHashModel staticObjectUtil3 = (TemplateHashModel) staticModels2.get("ca.mikegabelmann.db.freemarker.Id");
+
+                    Map<String, Object> input2Template = new HashMap<>(input);
+                    input2Template.put("keyWrapper", lkw);
+                    input2Template.put("tableName", tw.getTableType().getName());
+                    input2Template.put("tableSimpleName", tw.getSimpleName());
+                    input2Template.put("Id", staticObjectUtil3);
+
+                    Template id = cfg.getTemplate("id.ftl");
+
+                    OutputStream baos2 = new ByteArrayOutputStream();
+                    Writer cw3 = new OutputStreamWriter(baos2);
+
+                    id.process(input2Template, cw3);
+
+                    //Use Google formatter to pretty print the class file
+                    //String source = baos2.toString();
+                    //LOG.debug(source);
+                    String formattedSource2 = new Formatter().formatSource(baos2.toString());
+                    LOG.debug(formattedSource2);
+
+                    writeFile("target/generated-sources/", lkw.getPackageName(), lkw.getSimpleName(), formattedSource2);
+                }
+            }
+        }
+    }
+
+    private static void writeFile(String basePath, String packageName, String className, String contents) throws IOException {
+        String fullClassName = packageName + "." + className;
+        String fileName = basePath + fullClassName.replaceAll("\\.", "/") + ".java";
+
+        Path path = Paths.get(fileName);
+        Files.createDirectories(path.getParent());
+
+        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            writer.write(contents);
+            LOG.debug("created file: {}", fileName);
         }
 
-        {
-            //Java JPA Table/Entity
-            Map<String, Object> inputTemplate = new HashMap<>(input);
-
-            TableWrapper tw = new TableWrapper(table);
-            tw.setPackageName("ca.mgabelmann.persistence.model");
-            inputTemplate.put("tableWrapper", tw);
-
-            //specialized properties
-            //inputTemplate.put("schema", "SCHEMA");
-
-            //allow template to access static classes
-            BeansWrapperBuilder wrapper = new BeansWrapperBuilder(version);
-            TemplateHashModel staticModels = wrapper.build().getStaticModels();
-            //TemplateHashModel staticObjectUtil1 = (TemplateHashModel) staticModels.get("ca.mikegabelmann.codegen.util.ObjectUtil");
-            TemplateHashModel staticObjectUtil2 = (TemplateHashModel) staticModels.get("ca.mikegabelmann.db.freemarker.Entity");
-
-            //inputTemplate.put("ObjectUtil", staticObjectUtil1);
-            inputTemplate.put("Entity", staticObjectUtil2);
-
-            Template entity = cfg.getTemplate("entity.ftl");
-            Writer cw2 = new OutputStreamWriter(System.out);
-            entity.process(inputTemplate, cw2);
-        }
     }
 
     /**
@@ -204,8 +339,8 @@ public class App {
 
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith("#") && !line.isEmpty()) {
-                    String[] keyvalue = line.split("=");
-                    map.put(keyvalue[0].trim(), keyvalue[1].trim());
+                    String[] keyValue = line.split("=");
+                    map.put(keyValue[0].trim(), keyValue[1].trim());
 
                 } else if (LOG.isTraceEnabled()) {
                     LOG.trace("skipping comment or empty line");

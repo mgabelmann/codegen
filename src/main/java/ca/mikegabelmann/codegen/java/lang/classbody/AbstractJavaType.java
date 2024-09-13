@@ -1,16 +1,17 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
+import ca.mikegabelmann.codegen.Printable;
 import org.jetbrains.annotations.NotNull;
 
 /**
  *
  * @author mgabe
  */
-abstract class AbstractJavaType {
+abstract class AbstractJavaType implements JavaType, Printable {
     /** Class or primitive type. */
     protected final String type;
 
-    /** field or variable name. */
+    /** field, method, class or variable name. */
     protected final String name;
 
 
@@ -24,20 +25,24 @@ abstract class AbstractJavaType {
         this.name = name;
     }
 
-    /**
-     * Get Java type.
-     * @return Java type
-     */
+    @Override
     public final String getType() {
         return type;
     }
 
-    /**
-     * Get Java name.
-     * @return Java name
-     */
+    @Override
     public final String getName() {
         return name;
+    }
+
+    @Override
+    public final String getCanonicalName() {
+        return type;
+    }
+
+    @Override
+    public final String getSimpleName() {
+        return !type.contains(".") ? type : type.substring(type.lastIndexOf('.') + 1);
     }
 
 }

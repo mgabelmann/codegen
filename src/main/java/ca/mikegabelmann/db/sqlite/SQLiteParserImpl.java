@@ -1,6 +1,6 @@
 package ca.mikegabelmann.db.sqlite;
 
-import ca.mikegabelmann.codegen.java.JavaNamingType;
+import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.db.ColumnMatcher;
 import ca.mikegabelmann.db.DatabaseParser;
@@ -76,7 +76,7 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener implements Databa
         String tableName = ctx.table_name().getText();
 
         table.setName(tableName);
-        table.setJavaName(NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, tableName));
+        table.setJavaName(NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, tableName));
         table.setDescription("");
         table.setBaseClass("");
         table.setAbstract(Boolean.FALSE);
@@ -106,7 +106,7 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener implements Databa
             column.setSize(new BigDecimal(sn.getText()));
         }
 
-        column.setJavaName(NameUtil.getJavaName(JavaNamingType.LOWER_CAMEL_CASE, columnName));
+        column.setJavaName(NameUtil.getJavaName(NamingType.LOWER_CAMEL_CASE, columnName));
         column.setDescription("");
 
         Integer length = column.getSize() == null ? null : column.getSize().intValue();
@@ -180,10 +180,27 @@ public class SQLiteParserImpl extends SQLiteParserBaseListener implements Databa
 
         //primary key columns
         if (!ctx.indexed_column().isEmpty()) {
-            LOG.debug("primary key");
+            if (ctx.UNIQUE_() != null) {
+                LOG.debug("UNIQUE constraint");
 
-            for (SQLiteParser.Indexed_columnContext record : ctx.indexed_column()) {
-                LOG.debug("\tcolumn={}", record.getText());
+                UniqueType ut = new UniqueType();
+
+                for (SQLiteParser.Indexed_columnContext record : ctx.indexed_column()) {
+                    UniqueColumnType uct = new UniqueColumnType();
+                    uct.setName(record.getText());
+
+                    ut.getUniqueColumn().add(uct);
+
+                    LOG.debug("  unique column={}", record.getText());
+                }
+
+                table.getForeignKeyOrIndexOrUnique().add(ut);
+
+            } else if (ctx.PRIMARY_() != null) {
+                LOG.debug("PRIMARY constraint");
+
+                //TODO:
+
             }
         }
 

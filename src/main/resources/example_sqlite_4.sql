@@ -1,5 +1,19 @@
 --primary key, plus composite foreign key
-CREATE TABLE MOBILE_SUPPORT_DETAIL(
+/*
+   class MobileSupportDetail {
+     @Id
+     private WildfireResource wildfireResource;
+
+     @ManyToOne
+     private Resource resource;
+
+     @ManyToOne
+     private VehicleType vehicleType
+
+     private Integer capacity
+   }
+ */
+CREATE TABLE MOBILE_SUPPORT_DETAIL (
    WILDFIRE_RESOURCE_ID INTEGER PRIMARY KEY,
    PRODUCT_TYPE_CODE TEXT NOT NULL,
    RESOURCE_TYPE_CODE TEXT NOT NULL,

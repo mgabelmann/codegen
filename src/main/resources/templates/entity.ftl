@@ -8,7 +8,7 @@
  *
  * @author ${author}
  * @version ${version}
- * @see ${basePackagePath}.model.${tableWrapper.getSimpleName()}
+ * @see ${tableWrapper.packageName}.${tableWrapper.getSimpleName()}
  */
 </#if>
 @${tableWrapper.addTypedImport("javax.annotation.processing.Generated")}(
@@ -25,8 +25,8 @@ public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedI
     private static final long serialVersionUID = 1L;
 
     //PROPERTIES
-<#list tableWrapper.getColumns() as column>
-    <#if javadoc>/** Column ${column.id}. */</#if>
+<#list tableWrapper.getAllColumns() as column>
+    <#if javadoc>/** Property ${column.getId()}. */</#if>
     ${Entity.field(column)}
 
 </#list>
@@ -44,7 +44,7 @@ public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedI
     //TODO: associations, collections
 
     //GETTERS & SETTERS
-<#list tableWrapper.getColumns() as column>
+<#list tableWrapper.getAllColumns() as column>
     <#if javadoc>/** Set ${column.id}. */</#if>
     ${Entity.setter(column)}
 
@@ -52,18 +52,16 @@ public class ${tableWrapper.getSimpleName()} implements ${tableWrapper.addTypedI
     ${Entity.getter(column)}
 
 </#list>
-
-    //TODO: toString
+    //OBJECT overrides
     ${Entity.toStringGenerator(tableWrapper)}
 
-    //TODO: hashCode
-    //TODO: equals
+    ${Entity.equalsGenerator(tableWrapper)}
 
+    ${Entity.hashCodeGenerator(tableWrapper)}
 }
 </#assign>
 
 
-<#--package ${basePackagePath}.model-->
 ${Entity.printPackage(tableWrapper)}
 
 ${Entity.printImports(tableWrapper)}

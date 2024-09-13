@@ -2,6 +2,7 @@ package ca.mikegabelmann.codegen.java.lang;
 
 import org.jetbrains.annotations.NotNull;
 
+
 /**
  *
  * @author mgabe
@@ -11,7 +12,7 @@ public enum JavaMethodNamePrefix {
     HAS("has"),
     GET("get"),
     SET("set"),
-    NONE("")
+    NONE(""),
     ;
 
 

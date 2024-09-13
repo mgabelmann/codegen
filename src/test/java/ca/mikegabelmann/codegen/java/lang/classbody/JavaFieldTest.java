@@ -12,7 +12,7 @@ class JavaFieldTest {
 
     @BeforeEach
     void beforeEach() {
-        this.field = new JavaField("type", "name");
+        this.field = new JavaField("type", "name", false);
     }
 
     @Test

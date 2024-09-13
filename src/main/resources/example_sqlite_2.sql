@@ -1,4 +1,4 @@
-CREATE TABLE contact_groups(
+CREATE TABLE contact_group (
    contact_id INTEGER,
    group_id INTEGER NOT NULL,
    local1_id INTEGER NOT NULL,

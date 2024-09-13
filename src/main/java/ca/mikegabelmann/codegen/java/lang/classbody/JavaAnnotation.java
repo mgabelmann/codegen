@@ -14,18 +14,20 @@ import java.util.TreeMap;
  *
  * @author mgabe
  */
-public class JavaAnnotation implements JavaType {
+public class JavaAnnotation extends AbstractJavaTypeAnnotated {
     /** Logger. */
     private static final Logger logger = LogManager.getLogger(JavaAnnotation.class);
-
-    private final String type;
 
     /** Properties of annotation. */
     private final SortedMap<String, List<Object>> properties;
 
 
+    public JavaAnnotation(@NotNull final Class<?> clazz) {
+        this(clazz.getCanonicalName());
+    }
+
     public JavaAnnotation(@NotNull final String type) {
-        this.type = type;
+        super(type, "");
         this.properties = new TreeMap<>();
     }
 
@@ -58,16 +60,6 @@ public class JavaAnnotation implements JavaType {
      */
     public List<Object> remove(@NotNull String key) {
         return properties.remove(key);
-    }
-
-    @Override
-    public String getCanonicalName() {
-        return type;
-    }
-
-    @Override
-    public String getSimpleName() {
-        return !type.contains(".") ? type : type.substring(type.lastIndexOf(".") + 1);
     }
 
     @Override

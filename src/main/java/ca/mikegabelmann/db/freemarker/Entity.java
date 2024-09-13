@@ -1,7 +1,9 @@
 package ca.mikegabelmann.db.freemarker;
 
-import ca.mikegabelmann.codegen.java.JavaNamingType;
+import ca.mikegabelmann.codegen.NamingType;
+import ca.mikegabelmann.codegen.java.AbstractJavaPrintFactory;
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
+import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaConstructor;
@@ -14,8 +16,10 @@ import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import ca.mikegabelmann.codegen.util.NameUtil;
-import ca.mikegabelmann.codegen.util.PrintJavaUtil;
+import ca.mikegabelmann.codegen.java.JavaClassPrintFactory;
 import ca.mikegabelmann.codegen.util.StringUtil;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.torque.ReferenceType;
@@ -25,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.TemporalType;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,26 +36,33 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ * NOTE: this is a facade as it hides the complexity of underlying operations from the client.
  *
  * @author mgabe
  */
 public class Entity {
-    /** Logger. */
+    /**
+     * Logger.
+     */
     private static final Logger LOG = LogManager.getLogger(Entity.class);
 
-    /** Do not instantiate this class. */
-    private Entity() {}
+    private static final AbstractJavaPrintFactory factory = new JavaClassPrintFactory();
 
 
     /**
-     *
+     * Do not instantiate this class.
+     */
+    private Entity() {
+    }
+
+    /**
      * @param tw
      * @param schema
      * @return
      */
     public static JavaAnnotation getTableAnnotation(@NotNull TableWrapper tw, @NotNull String type, String schema) {
         JavaAnnotation ann = new JavaAnnotation(type);
-        ann.add("name", tw.getTableType().getName());
+        ann.add("name", tw.getName());
 
         if (StringUtil.isNotBlankOrNull(schema)) {
             ann.add("schema", schema);
@@ -67,47 +77,36 @@ public class Entity {
 
         JavaAnnotation ann = Entity.getTableAnnotation(tw, type, schema);
 
-        return PrintJavaUtil.getAnnotation(ann);
+        return factory.print(ann);
     }
 
 
-    /**
-     *
-     * @param cw
-     * @return
-     */
-    public static JavaAnnotation getOneToOne(@NotNull ColumnWrapper cw) {
+    public static JavaAnnotation getOneToOne(@NotNull final AbstractWrapper aw, final boolean eager) {
         JavaAnnotation ann = new JavaAnnotation("jakarta.persistence.OneToOne");
+        ann.add("fetch", eager ? FetchType.EAGER : FetchType.LAZY);
 
-        if (cw.getId().toUpperCase().endsWith("_CODE")) {
-            ann.add("fetch", FetchType.EAGER);
-
-        } else {
-            ann.add("fetch", FetchType.LAZY);
-        }
-
-        cw.addImport("jakarta.persistence.FetchType");
+        aw.addImport("jakarta.persistence.FetchType");
 
         return ann;
     }
 
     /**
-     *
      * @return
      */
-    public static JavaAnnotation getManyToOne() {
-        JavaAnnotation ann = new JavaAnnotation("ManyToOne");
+    public static JavaAnnotation getManyToOne(@NotNull AbstractWrapper aw) {
+        JavaAnnotation ann = new JavaAnnotation("jakarta.persistence.ManyToOne");
         ann.add("fetch", FetchType.LAZY);
 
+        aw.addImport("jakarta.persistence.FetchType");
+
         return ann;
     }
 
     /**
-     *
      * @return
      */
     public static JavaAnnotation getOneToMany() {
-        JavaAnnotation ann = new JavaAnnotation("OneToMany");
+        JavaAnnotation ann = new JavaAnnotation("jakarta.persistence.OneToMany");
         //TODO: cascade
         //TODO: fetch
         //TODO: *mappedBy
@@ -119,11 +118,10 @@ public class Entity {
     }
 
     /**
-     *
      * @return
      */
     public static JavaAnnotation getManyToMany() {
-        JavaAnnotation ann = new JavaAnnotation("ManyToMany");
+        JavaAnnotation ann = new JavaAnnotation("jakarta.persistence.ManyToMany");
         //TODO: cascade
         //TODO: fetch
         //TODO: *mappedBy
@@ -134,7 +132,6 @@ public class Entity {
     }
 
     /**
-     *
      * @param fkw
      * @return
      */
@@ -171,7 +168,6 @@ public class Entity {
     }
 
     /**
-     *
      * @param referenceType
      * @param columnWrapper
      * @return
@@ -192,7 +188,6 @@ public class Entity {
     }
 
     /**
-     *
      * @param cw
      * @return
      */
@@ -217,16 +212,15 @@ public class Entity {
         a.add("columnDefinition", cw.getColumnType().getType().value());
 
         //TODO: sizes
-            //TODO: precision/scale,
-            //TODO: size
-            //TODO: length
+        //TODO: precision/scale,
+        //TODO: size
+        //TODO: length
         //TODO: table
 
         return a;
     }
 
     /**
-     *
      * @param cw
      * @return
      */
@@ -249,43 +243,42 @@ public class Entity {
     }
 
     public static String printPackage(@NotNull final TableWrapper table) {
-        return PrintJavaUtil.getPackage(new JavaPackage(table.getPackageName()));
+        return factory.print(new JavaPackage(table.getPackageName()));
     }
 
     /**
      * Get all imports for use in Java code.
+     *
      * @param table
      * @return
      */
     public static String printImports(@NotNull final TableWrapper table) {
         Set<String> imports = table.getAllImports();
 
-        return imports.stream().map(a -> PrintJavaUtil.getImport(new JavaImport(a))).collect(Collectors.joining(System.lineSeparator()));
+        return imports.stream().map(a -> factory.print(new JavaImport(a))).collect(Collectors.joining(System.lineSeparator()));
     }
 
     /**
      * Get Java annotation formatted for use in Java code.
+     *
      * @param annotation annotation
      * @return Java annotation
      */
     public static String annotation(@NotNull final JavaAnnotation annotation) {
-        return PrintJavaUtil.getAnnotation(annotation);
+        return factory.print(annotation);
     }
 
     /**
-     *
      * @param column
      * @return
      */
     public static String field(@NotNull final AbstractWrapper column) {
-        JavaField field = new JavaField(column.getSimpleName(), column.getVariableName());
+        JavaField field = new JavaField(column.getSimpleName(), column.getVariableName(), false);
         field.addModifier(JavaFieldModifier.PRIVATE);
 
         //TODO: determine annotations to add
 
-        if (column instanceof LocalKeyWrapper) {
-            LocalKeyWrapper lkw = (LocalKeyWrapper) column;
-
+        if (column instanceof LocalKeyWrapper lkw) {
             if (!lkw.isCompositeKey()) {
                 //get @Id
                 field.addAnnotation(new JavaAnnotation("jakarta.persistence.Id"));
@@ -297,36 +290,32 @@ public class Entity {
                 }*/
 
                 //get @Column
-                field.addAnnotation(Entity.getColumnAnnotation(lkw.getColumns().get(0)));
+                field.addAnnotation(Entity.getColumnAnnotation((ColumnWrapper) lkw.getColumnValues().get(0)));
 
             } else {
                 //get @EmbeddedId
                 field.addAnnotation(new JavaAnnotation("jakarta.persistence.EmbeddedId"));
             }
 
-        } else if (column instanceof ForeignKeyWrapper) {
-            ForeignKeyWrapper fkw = (ForeignKeyWrapper) column;
+        } else if (column instanceof ForeignKeyWrapper fkw) {
+            //FIXME: this is not working as expected, in most cases should be @ManyToOne instead of @OneToOne
+            //the difference between ManyToOne and OneToOne is OneToOne have unique on FK
+            //NOTE: need a better way to detect OneToOne, ManyToOne, @OneToMany, ManyToMany
 
-            //NOTE: need a better way to detect OneToOne, ManyToOne, ManyToMany
-            if (!fkw.isCompositeKey() && fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
-                //get @OneToOne
-                field.addAnnotation(Entity.getOneToOne(fkw.getColumns().get(0)));
+            //NOTE: if the column is FK AND is UNIQUE then it's OneToOne, else ManyToOne. How to detect OneToMany and ManyToMany?!?
 
-            } else if (fkw.isCompositeKey() && ! fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
-                //get @ManyToOne
-                field.addAnnotation(Entity.getManyToOne());
-
+            if (fkw.getColumns().stream().anyMatch(ColumnWrapper::isUnique)) {
+                field.addAnnotation(Entity.getOneToOne(fkw, fkw.getSimpleName().endsWith("CODE")));
             } else {
-                //TODO: detect @ManyToMany
-
+                field.addAnnotation(Entity.getManyToOne(fkw));
             }
+
+            //TODO: detect @ManyToMany
 
             //get @JoinColumns if > 1 column with @JoinColumn, otherwise @JoinColumn
             field.addAnnotation(Entity.getJoinColumn(fkw));
 
-        } else if (column instanceof ColumnWrapper) {
-            ColumnWrapper cw = (ColumnWrapper) column;
-
+        } else if (column instanceof ColumnWrapper cw) {
             //get @Temporal
             //only applies to packages java.util.* or java.sql.*
             if (cw.isTemporal() && !cw.getCanonicalName().contains("java.time")) {
@@ -336,19 +325,32 @@ public class Entity {
             //get @Column
             field.addAnnotation(Entity.getColumnAnnotation(cw));
 
-        } else {
+        } else if (column instanceof OneToManyWrapper omw) {
+            JavaAnnotation ann1 = new JavaAnnotation("jakarta.persistence.OneToMany");
+            ann1.add("mappedBy", omw.getMappedBy());
+            ann1.add("cascade", CascadeType.ALL);
+            ann1.add("orphanRemoval", true);
 
+            field.addAnnotation(ann1);
+            field.setInitializationValue("new ArrayList<>()");
+
+            omw.getImports().add("jakarta.persistence.CascadeType");
+
+            //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "shipment")
+            //private List<Product> products = new ArrayList<>();
+
+        } else {
+            LOG.warn("unknown type {}", column.getClass().getCanonicalName());
         }
 
         for (JavaAnnotation ann : field.getAnnotations()) {
             column.addImport(ann.getCanonicalName());
         }
 
-        return PrintJavaUtil.getField(field);
+        return factory.print(field);
     }
 
     /**
-     *
      * @param wrapper
      * @return
      */
@@ -357,34 +359,32 @@ public class Entity {
 
         //TODO: determine annotations to add
 
-        JavaMethod method = new JavaMethod(NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, wrapper.getId()));
+        JavaMethod method = new JavaMethod(NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, wrapper.getId()));
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(returnType);
         method.setNamePrefix(JavaMethodNamePrefix.GET);
 
-        method.getBody().append(PrintJavaUtil.getFieldReturnValue(wrapper.getVariableName(), true));
+        method.getBody().append(JavaClassPrintFactory.printFieldReturnValue(wrapper.getVariableName(), true));
 
-        return PrintJavaUtil.getMethod(method);
+        return factory.print(method);
     }
 
     /**
-     *
      * @param wrapper
      * @return
      */
     public static String setter(@NotNull final AbstractWrapper wrapper) {
-        JavaMethod method = new JavaMethod(NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, wrapper.getId()));
+        JavaMethod method = new JavaMethod(NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, wrapper.getId()));
         method.addModifier(JavaMethodModifier.PUBLIC);
         method.setJavaReturnType(null);
         method.setNamePrefix(JavaMethodNamePrefix.SET);
         method.addArgument(new JavaArgument(wrapper.getSimpleName(), wrapper.getVariableName(), true));
-        method.getBody().append(PrintJavaUtil.getFieldAssignment(wrapper.getVariableName(), true));
+        method.getBody().append(JavaClassPrintFactory.printFieldAssignment(wrapper.getVariableName(), true));
 
-        return PrintJavaUtil.getMethod(method);
+        return factory.print(method);
     }
 
     /**
-     *
      * @param table
      * @return
      */
@@ -392,11 +392,10 @@ public class Entity {
         JavaConstructor con = new JavaConstructor(table.getCanonicalName());
         con.addModifier(JavaConstructorModifier.PUBLIC);
 
-        return PrintJavaUtil.getConstructor(con);
+        return factory.print(con);
     }
 
     /**
-     *
      * @param table
      * @return
      */
@@ -404,7 +403,7 @@ public class Entity {
         JavaConstructor con = new JavaConstructor(table.getCanonicalName());
         con.addModifier(JavaConstructorModifier.PUBLIC);
 
-        Collection<AbstractWrapper> columns = table.getColumns();
+        List<AbstractWrapper> columns = table.getAllColumns();
 
         for (AbstractWrapper column : columns) {
             if (allArgs || column.isRequired()) {
@@ -418,29 +417,99 @@ public class Entity {
             }
         }
 
-        return PrintJavaUtil.getConstructor(con);
+        String conStr = factory.print(con);
+
+        //try and avoid required and all being same which would be an error
+        if (!allArgs) {
+            String conStrAll = constructorArgs(table, true);
+            if (conStr.equals(conStrAll)) {
+                LOG.warn("required args constructor is the same as all args constructor, ignoring");
+                conStr = "//required args constructor is the same as all args constructor";
+            }
+        }
+
+        return conStr;
     }
 
-    //FIXME: JavaMethod does not currently allow custom method bodies
+    /**
+     * @param table
+     * @return
+     */
     public static String toStringGenerator(@NotNull final TableWrapper table) {
-        JavaAnnotation ja1 = new JavaAnnotation("Override");
-
-        JavaMethod jm1 = new JavaMethod("toString");
-        jm1.addModifier(JavaMethodModifier.PUBLIC);
-        jm1.setJavaReturnType(new JavaReturnType("java.lang.String"));
-        jm1.addAnnotation(ja1);
-
-
-
-        return PrintJavaUtil.getMethod(jm1);
-/*
-    @Override
-    public String toString() {
-        return "ColumnWrapper{" +
-                "columnType=" + columnType +
-                '}';
+        return toStringGenerator(table.getNonFkColumns(), table.getSimpleName());
     }
- */
+
+    public static String toStringGenerator(@NotNull final List<AbstractWrapper> cols, @NotNull final String simpleName) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("@Override").append(JavaTokens.NEWLINE);
+        sb.append("public String toString() {").append(JavaTokens.NEWLINE);
+
+        sb.append("return \"").append(simpleName).append("{\" +").append(JavaTokens.NEWLINE);
+        int i = 0;
+
+        for (AbstractWrapper column : cols) {
+            sb.append(i++ > 0 ? "\", " : "\"");
+            sb.append(column.getVariableName()).append("='\" + ").append(column.getVariableName()).append(" + '\\'' +").append(JavaTokens.NEWLINE);
+        }
+
+        sb.append("'}';").append(JavaTokens.NEWLINE);
+        sb.append("}").append(JavaTokens.NEWLINE);
+
+        return sb.toString();
+    }
+
+    public static String equalsGenerator(@NotNull final TableWrapper table) {
+        table.addImport("java.util.Objects");
+
+        return equalsGenerator(table.getNonFkColumns(), table.getSimpleName(), "that");
+    }
+
+    public static String equalsGenerator(@NotNull final List<AbstractWrapper> cols, @NotNull final String simpleName, @NotNull final String variableName) {
+        //NOTE: technically a JPA object with the same key (PK or Composite) is equal
+        StringBuilder sb = new StringBuilder();
+        sb.append("@Override").append(JavaTokens.NEWLINE);
+        sb.append("public boolean equals(final Object o) {").append(JavaTokens.NEWLINE);
+        sb.append("if (this == o) return true;").append(JavaTokens.NEWLINE);
+        sb.append("if (!(o instanceof ").append(simpleName).append(")) return false;").append(JavaTokens.NEWLINE);
+        sb.append(simpleName).append(" ").append(variableName).append(" = (").append(simpleName).append(") o;").append(JavaTokens.NEWLINE);
+        sb.append("return ");
+
+        int i = cols.size();
+
+        for (AbstractWrapper column : cols) {
+            sb.append("Objects.equals(").append(column.getVariableName()).append(", ").append(variableName).append(".").append(column.getVariableName()).append(")");
+            sb.append(--i > 0 ? " && " : ";" + JavaTokens.NEWLINE);
+        }
+
+        sb.append("}").append(JavaTokens.NEWLINE);
+
+        return sb.toString();
+    }
+
+    public static String hashCodeGenerator(@NotNull final TableWrapper table) {
+        table.addImport("java.util.Objects");
+
+        return hashCodeGenerator(table.getNonFkColumns());
+    }
+
+    public static String hashCodeGenerator(@NotNull final List<AbstractWrapper> cols) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("@Override").append(JavaTokens.NEWLINE);
+        sb.append("public int hashCode() {").append(JavaTokens.NEWLINE);
+
+        int i = 0;
+        for (AbstractWrapper column : cols) {
+            if (i++ == 0) {
+                sb.append("int result = Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
+            } else {
+                sb.append("result = 31 * result + Objects.hashCode(").append(column.getVariableName()).append(");").append(JavaTokens.NEWLINE);
+            }
+        }
+
+        sb.append("return result;").append(JavaTokens.NEWLINE);
+        sb.append("}").append(JavaTokens.NEWLINE);
+
+        return sb.toString();
     }
 
 }

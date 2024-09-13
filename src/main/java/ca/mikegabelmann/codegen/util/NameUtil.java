@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
 
-import ca.mikegabelmann.codegen.java.JavaNamingType;
+import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +31,7 @@ public final class NameUtil {
 	 * @return field
 	 */
 	public static String getJavaName(
-		final JavaNamingType namingMethodType,
+		final @NotNull NamingType namingMethodType,
 		final String value) {
 
 		if (value == null) return null;
@@ -61,7 +61,7 @@ public final class NameUtil {
 					}
 				}
 
-				if (JavaNamingType.LOWER_CAMEL_CASE.equals(namingMethodType) && !sb.isEmpty()) {
+				if (NamingType.LOWER_CAMEL_CASE.equals(namingMethodType) && !sb.isEmpty()) {
 					sb.replace(0, 1, sb.substring(0, 1).toLowerCase());
 				}
 

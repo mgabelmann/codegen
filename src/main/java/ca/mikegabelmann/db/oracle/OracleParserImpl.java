@@ -1,6 +1,6 @@
 package ca.mikegabelmann.db.oracle;
 
-import ca.mikegabelmann.codegen.java.JavaNamingType;
+import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.db.DatabaseParser;
 import ca.mikegabelmann.db.antlr.oracle.PlSqlParserBaseListener;
@@ -60,7 +60,7 @@ public class OracleParserImpl extends PlSqlParserBaseListener implements Databas
         String tableName = ctx.table_name().getText();
 
         table.setName(tableName);
-        table.setJavaName(NameUtil.getJavaName(JavaNamingType.UPPER_CAMEL_CASE, tableName));
+        table.setJavaName(NameUtil.getJavaName(NamingType.UPPER_CAMEL_CASE, tableName));
         table.setDescription("");
         table.setBaseClass("");
         table.setAbstract(Boolean.FALSE);

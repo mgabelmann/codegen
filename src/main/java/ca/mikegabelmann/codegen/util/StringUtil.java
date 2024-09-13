@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StringUtil {
 
-
     /** Do not instantiate this class. */
     private StringUtil() {}
 

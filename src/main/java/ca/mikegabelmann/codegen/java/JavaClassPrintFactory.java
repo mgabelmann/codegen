@@ -1,10 +1,11 @@
-package ca.mikegabelmann.codegen.util;
+package ca.mikegabelmann.codegen.java;
 
 import ca.mikegabelmann.codegen.java.lang.JavaKeywords;
 import ca.mikegabelmann.codegen.java.lang.JavaMethodNamePrefix;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaArgument;
+import ca.mikegabelmann.codegen.java.lang.classbody.JavaClass;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaConstructor;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaField;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaImport;
@@ -12,6 +13,8 @@ import ca.mikegabelmann.codegen.java.lang.classbody.JavaMethod;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaPackage;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaReturnType;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
+import ca.mikegabelmann.codegen.util.AnnotationUtil;
+import ca.mikegabelmann.codegen.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -23,22 +26,19 @@ import java.util.stream.Collectors;
 
 /**
  * Used to format various objects for printing to stream, file, etc.
+ *
  * @author mgabe
  */
-public class PrintJavaUtil {
+public class JavaClassPrintFactory extends AbstractJavaPrintFactory {
     /** Logger. */
-    private static final Logger logger = LogManager.getLogger(PrintJavaUtil.class);
-
-    /** Do not instantiate this class */
-    private PrintJavaUtil() {}
-
+    private static final Logger logger = LogManager.getLogger(JavaClassPrintFactory.class);
 
     /**
      * Get Java annotation.
      * @param annotation
      * @return
      */
-    public static String getAnnotation(@NotNull final JavaAnnotation annotation) {
+    String printAnnotation(@NotNull final JavaAnnotation annotation) {
         StringBuilder sb = new StringBuilder();
         sb.append(JavaTokens.ANNOTATION);
         sb.append(annotation.getSimpleName());
@@ -59,15 +59,15 @@ public class PrintJavaUtil {
      * @param argument argument
      * @return
      */
-    public static String getArgument(@NotNull final JavaArgument argument) {
+    String printArgument(@NotNull final JavaArgument argument) {
         StringBuilder sb = new StringBuilder();
 
         for (JavaAnnotation annotation : argument.getAnnotations()) {
-            sb.append(PrintJavaUtil.getAnnotation(annotation));
+            sb.append(this.printAnnotation(annotation));
             sb.append(JavaTokens.SPACE);
         }
 
-        if (argument.isFinal()) {
+        if (argument.isRequired()) {
             sb.append(JavaKeywords.FINAL);
         }
 
@@ -78,12 +78,62 @@ public class PrintJavaUtil {
         return sb.toString();
     }
 
+    String printClass(@NotNull final JavaClass javaClass) {
+        //TODO: implement me
+        //throw new RuntimeException("not implemented yet");
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(printPackage(javaClass.getJavaPackage()));
+        sb.append(JavaTokens.NEWLINE);
+
+        sb.append(javaClass.getAllImports().stream().map(a-> this.printImport(new JavaImport(a))).collect(Collectors.joining(JavaTokens.NEWLINE)));
+        sb.append(JavaTokens.NEWLINE);
+
+        Set<JavaAnnotation> classAnnotations = javaClass.getAnnotations();
+        sb.append(classAnnotations.stream().map(this::printAnnotation).collect(Collectors.joining(JavaTokens.NEWLINE)));
+        if (!classAnnotations.isEmpty()) {
+            sb.append(JavaTokens.NEWLINE);
+        }
+
+        String modifiersList = javaClass.getOrderedModifiers().stream().map(Object::toString).collect(Collectors.joining(JavaTokens.SPACE));
+        sb.append(modifiersList);
+        sb.append(JavaKeywords.CLASS);
+        sb.append(javaClass.getSimpleName());
+        sb.append(JavaTokens.SPACE);
+        //TODO: add implements
+        //TODO: add extends
+        sb.append(JavaTokens.BRACE_LEFT);
+        sb.append(JavaTokens.NEWLINE);
+
+        Set<JavaField> fields = javaClass.getJavaFields();
+        sb.append(fields.stream().map(this::printField).collect(Collectors.joining(JavaTokens.NEWLINE)));
+
+        if (!fields.isEmpty()) {
+            sb.append(JavaTokens.NEWLINE);
+        }
+
+        Set<JavaConstructor> constructors = javaClass.getConstructors();
+        sb.append(constructors.stream().map(this::printConstructor).collect(Collectors.joining(JavaTokens.NEWLINE)));
+
+        if (!fields.isEmpty()) {
+            sb.append(JavaTokens.NEWLINE);
+        }
+
+        Set<JavaMethod> methods = javaClass.getMethods();
+        sb.append(methods.stream().map(this::printMethod).collect(Collectors.joining(JavaTokens.NEWLINE + JavaTokens.NEWLINE)));
+
+        sb.append(JavaTokens.NEWLINE);
+        sb.append(JavaTokens.BRACE_RIGHT);
+
+        return sb.toString();
+    }
+
     /**
      * Get Java constructor.
      * @param constructor constructor
      * @return
      */
-    public static String getConstructor(@NotNull final JavaConstructor constructor) {
+    String printConstructor(@NotNull final JavaConstructor constructor) {
         StringBuilder sb = new StringBuilder();
 
         //UML
@@ -92,7 +142,7 @@ public class PrintJavaUtil {
         //  +plot()
         //  +move(x : int, y : int)
 
-        String annotationList = constructor.getAnnotations().stream().map(PrintJavaUtil::getAnnotation).collect(Collectors.joining(JavaTokens.NEWLINE));
+        String annotationList = constructor.getAnnotations().stream().map(this::printAnnotation).collect(Collectors.joining(JavaTokens.NEWLINE));
         sb.append(annotationList);
 
         String modifiersList = constructor.getModifiers().stream().map(Object::toString).collect(Collectors.joining(JavaTokens.SPACE));
@@ -102,7 +152,7 @@ public class PrintJavaUtil {
         sb.append(JavaTokens.BRACKET_LEFT);
 
         Set<JavaArgument> arguments = constructor.getJavaArguments();
-        String argumentList = arguments.stream().map(PrintJavaUtil::getArgument).collect(Collectors.joining(JavaTokens.DELIMITER));
+        String argumentList = arguments.stream().map(this::printArgument).collect(Collectors.joining(JavaTokens.DELIMITER));
         sb.append(argumentList);
 
         sb.append(JavaTokens.BRACKET_RIGHT);
@@ -119,7 +169,7 @@ public class PrintJavaUtil {
         sb.append(JavaTokens.BRACE_LEFT);
 
         for (JavaArgument argument : arguments) {
-            sb.append(PrintJavaUtil.getFieldAssignment(argument.getName(), true));
+            sb.append(JavaClassPrintFactory.printFieldAssignment(argument.getName(), true));
         }
 
         sb.append(JavaTokens.BRACE_RIGHT);
@@ -132,12 +182,12 @@ public class PrintJavaUtil {
      * @param field field
      * @return
      */
-    public static String getField(@NotNull final JavaField field) {
+    String printField(@NotNull final JavaField field) {
         StringBuilder sb = new StringBuilder();
 
         Set<JavaAnnotation> annotations = field.getAnnotations();
         for (JavaAnnotation annotation : annotations) {
-            sb.append(PrintJavaUtil.getAnnotation(annotation));
+            sb.append(printAnnotation(annotation));
             sb.append(JavaTokens.NEWLINE);
         }
 
@@ -146,41 +196,31 @@ public class PrintJavaUtil {
             sb.append(modifier.toString());
         }
 
-        sb.append(field.getCanonicalName());
+        sb.append(field.getSimpleName());
         sb.append(JavaTokens.SPACE);
         sb.append(field.getName());
 
+        if (StringUtil.isNotBlankOrNull(field.getInitializationValue())) {
+            sb.append(JavaTokens.EQUALS_WITH_SPACES);
+            sb.append(field.getInitializationValue());
+        }
+
         sb.append(JavaTokens.SEMICOLON);
 
         return sb.toString();
     }
 
-    public static String getFieldAssignment(@NotNull final String name, boolean includeThis) {
-        StringBuilder sb = new StringBuilder();
-
-        if (includeThis) {
-            sb.append(JavaKeywords.THIS_DOT);
+    /**
+     * Get Java import statement.
+     * @param value package/class to import
+     * @return import statement
+     */
+    String printImport(@NotNull final JavaImport value) {
+        if (value.getType().isEmpty()) {
+            return "";
         }
 
-        sb.append(name);
-        sb.append(JavaTokens.EQUALS_WITH_SPACES);
-        sb.append(name);
-        sb.append(JavaTokens.SEMICOLON);
-
-        return sb.toString();
-    }
-
-    public static String getFieldReturnValue(@NotNull final String name, boolean includeThis) {
-        StringBuilder sb = new StringBuilder(JavaKeywords.RETURN);
-
-        if (includeThis) {
-            sb.append(JavaKeywords.THIS_DOT);
-        }
-
-        sb.append(name);
-        sb.append(JavaTokens.SEMICOLON);
-
-        return sb.toString();
+        return JavaKeywords.IMPORT + value.getCanonicalName() + JavaTokens.SEMICOLON;
     }
 
     /**
@@ -188,22 +228,22 @@ public class PrintJavaUtil {
      * @param method method
      * @return
      */
-    public static String getMethod(@NotNull final JavaMethod method) {
+    String printMethod(@NotNull final JavaMethod method) {
         StringBuilder sb = new StringBuilder();
 
-        String annotationList = method.getAnnotations().stream().map(PrintJavaUtil::getAnnotation).collect(Collectors.joining(JavaTokens.NEWLINE));
+        String annotationList = method.getAnnotations().stream().map(this::printAnnotation).collect(Collectors.joining(JavaTokens.NEWLINE));
         sb.append(annotationList);
 
         if (StringUtil.isNotBlankOrNull(annotationList)) {
             sb.append(JavaTokens.NEWLINE);
         }
 
-        String modifiers = method.getModifiers().stream().map(Object::toString).collect(Collectors.joining(JavaTokens.SPACE));
+        String modifiers = method.getOrderedModifiers().stream().map(Object::toString).collect(Collectors.joining(JavaTokens.SPACE));
         sb.append(modifiers);
 
         JavaReturnType returnType = method.getJavaReturnType();
 
-        sb.append(PrintJavaUtil.getReturn(returnType));
+        sb.append(this.printReturn(returnType));
 
         JavaMethodNamePrefix jmnp = method.getNamePrefix();
         if (jmnp != null) {
@@ -213,7 +253,7 @@ public class PrintJavaUtil {
         sb.append(JavaTokens.BRACKET_LEFT);
 
         Set<JavaArgument> arguments = method.getArguments();
-        String argumentList = arguments.stream().map(PrintJavaUtil::getArgument).collect(Collectors.joining(JavaTokens.DELIMITER));
+        String argumentList = arguments.stream().map(this::printArgument).collect(Collectors.joining(JavaTokens.DELIMITER));
         sb.append(argumentList);
 
         sb.append(JavaTokens.BRACKET_RIGHT);
@@ -237,11 +277,25 @@ public class PrintJavaUtil {
     }
 
     /**
+     * Get Java package statement.
+     * @param value package space
+     * @return package statement
+     */
+    String printPackage(@NotNull final JavaPackage value) {
+        if (value.getName().isEmpty()) {
+            //default package
+            return "";
+        }
+
+        return JavaKeywords.PACKAGE + value.getName() + JavaTokens.SEMICOLON;
+    }
+
+    /**
      * Get Java return type.
      * @param returnType return type
      * @return
      */
-    public static String getReturn(final JavaReturnType returnType) {
+    String printReturn(final JavaReturnType returnType) {
         if (returnType != null) {
             return returnType.getSimpleName() + JavaTokens.SPACE;
 
@@ -250,22 +304,32 @@ public class PrintJavaUtil {
         }
     }
 
-    /**
-     * Get Java import statement.
-     * @param value package/class to import
-     * @return import statement
-     */
-    public static String getImport(@NotNull final JavaImport value) {
-        return JavaKeywords.IMPORT + value.getCanonicalName() + JavaTokens.SEMICOLON;
+    public static String printFieldAssignment(@NotNull final String name, boolean includeThis) {
+        StringBuilder sb = new StringBuilder();
+
+        if (includeThis) {
+            sb.append(JavaKeywords.THIS_DOT);
+        }
+
+        sb.append(name);
+        sb.append(JavaTokens.EQUALS_WITH_SPACES);
+        sb.append(name);
+        sb.append(JavaTokens.SEMICOLON);
+
+        return sb.toString();
     }
 
-    /**
-     * Get Java package statement.
-     * @param value package space
-     * @return package statement
-     */
-    public static String getPackage(@NotNull final JavaPackage value) {
-        return JavaKeywords.PACKAGE + value.getPackageName() + JavaTokens.SEMICOLON;
+    public static String printFieldReturnValue(@NotNull final String name, boolean includeThis) {
+        StringBuilder sb = new StringBuilder(JavaKeywords.RETURN);
+
+        if (includeThis) {
+            sb.append(JavaKeywords.THIS_DOT);
+        }
+
+        sb.append(name);
+        sb.append(JavaTokens.SEMICOLON);
+
+        return sb.toString();
     }
 
 }

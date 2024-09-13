@@ -20,22 +20,29 @@ public enum JavaPrimitive implements JavaType {
 
     /**
      * Constructor.
+     * @param clazz class
      * @param type primitive type
      */
-    JavaPrimitive(final Class<?> clazz, final String type) {
+    JavaPrimitive(@NotNull final Class<?> clazz, @NotNull final String type) {
         this.clazz = clazz;
         this.type = type;
     }
 
-    private final Class clazz;
+    private final Class<?> clazz;
     private final String type;
 
-    public Class getClazz() {
+    public Class<?> getClazz() {
         return clazz;
     }
 
+    @Override
     public String getType() {
         return type;
+    }
+
+    @Override
+    public String getName() {
+        return "";
     }
 
     @Override

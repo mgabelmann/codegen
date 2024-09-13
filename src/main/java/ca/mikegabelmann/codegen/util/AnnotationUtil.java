@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
+import ca.mikegabelmann.codegen.java.JavaClassPrintFactory;
 import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.java.lang.classbody.JavaAnnotation;
 import org.apache.logging.log4j.LogManager;
@@ -126,14 +127,14 @@ public final class AnnotationUtil {
 
 		} else if (o instanceof JavaAnnotation) {
 			//some recursion here for a special case since we don't want to alter the existing toString()
-			value = PrintJavaUtil.getAnnotation((JavaAnnotation) o);
+			value = new JavaClassPrintFactory().print((JavaAnnotation) o);
 
 		} else if (o != null) {
 			value = o.toString();	
 			
 		} else {
 			value = "";	
-			logger.warn("invalid escape value={}, using \"\"", o);
+			logger.warn("invalid escape value=null, using \"\"");
 		}
 		
 		return value;

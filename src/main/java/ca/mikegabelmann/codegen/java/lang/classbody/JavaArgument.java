@@ -7,57 +7,44 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author mgabe
  */
-public class JavaArgument extends AbstractJavaTypeAnnotated implements JavaType, JavaName {
+public class JavaArgument extends AbstractJavaTypeAnnotated {
     /** Is the argument final. */
-    private final boolean isFinal;
+    private final boolean required;
 
-    private final String name;
-
-    private final String type;
 
     /**
-     *
+     * Constructor.
      * @param type
      * @param name
-     * @param isFinal
+     * @param required
      */
-    public JavaArgument(@NotNull final JavaPrimitive type, @NotNull final String name, final boolean isFinal) {
-        this(type.getCanonicalName(), name, isFinal);
+    public JavaArgument(@NotNull final JavaPrimitive type, @NotNull final String name, final boolean required) {
+        this(type.getCanonicalName(), name, required);
     }
 
     /**
-     *
+     * Constructor.
+     * @param clazz
+     * @param name
+     * @param required
+     */
+    public JavaArgument(@NotNull final Class<?> clazz, @NotNull final String name, final boolean required) {
+        this(clazz.getCanonicalName(), name, required);
+    }
+
+    /**
+     * Constructor.
      * @param type
      * @param name
-     * @param isFinal
+     * @param required
      */
-    public JavaArgument(@NotNull final String type, @NotNull final String name, final boolean isFinal) {
-        this.type = type;
-        this.name = name;
-        this.isFinal = isFinal;
+    public JavaArgument(@NotNull final String type, @NotNull final String name, final boolean required) {
+        super(type, name);
+        this.required = required;
     }
 
-    @Override
-    public String getCanonicalName() {
-        return type;
-    }
-
-    @Override
-    public String getSimpleName() {
-        return !type.contains(".") ? type : type.substring(type.lastIndexOf(".") + 1);
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public boolean isFinal() {
-        return isFinal;
+    public boolean isRequired() {
+        return required;
     }
 
     @Override
@@ -66,7 +53,7 @@ public class JavaArgument extends AbstractJavaTypeAnnotated implements JavaType,
         sb.append("type='").append(type).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", annotations=").append(annotations);
-        sb.append(", isFinal=").append(isFinal);
+        sb.append(", required=").append(required);
         sb.append('}');
         return sb.toString();
     }

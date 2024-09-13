@@ -15,7 +15,7 @@ class JavaArgumentTest {
 
         Assertions.assertEquals("type", argument.getCanonicalName());
         Assertions.assertEquals("name", argument.getName());
-        Assertions.assertFalse(argument.isFinal());
+        Assertions.assertFalse(argument.isRequired());
     }
 
     @Test
@@ -24,7 +24,7 @@ class JavaArgumentTest {
 
         Assertions.assertEquals("type", argument.getCanonicalName());
         Assertions.assertEquals("name", argument.getName());
-        Assertions.assertTrue(argument.isFinal());
+        Assertions.assertTrue(argument.isRequired());
     }
 
     @Test
