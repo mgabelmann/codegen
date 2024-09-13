@@ -20,6 +20,7 @@ public class JavaField extends AbstractJavaTypeAnnotated implements JavaOrderedM
     /** Field modifiers. */
     private final Set<JavaFieldModifier> modifiers;
 
+    private String initializationValue;
 
     /**
      * Constructor.
@@ -44,6 +45,18 @@ public class JavaField extends AbstractJavaTypeAnnotated implements JavaOrderedM
         if (required) {
             this.modifiers.add(JavaFieldModifier.FINAL);
         }
+    }
+
+    public String getInitializationValue() {
+        return initializationValue;
+    }
+
+    public void setInitializationValue(String initializationValue) {
+        this.initializationValue = initializationValue;
+    }
+
+    public boolean isRequired() {
+        return modifiers.contains(JavaFieldModifier.FINAL);
     }
 
     @Override
@@ -71,10 +84,6 @@ public class JavaField extends AbstractJavaTypeAnnotated implements JavaOrderedM
         List<JavaFieldModifier> ordered = new ArrayList<>(modifiers);
         ordered.sort(Comparator.comparingInt(JavaFieldModifier::getOrder));
         return ordered;
-    }
-
-    public boolean isRequired() {
-        return modifiers.contains(JavaFieldModifier.FINAL);
     }
 
     @Override

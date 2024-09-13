@@ -121,7 +121,7 @@ public class App {
         //ANTR parse file
         //Parse SQLITE DB statements
         SQLiteFactory factory = new SQLiteFactory(columnMatcher);
-        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_8.sql")));
+        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_3.sql")));
         //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
 
         //Parse ORACLE DB statements
@@ -247,8 +247,6 @@ public class App {
                             String name = tableType.getName() + "S";
 
                             OneToManyWrapper otmw = new OneToManyWrapper(javaType, mappedBy, name);
-                            otmw.getImports().add("java.util.List");
-                            otmw.getImports().add("java.util.ArrayList");
                             tw.getBidirectionals().put(table.getName(), otmw);
                         }
                     }

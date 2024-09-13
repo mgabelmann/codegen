@@ -200,6 +200,11 @@ public class JavaClassPrintFactory extends AbstractJavaPrintFactory {
         sb.append(JavaTokens.SPACE);
         sb.append(field.getName());
 
+        if (StringUtil.isNotBlankOrNull(field.getInitializationValue())) {
+            sb.append(JavaTokens.EQUALS_WITH_SPACES);
+            sb.append(field.getInitializationValue());
+        }
+
         sb.append(JavaTokens.SEMICOLON);
 
         return sb.toString();

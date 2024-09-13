@@ -106,7 +106,7 @@ public class Entity {
      * @return
      */
     public static JavaAnnotation getOneToMany() {
-        JavaAnnotation ann = new JavaAnnotation("OneToMany");
+        JavaAnnotation ann = new JavaAnnotation("jakarta.persistence.OneToMany");
         //TODO: cascade
         //TODO: fetch
         //TODO: *mappedBy
@@ -121,7 +121,7 @@ public class Entity {
      * @return
      */
     public static JavaAnnotation getManyToMany() {
-        JavaAnnotation ann = new JavaAnnotation("ManyToMany");
+        JavaAnnotation ann = new JavaAnnotation("jakarta.persistence.ManyToMany");
         //TODO: cascade
         //TODO: fetch
         //TODO: *mappedBy
@@ -310,20 +310,7 @@ public class Entity {
                 field.addAnnotation(Entity.getManyToOne(fkw));
             }
 
-            /*
-            if (!fkw.isCompositeKey() && fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
-                //get @OneToOne
-                field.addAnnotation(Entity.getOneToOne(fkw.getColumns().get(0)));
-
-            } else if (fkw.isCompositeKey() && !fkw.getColumns().get(0).getColumnType().isPrimaryKey()) {
-                //get @ManyToOne
-                field.addAnnotation(Entity.getManyToOne());
-
-            } else {
-                //TODO: detect @ManyToMany
-
-            }
-            */
+            //TODO: detect @ManyToMany
 
             //get @JoinColumns if > 1 column with @JoinColumn, otherwise @JoinColumn
             field.addAnnotation(Entity.getJoinColumn(fkw));
@@ -341,16 +328,16 @@ public class Entity {
         } else if (column instanceof OneToManyWrapper omw) {
             JavaAnnotation ann1 = new JavaAnnotation("jakarta.persistence.OneToMany");
             ann1.add("mappedBy", omw.getMappedBy());
-            ann1.add("cascade", "CascadeType.ALL");
+            ann1.add("cascade", CascadeType.ALL);
             ann1.add("orphanRemoval", true);
 
             field.addAnnotation(ann1);
+            field.setInitializationValue("new ArrayList<>()");
+
+            omw.getImports().add("jakarta.persistence.CascadeType");
 
             //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "shipment")
             //private List<Product> products = new ArrayList<>();
-
-            //TODO: create
-            //JavaAnnotation ann2 = Entity.
 
         } else {
             LOG.warn("unknown type {}", column.getClass().getCanonicalName());

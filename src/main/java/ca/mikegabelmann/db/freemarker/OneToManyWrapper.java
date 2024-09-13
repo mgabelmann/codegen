@@ -15,6 +15,9 @@ public class OneToManyWrapper extends AbstractWrapper {
         this.javaType = javaType;
         this.mappedBy = mappedBy;
         this.name = name;
+
+        this.imports.add("java.util.List");
+        this.imports.add("java.util.ArrayList");
     }
 
     public String getMappedBy() {
