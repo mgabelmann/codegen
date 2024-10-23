@@ -1,9 +1,9 @@
-package ca.mikegabelmann.db.sqlite;
+package ca.mikegabelmann.db.h2;
 
 import ca.mikegabelmann.db.ColumnMatcher;
 import ca.mikegabelmann.db.DatabaseFactory;
-import ca.mikegabelmann.db.antlr.sqlite.SQLiteLexer;
-import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
+import ca.mikegabelmann.db.antlr.h2.H2Lexer;
+import ca.mikegabelmann.db.antlr.h2.H2Parser;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -17,22 +17,22 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class SQLiteFactory implements DatabaseFactory {
+public class H2Factory implements DatabaseFactory {
     /** Logger. */
-    private static final Logger LOG = LogManager.getLogger(SQLiteFactory.class);
+    private static final Logger LOG = LogManager.getLogger(H2Factory.class);
 
-    private final SQLiteParserImpl sqliteParser;
+    private final H2ParserImpl h2Parser;
 
 
     /** Constructor. */
-    public SQLiteFactory(final ColumnMatcher columnMatcher) {
-        this.sqliteParser = new SQLiteParserImpl(columnMatcher);
+    public H2Factory(final ColumnMatcher columnMatcher) {
+        this.h2Parser = new H2ParserImpl(columnMatcher);
     }
 
     @Override
     public void parseStream(CharStream cs) throws IOException {
-        SQLiteLexer lexer = new SQLiteLexer(cs);
-        SQLiteParser parser = new SQLiteParser(new CommonTokenStream(lexer));
+        H2Lexer lexer = new H2Lexer(cs);
+        H2Parser parser = new H2Parser(new CommonTokenStream(lexer));
 
         parser.addErrorListener(new BaseErrorListener() {
             @Override
@@ -41,19 +41,18 @@ public class SQLiteFactory implements DatabaseFactory {
             }
         });
 
-        parser.addParseListener(sqliteParser);
+        parser.addParseListener(h2Parser);
 
-        parser.parse();
+        parser.sql_script();
     }
 
     @Override
     public List<TableType> getTables() {
-        return sqliteParser.getTables();
+        return h2Parser.getTables();
     }
 
     @Override
-    public TableType getTable(final String tableName) {
-        return sqliteParser.getTable(tableName);
+    public TableType getTable(String tableName) {
+        return h2Parser.getTable(tableName);
     }
-
 }

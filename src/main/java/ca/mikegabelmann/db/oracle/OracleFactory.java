@@ -1,5 +1,6 @@
 package ca.mikegabelmann.db.oracle;
 
+import ca.mikegabelmann.db.ColumnMatcher;
 import ca.mikegabelmann.db.DatabaseFactory;
 import ca.mikegabelmann.db.antlr.oracle.PlSqlLexer;
 import ca.mikegabelmann.db.antlr.oracle.PlSqlParser;
@@ -24,15 +25,14 @@ public class OracleFactory implements DatabaseFactory {
 
 
     /** Constructor. */
-    public OracleFactory() {
-        this.oracleParser = new OracleParserImpl();
+    public OracleFactory(final ColumnMatcher columnMatcher) {
+        this.oracleParser = new OracleParserImpl(columnMatcher);
     }
 
     @Override
     public void parseStream(CharStream cs) throws IOException {
         PlSqlLexer lexer = new PlSqlLexer(cs);
         PlSqlParser parser = new PlSqlParser(new CommonTokenStream(lexer));
-
 
         parser.addErrorListener(new BaseErrorListener() {
             @Override

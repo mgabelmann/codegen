@@ -9,6 +9,11 @@
             <mapping database-type="" name=".*_DTM$" jdbc-type="TIMESTAMP" java-type="java.time.LocalDateTime"/>
         </database>
 
+        <database name="H2">
+            <!-- defaults -->
+            <mapping database-type="UUID" name="" jdbc-type="VARBINARY" java-type="java.util.UUID"/>
+        </database>
+
         <database name="ORACLE">
             <!-- determine UUID type -->
             <mapping database-type="RAW" length="16" name="" jdbc-type="VARBINARY" java-type="java.util.UUID" />

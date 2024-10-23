@@ -63,7 +63,7 @@ public final class ColumnMatcher {
             boolean regexMatch = false;
 
             String mappingDatabaseType = mapping.getDatabaseType();
-            if (StringUtil.isBlankOrNull(mappingDatabaseType) || (databaseType != null && databaseType.equals(mappingDatabaseType))) {
+            if (StringUtil.isBlankOrNull(mappingDatabaseType) || (databaseType != null && databaseType.toUpperCase().equals(mappingDatabaseType))) {
                 databaseTypeMatch = true;
             }
 

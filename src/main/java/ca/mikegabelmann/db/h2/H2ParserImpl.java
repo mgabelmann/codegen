@@ -1,11 +1,11 @@
-package ca.mikegabelmann.db.oracle;
+package ca.mikegabelmann.db.h2;
 
 import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.db.ColumnMatcher;
 import ca.mikegabelmann.db.DatabaseParser;
-import ca.mikegabelmann.db.antlr.oracle.PlSqlParserBaseListener;
-import ca.mikegabelmann.db.antlr.oracle.PlSqlParser;
+import ca.mikegabelmann.db.antlr.h2.H2ParserBaseListener;
+import ca.mikegabelmann.db.antlr.h2.H2Parser;
 import ca.mikegabelmann.db.mapping.Mapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class OracleParserImpl extends PlSqlParserBaseListener implements DatabaseParser {
+public class H2ParserImpl extends H2ParserBaseListener implements DatabaseParser {
     /** Logger. */
-    private static final Logger LOG = LogManager.getLogger(OracleParserImpl.class);
+    private static final Logger LOG = LogManager.getLogger(H2ParserImpl.class);
 
     /** List of parsed tables. */
     private final List<TableType> tableTypes;
@@ -30,7 +30,7 @@ public class OracleParserImpl extends PlSqlParserBaseListener implements Databas
     /** Current table, not exposed. */
     private TableType table;
 
-    public OracleParserImpl(final ColumnMatcher columnMatcher) {
+    public H2ParserImpl(final ColumnMatcher columnMatcher) {
         this.tableTypes = new ArrayList<>();
         this.columnMatcher = columnMatcher;
     }
@@ -48,23 +48,23 @@ public class OracleParserImpl extends PlSqlParserBaseListener implements Databas
 
 
     @Override
-    public void enterSql_script(PlSqlParser.Sql_scriptContext ctx) {
+    public void enterSql_script(H2Parser.Sql_scriptContext ctx) {
         LOG.debug("parse - start");
     }
 
     @Override
-    public void exitSql_script(PlSqlParser.Sql_scriptContext ctx) {
+    public void exitSql_script(H2Parser.Sql_scriptContext ctx) {
         LOG.debug("parse - end");
     }
 
     @Override
-    public void enterCreate_table(PlSqlParser.Create_tableContext ctx) {
+    public void enterCreate_table(H2Parser.Create_tableContext ctx) {
         LOG.debug("enterCreate_table");
         this.table = new TableType();
     }
 
     @Override
-    public void exitCreate_table(PlSqlParser.Create_tableContext ctx) {
+    public void exitCreate_table(H2Parser.Create_tableContext ctx) {
         String tableName = ctx.table_name().getText();
 
         table.setName(tableName);
@@ -81,7 +81,7 @@ public class OracleParserImpl extends PlSqlParserBaseListener implements Databas
     }
 
     @Override
-    public void exitColumn_definition(PlSqlParser.Column_definitionContext ctx) {
+    public void exitColumn_definition(H2Parser.Column_definitionContext ctx) {
         String columnName = ctx.column_name().getText();
         String typeName = ctx.datatype().native_datatype_element().getText();
 
@@ -93,7 +93,7 @@ public class OracleParserImpl extends PlSqlParserBaseListener implements Databas
         column.setRequired(false);
         column.setAutoIncrement(Boolean.FALSE);
 
-        PlSqlParser.Precision_partContext precisionTmp = ctx.datatype().precision_part();
+        H2Parser.Precision_partContext precisionTmp = ctx.datatype().precision_part();
         if (precisionTmp!= null) {
             BigDecimal size = new BigDecimal(precisionTmp.numeric(0).getText());
             column.setSize(size);
@@ -118,7 +118,7 @@ public class OracleParserImpl extends PlSqlParserBaseListener implements Databas
             //FIXME: use fallback from sqldatatype.properties, is this necessary?!? could be defined as ALL
         }
 
-        for (PlSqlParser.Inline_constraintContext constraint : ctx.inline_constraint()) {
+        for (H2Parser.Inline_constraintContext constraint : ctx.inline_constraint()) {
             LOG.debug("constraint: {}", constraint.getText());
 
             if ("NOTNULL".equalsIgnoreCase(constraint.getText())) {
@@ -137,17 +137,17 @@ public class OracleParserImpl extends PlSqlParserBaseListener implements Databas
     }
 
 //    @Override
-//    public void exitPrimary_key_clause(PlSqlParser.Primary_key_clauseContext ctx) {
+//    public void exitPrimary_key_clause(H2Parser.Primary_key_clauseContext ctx) {
 //        LOG.debug("exitPrimary_key_clause, PRIMARY KEY={}", ctx.getText());
 //    }
 //
 //    @Override
-//    public void exitKey_clause(PlSqlParser.Key_clauseContext ctx) {
+//    public void exitKey_clause(H2Parser.Key_clauseContext ctx) {
 //        LOG.debug("exitKey_clause, PRIMARY KEY={}", ctx.getText());
 //    }
 
     @Override
-    public void exitOut_of_line_constraint(PlSqlParser.Out_of_line_constraintContext ctx) {
+    public void exitOut_of_line_constraint(H2Parser.Out_of_line_constraintContext ctx) {
         if (table != null && ctx.PRIMARY() != null) {
             String columnName = ctx.column_name(0).getText();
 
@@ -165,6 +165,5 @@ public class OracleParserImpl extends PlSqlParserBaseListener implements Databas
 
         LOG.debug("exitOut_of_line_constraint {}", ctx.getText());
     }
-
 
 }

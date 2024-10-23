@@ -6,8 +6,10 @@ import ca.mikegabelmann.db.freemarker.ForeignKeyWrapper;
 import ca.mikegabelmann.db.freemarker.LocalKeyWrapper;
 import ca.mikegabelmann.db.freemarker.OneToManyWrapper;
 import ca.mikegabelmann.db.freemarker.TableWrapper;
+import ca.mikegabelmann.db.h2.H2Factory;
 import ca.mikegabelmann.db.mapping.Database;
 import ca.mikegabelmann.db.mapping.ReverseEngineering;
+import ca.mikegabelmann.db.oracle.OracleFactory;
 import ca.mikegabelmann.db.sqlite.SQLiteFactory;
 import com.google.googlejavaformat.java.Formatter;
 import freemarker.ext.beans.BeansWrapperBuilder;
@@ -105,10 +107,18 @@ public class App {
                     LOG.trace("adding CUSTOM mappings");
                     columnMatcher.addMappings(db.getMapping());
                 }
-                if ("SQLITE".equalsIgnoreCase(db.getName())) {
+                /*if ("SQLITE".equalsIgnoreCase(db.getName())) {
                     LOG.trace("adding SQLITE mappings");
                     columnMatcher.addMappings(db.getMapping());
+                }*/
+                if ("H2".equalsIgnoreCase(db.getName())) {
+                    LOG.trace("adding H2 mappings");
+                    columnMatcher.addMappings(db.getMapping());
                 }
+                /*if ("ORACLE".equalsIgnoreCase(db.getName())) {
+                    LOG.trace("adding ORACLE mappings");
+                    columnMatcher.addMappings(db.getMapping());
+                }*/
                 if ("ANY".equalsIgnoreCase(db.getName())) {
                     LOG.trace("adding ALL mappings");
                     columnMatcher.addMappings(db.getMapping());
@@ -120,13 +130,17 @@ public class App {
 
         //ANTR parse file
         //Parse SQLITE DB statements
-        SQLiteFactory factory = new SQLiteFactory(columnMatcher);
-        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_3.sql")));
-        //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
+        //SQLiteFactory factory = new SQLiteFactory(columnMatcher);
+        //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_3.sql")));
 
         //Parse ORACLE DB statements
-        //OracleFactory factory = new OracleFactory();
+        //OracleFactory factory = new OracleFactory(columnMatcher);
         //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
+
+        H2Factory factory = new H2Factory(columnMatcher);
+
+        //Parse H2 DB statements
+        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_h2_1.sql")));
 
         List<TableType> tables = factory.getTables();
         if (tables.isEmpty()) {
