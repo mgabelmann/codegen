@@ -121,7 +121,10 @@ public final class AnnotationUtil {
 		} else if (o != null && o.getClass().isEnum()) {
 			//handle simple enums (may not work for all)
 			value = o.getClass().getSimpleName() + "." + ((Enum<?>) o).name();
-			
+
+		} else if (o instanceof StringAsClass sac) {
+			value = sac.getString() + ".class";
+
 		} else if (o instanceof Class) {
 			value = ((Class<?>) o).getCanonicalName() + ".class";
 

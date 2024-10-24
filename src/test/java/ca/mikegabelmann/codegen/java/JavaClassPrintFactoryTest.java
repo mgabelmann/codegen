@@ -16,6 +16,7 @@ import ca.mikegabelmann.codegen.java.lang.modifiers.JavaClassModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaConstructorModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
+import ca.mikegabelmann.codegen.util.StringAsClass;
 import ca.mikegabelmann.codegen.util.StringUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +53,14 @@ class JavaClassPrintFactoryTest {
         a.add("b", Boolean.FALSE);
 
         Assertions.assertEquals("@A(b = false)", printFactory.printAnnotation(a));
+    }
+
+    @Test
+    void test2a_getAnnotation() {
+        JavaAnnotation a = new JavaAnnotation("A");
+        a.add("b", new StringAsClass("YesNoConverter"));
+
+        Assertions.assertEquals("@A(b = YesNoConverter.class)", printFactory.printAnnotation(a));
     }
 
     @Test

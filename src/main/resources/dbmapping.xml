@@ -12,6 +12,7 @@
         <database name="H2">
             <!-- defaults -->
             <mapping database-type="UUID" name="" jdbc-type="VARBINARY" java-type="java.util.UUID"/>
+            <mapping database-type="CHAR" name="" length="1" jdbc-type="VARCHAR" java-type="java.lang.Boolean"/>
         </database>
 
         <database name="ORACLE">

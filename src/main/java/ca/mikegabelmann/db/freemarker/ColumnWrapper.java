@@ -46,6 +46,10 @@ public class ColumnWrapper extends AbstractWrapper {
         return temporal;
     }
 
+    public boolean isBoolean() {
+        return columnType.getJavaSqlType().equals("java.lang.Boolean");
+    }
+
     /**
      * Return underlying object.
      * @return column

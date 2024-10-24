@@ -148,26 +148,32 @@ public class AnnotationUtilTest {
 	}
 
 	@Test
-	@DisplayName("escapeValue - Object")
+	@DisplayName("escapeValue - Class")
 	void test8_escapeValue() {
+		Assertions.assertEquals("YesNoConverter.class", AnnotationUtil.escapeValue(new StringAsClass("YesNoConverter")));
+	}
+
+	@Test
+	@DisplayName("escapeValue - Object")
+	void test9_escapeValue() {
 		Assertions.assertEquals("my name is Tim", AnnotationUtil.escapeValue(new TestObject("Tim")));
 	}
 
 	@Test
 	@DisplayName("escapeValue - null")
-	void test9_escapeValue() {
+	void test10_escapeValue() {
 		Assertions.assertEquals("", AnnotationUtil.escapeValue(null));
 	}
 
 	@Test
 	@DisplayName("escapeValue - JavaAnnotation")
-	void test10_escapeValue() {
+	void test11_escapeValue() {
 		Assertions.assertEquals("@A", AnnotationUtil.escapeValue(new JavaAnnotation("A")));
 	}
 
 	@Test
 	@DisplayName("escapeValue - List<JavaAnnotation>")
-	void test11_escapeValue() {
+	void test12_escapeValue() {
 		Assertions.assertEquals("{@A, @B}", AnnotationUtil.escapeValue(List.of(new JavaAnnotation("A"), new JavaAnnotation("B"))));
 	}
 

@@ -17,6 +17,7 @@ import ca.mikegabelmann.codegen.java.lang.modifiers.JavaFieldModifier;
 import ca.mikegabelmann.codegen.java.lang.modifiers.JavaMethodModifier;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.codegen.java.JavaClassPrintFactory;
+import ca.mikegabelmann.codegen.util.StringAsClass;
 import ca.mikegabelmann.codegen.util.StringUtil;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
@@ -320,6 +321,13 @@ public class Entity {
             //only applies to packages java.util.* or java.sql.*
             if (cw.isTemporal() && !cw.getCanonicalName().contains("java.time")) {
                 field.addAnnotation(Entity.getTemporalAnnotation(cw));
+            }
+
+            if (cw.isBoolean()) {
+                JavaAnnotation ann = new JavaAnnotation("jakarta.persistence.Convert");
+                ann.add("converter", new StringAsClass("YesNoConverter"));
+                field.addAnnotation(ann);
+                column.addImport("org.hibernate.type.YesNoConverter");
             }
 
             //get @Column
