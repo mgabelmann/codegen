@@ -10,6 +10,8 @@ import ca.mikegabelmann.db.mapping.Mapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.torque.ColumnType;
+import org.apache.torque.ForeignKeyType;
+import org.apache.torque.ReferenceType;
 import org.apache.torque.SqlDataType;
 import org.apache.torque.TableType;
 
@@ -164,6 +166,56 @@ public class H2ParserImpl extends H2ParserBaseListener implements DatabaseParser
         }
 
         LOG.debug("exitOut_of_line_constraint {}", ctx.getText());
+    }
+
+    /*
+    alter table if exists person
+    add constraint FKkr973bltqks4ob25rav9smmgf
+    foreign key (sex_code)
+    references sex_code;
+     */
+    @Override
+    public void exitAlter_table(H2Parser.Alter_tableContext ctx) {
+        //LOG.debug("exitAlter_table {}", ctx.getText());
+
+        String srcTable = ctx.tableview_name().getText();
+        //LOG.debug("table={}", srcTable);
+
+        if (!ctx.constraint_clauses().out_of_line_constraint().isEmpty()) {
+            ctx.constraint_clauses().out_of_line_constraint().forEach(constraint -> {
+                String constraintName = constraint.constraint_name().getText();
+                LOG.debug("constraint name={}", constraintName);
+
+                if (constraint.foreign_key_clause() != null) {
+                    //if we get here we have a clause we can process as a FK
+                    String foreignTable = constraint.foreign_key_clause().references_clause().tableview_name().getText();
+
+                    ForeignKeyType fkt = new ForeignKeyType();
+                    fkt.setForeignTable(foreignTable);
+                    fkt.setName(constraintName);
+
+                    List<H2Parser.Column_nameContext> columns = constraint.foreign_key_clause().paren_column_list().column_list().column_name();
+                    for (H2Parser.Column_nameContext column : columns) {
+                        ReferenceType rt = new ReferenceType();
+                        rt.setLocal(column.getText());
+                        rt.setForeign(column.getText());
+
+                        fkt.getReference().add(rt);
+                    }
+
+                    TableType tableType = tableTypes.stream().filter(tt -> tt.getName().equals(srcTable)).findFirst().orElse(null);
+                    if (tableType != null) {
+                        tableType.getForeignKeyOrIndexOrUnique().add(fkt);
+
+                    } else {
+                        LOG.warn("can not find table {}", srcTable);
+                    }
+                }
+            });
+        }
+
+        //add foreign key
+
     }
 
 }

@@ -4717,7 +4717,7 @@ role_identified_clause
     ;
 
 alter_table
-    : ALTER TABLE tableview_name memoptimize_read_write_clause* (
+    : ALTER TABLE (IF EXISTS)? tableview_name memoptimize_read_write_clause* (
         | alter_table_properties
         | constraint_clauses
         | column_clauses
