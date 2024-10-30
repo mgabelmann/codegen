@@ -2,15 +2,12 @@ package ca.mikegabelmann.db;
 
 import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
-import ca.mikegabelmann.db.freemarker.ForeignKeyWrapper;
 import ca.mikegabelmann.db.freemarker.LocalKeyWrapper;
 import ca.mikegabelmann.db.freemarker.OneToManyWrapper;
 import ca.mikegabelmann.db.freemarker.TableWrapper;
 import ca.mikegabelmann.db.h2.H2Factory;
 import ca.mikegabelmann.db.mapping.Database;
 import ca.mikegabelmann.db.mapping.ReverseEngineering;
-import ca.mikegabelmann.db.oracle.OracleFactory;
-import ca.mikegabelmann.db.sqlite.SQLiteFactory;
 import com.google.googlejavaformat.java.Formatter;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
@@ -140,7 +137,7 @@ public class App {
         H2Factory factory = new H2Factory(columnMatcher);
 
         //Parse H2 DB statements
-        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_h2_1.sql")));
+        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_h2_2.sql")));
 
         List<TableType> tables = factory.getTables();
         if (tables.isEmpty()) {

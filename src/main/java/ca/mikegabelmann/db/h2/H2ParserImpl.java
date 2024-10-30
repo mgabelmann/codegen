@@ -151,17 +151,21 @@ public class H2ParserImpl extends H2ParserBaseListener implements DatabaseParser
     @Override
     public void exitOut_of_line_constraint(H2Parser.Out_of_line_constraintContext ctx) {
         if (table != null && ctx.PRIMARY() != null) {
-            String columnName = ctx.column_name(0).getText();
 
-            ColumnType column = table.getColumn().stream().filter(col -> col.getName().equals(columnName)).findFirst().orElse(null);
-            if (column != null) {
-                column.setPrimaryKey(Boolean.TRUE);
-                column.setRequired(Boolean.TRUE);
-                column.setAutoIncrement(Boolean.FALSE);
+            List<H2Parser.Column_nameContext> columns = ctx.column_name();
+            for (H2Parser.Column_nameContext column : columns) {
+                String columnName = column.getText();
+                ColumnType ct = table.getColumn().stream().filter(col -> col.getName().equals(columnName)).findFirst().orElse(null);
+
+                if (column != null) {
+                    ct.setPrimaryKey(Boolean.TRUE);
+                    ct.setRequired(Boolean.TRUE);
+                    ct.setAutoIncrement(Boolean.FALSE);
 
 
-            } else {
-                LOG.debug("primary key not found for id={}", columnName);
+                } else {
+                    LOG.debug("primary key not found for id={}", columnName);
+                }
             }
         }
 
