@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -86,15 +87,15 @@ public class TableWrapper extends AbstractWrapper {
         //remove columns that are a fk
         for (ForeignKeyWrapper fkw : foreignKeysTmp.values()) {
             for (ReferenceType rt : fkw.getForeignKeyType().getReference()) {
-                String localKey = rt.getLocal();
+                String local = rt.getLocal();
 
-                if (columnsNonKeyTmp.containsKey(localKey)) {
-                    ColumnWrapper cw = columnsNonKeyTmp.remove(localKey);
+                if (columnsNonKeyTmp.containsKey(local)) {
+                    ColumnWrapper cw = columnsNonKeyTmp.remove(local);
                     fkw.addColumn(cw);
                     columnsFk.put(fkw.getForeignKeyType().getForeignTable(), fkw);
 
-                } else if (columnsKeyTmp.containsKey(localKey)) {
-                    ColumnWrapper cw = columnsKeyTmp.remove(localKey);
+                } else if (columnsKeyTmp.containsKey(local)) {
+                    ColumnWrapper cw = columnsKeyTmp.remove(local);
                     fkw.addColumn(cw);
                     keys.put(fkw.getForeignKeyType().getForeignTable(), fkw);
                 }
@@ -140,6 +141,7 @@ public class TableWrapper extends AbstractWrapper {
 
     }
 
+
     public TableType getTableType() {
         return tableType;
     }
@@ -147,10 +149,6 @@ public class TableWrapper extends AbstractWrapper {
     public LocalKeyWrapper getLocalKey() {
         return localKey;
     }
-
-//    public Map<String, AbstractWrapper> getKeys() {
-//        return keys;
-//    }
 
     public Map<String, ForeignKeyWrapper> getColumnsFk() {
         return columnsFk;
@@ -160,32 +158,44 @@ public class TableWrapper extends AbstractWrapper {
         return columns;
     }
 
+    public Map<String, AbstractWrapper> getBidirectionals() {
+        return bidirectionals;
+    }
+
+    public List<ForeignKeyWrapper> getForeignKeys() {
+        return new ArrayList<>(columnsFk.values());
+    }
+
+    public List<ColumnWrapper> getColumnsNonKeys() {
+        return new ArrayList<>(columns.values());
+    }
+
+    public List<AbstractWrapper> getBiDirectionalColumns() {
+        return new ArrayList<>(bidirectionals.values());
+    }
+
+    public List<AbstractWrapper> getAllColumns() {
+        ArrayList<AbstractWrapper> allColumns = new ArrayList<>();
+        allColumns.add(localKey);
+        allColumns.addAll(columns.values().stream().sorted(Comparator.comparing(ColumnWrapper::getName)).toList());
+        allColumns.addAll(columnsFk.values());
+        allColumns.addAll(bidirectionals.values());
+
+        return allColumns;
+    }
+
+    /** Columns for use in equals(), toString() methods. */
     public List<AbstractWrapper> getNonFkColumns() {
-        List<AbstractWrapper> cols = new ArrayList<>();
+        ArrayList<AbstractWrapper> cols = new ArrayList<>();
 
         if (localKey.isCompositeKey()) {
             cols.add(localKey);
+
         } else {
             cols.addAll(localKey.getColumnValues());
         }
 
         cols.addAll(columns.values());
-
-        return cols;
-    }
-
-    public List<AbstractWrapper> getBidirectionalColumns() {
-        return new ArrayList<>(bidirectionals.values());
-    }
-
-    public Map<String, AbstractWrapper> getBidirectionals() {
-        return bidirectionals;
-    }
-
-    public List<AbstractWrapper> getAllColumns() {
-        List<AbstractWrapper> cols = new ArrayList<>(this.getNonFkColumns());
-        cols.addAll(columnsFk.values());
-        cols.addAll(bidirectionals.values());
         return cols;
     }
 

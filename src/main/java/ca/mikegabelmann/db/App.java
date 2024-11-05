@@ -8,6 +8,8 @@ import ca.mikegabelmann.db.freemarker.TableWrapper;
 import ca.mikegabelmann.db.h2.H2Factory;
 import ca.mikegabelmann.db.mapping.Database;
 import ca.mikegabelmann.db.mapping.ReverseEngineering;
+import ca.mikegabelmann.db.oracle.OracleFactory;
+import ca.mikegabelmann.db.sqlite.SQLiteFactory;
 import com.google.googlejavaformat.java.Formatter;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
@@ -46,7 +48,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 
 /**
@@ -93,6 +94,22 @@ public class App {
         }*/
 
         ColumnMatcher columnMatcher = new ColumnMatcher();
+
+        //Create factory
+        //SQLiteFactory factory = new SQLiteFactory(columnMatcher);
+        //OracleFactory factory = new OracleFactory(columnMatcher);
+        H2Factory factory = new H2Factory(columnMatcher);
+
+        String factoryName = factory.getClass().getSimpleName();
+
+        String dbType;
+        switch (factoryName) {
+            case "H2Factory" -> dbType = "H2";
+            case "OracleFactory" -> dbType = "ORACLE";
+            case "SQLiteFactory" -> dbType = "SQLITE";
+            default -> throw new RuntimeException("Unknown factory: " + factoryName);
+        }
+
         {
             JAXBContext jc = JAXBContext.newInstance(ReverseEngineering.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -104,40 +121,23 @@ public class App {
                     LOG.trace("adding CUSTOM mappings");
                     columnMatcher.addMappings(db.getMapping());
                 }
-                /*if ("SQLITE".equalsIgnoreCase(db.getName())) {
-                    LOG.trace("adding SQLITE mappings");
-                    columnMatcher.addMappings(db.getMapping());
-                }*/
-                if ("H2".equalsIgnoreCase(db.getName())) {
-                    LOG.trace("adding H2 mappings");
+                if (dbType.equalsIgnoreCase(db.getName())) {
+                    LOG.trace("adding {} mappings", dbType);
                     columnMatcher.addMappings(db.getMapping());
                 }
-                /*if ("ORACLE".equalsIgnoreCase(db.getName())) {
-                    LOG.trace("adding ORACLE mappings");
-                    columnMatcher.addMappings(db.getMapping());
-                }*/
                 if ("ANY".equalsIgnoreCase(db.getName())) {
                     LOG.trace("adding ALL mappings");
                     columnMatcher.addMappings(db.getMapping());
                 }
             }
 
-            LOG.debug("added all database mappings");
+            //LOG.trace("added all database mappings");
         }
 
-        //ANTR parse file
-        //Parse SQLITE DB statements
-        //SQLiteFactory factory = new SQLiteFactory(columnMatcher);
-        //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_3.sql")));
-
-        //Parse ORACLE DB statements
-        //OracleFactory factory = new OracleFactory(columnMatcher);
+        //ANTR parse file, Parse SQLITE DB statements
+        //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_sqlite_5.sql")));
         //factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_oracle_1.sql")));
-
-        H2Factory factory = new H2Factory(columnMatcher);
-
-        //Parse H2 DB statements
-        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_h2_2.sql")));
+        factory.parseStream(CharStreams.fromStream(App.class.getResourceAsStream("/example_h2_1.sql")));
 
         List<TableType> tables = factory.getTables();
         if (tables.isEmpty()) {

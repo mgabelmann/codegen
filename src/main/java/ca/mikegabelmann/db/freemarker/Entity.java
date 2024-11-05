@@ -290,8 +290,15 @@ public class Entity {
                     //@SequenceGenerator(name="addressSeq", sequenceName="ADDRESS_SEQ")
                 }*/
 
+                ColumnWrapper cw = (ColumnWrapper) lkw.getColumnValues().get(0);
+
+                if (cw.getColumnType().getJavaSqlType().endsWith("UUID")) {
+                    //add generator for UUID type
+                    field.addAnnotation(new JavaAnnotation("org.hibernate.annotations.UuidGenerator"));
+                }
+
                 //get @Column
-                field.addAnnotation(Entity.getColumnAnnotation((ColumnWrapper) lkw.getColumnValues().get(0)));
+                field.addAnnotation(Entity.getColumnAnnotation(cw));
 
             } else {
                 //get @EmbeddedId
