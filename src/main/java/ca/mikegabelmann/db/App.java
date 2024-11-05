@@ -2,6 +2,7 @@ package ca.mikegabelmann.db;
 
 import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
+import ca.mikegabelmann.codegen.util.PluralizerUtil;
 import ca.mikegabelmann.db.freemarker.LocalKeyWrapper;
 import ca.mikegabelmann.db.freemarker.OneToManyWrapper;
 import ca.mikegabelmann.db.freemarker.TableWrapper;
@@ -255,7 +256,9 @@ public class App {
                         for (TableType tableType : tableTypes) {
                             String javaType = "ca.mgabelmann.persistence.model" + "." + tableType.getJavaName();
                             String mappedBy = NameUtil.getJavaName(NamingType.LOWER_CAMEL_CASE, table.getName());
-                            String name = tableType.getName() + "S";
+
+                            //make name plural, some basic rules applied, but may need work
+                            String name = PluralizerUtil.pluralize(tableType.getName());
 
                             OneToManyWrapper otmw = new OneToManyWrapper(javaType, mappedBy, name);
                             tw.getBidirectionals().put(table.getName(), otmw);
