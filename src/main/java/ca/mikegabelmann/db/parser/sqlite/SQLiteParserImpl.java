@@ -1,9 +1,9 @@
-package ca.mikegabelmann.db.sqlite;
+package ca.mikegabelmann.db.parser.sqlite;
 
 import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.db.ColumnMatcher;
-import ca.mikegabelmann.db.DatabaseParser;
+import ca.mikegabelmann.db.parser.DatabaseParser;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParserBaseListener;
 import ca.mikegabelmann.db.mapping.Mapping;

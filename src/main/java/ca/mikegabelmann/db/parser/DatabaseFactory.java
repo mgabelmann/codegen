@@ -1,4 +1,4 @@
-package ca.mikegabelmann.db;
+package ca.mikegabelmann.db.parser;
 
 import org.antlr.v4.runtime.CharStream;
 

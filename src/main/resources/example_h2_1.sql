@@ -1,5 +1,6 @@
 --create tables
 
+--taken from output of demo-rest2 unit test generated SQL
 create table address(
     country varchar(2) not null,
     primary_address char(1) not null check (primary_address in ('N','Y')),
@@ -37,6 +38,7 @@ create table sex_code (
 
 
 --alter table statements for FKs
+
 alter table if exists person
     add constraint FKkr973bltqks4ob25rav9smmgf
     foreign key (sex_code)

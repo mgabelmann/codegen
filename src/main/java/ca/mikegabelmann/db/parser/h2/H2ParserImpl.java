@@ -1,12 +1,14 @@
-package ca.mikegabelmann.db.h2;
+package ca.mikegabelmann.db.parser.h2;
 
 import ca.mikegabelmann.codegen.NamingType;
+import ca.mikegabelmann.codegen.java.lang.JavaTokens;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.db.ColumnMatcher;
-import ca.mikegabelmann.db.DatabaseParser;
+import ca.mikegabelmann.db.parser.DatabaseParser;
 import ca.mikegabelmann.db.antlr.h2.H2ParserBaseListener;
 import ca.mikegabelmann.db.antlr.h2.H2Parser;
 import ca.mikegabelmann.db.mapping.Mapping;
+import org.antlr.v4.runtime.RuleContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.torque.ColumnType;
@@ -18,6 +20,7 @@ import org.apache.torque.TableType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class H2ParserImpl extends H2ParserBaseListener implements DatabaseParser {
@@ -95,14 +98,21 @@ public class H2ParserImpl extends H2ParserBaseListener implements DatabaseParser
         column.setRequired(false);
         column.setAutoIncrement(Boolean.FALSE);
 
+        //FIXME: get column definition
+        //String v = ctx.inline_constraint().stream().map(RuleContext::getText).collect(Collectors.joining(JavaTokens.NEWLINE));
+        //LOG.info("column definition = {}", ctx.datatype().getText() + " " + v);
+        column.setDefinition("");
+        LOG.debug("TODO: set column definition for {}", columnName);
+
         H2Parser.Precision_partContext precisionTmp = ctx.datatype().precision_part();
-        if (precisionTmp!= null) {
+        if (precisionTmp != null) {
             BigDecimal size = new BigDecimal(precisionTmp.numeric(0).getText());
             column.setSize(size);
         }
 
         column.setJavaName(NameUtil.getJavaName(NamingType.LOWER_CAMEL_CASE, columnName));
         column.setDescription("");
+        LOG.debug("TODO: set column description for {}", columnName);
 
         Integer length = column.getSize() == null ? null : column.getSize().intValue();
         //TODO: precision
@@ -157,11 +167,10 @@ public class H2ParserImpl extends H2ParserBaseListener implements DatabaseParser
                 String columnName = column.getText();
                 ColumnType ct = table.getColumn().stream().filter(col -> col.getName().equals(columnName)).findFirst().orElse(null);
 
-                if (column != null) {
+                if (ct != null) {
                     ct.setPrimaryKey(Boolean.TRUE);
                     ct.setRequired(Boolean.TRUE);
                     ct.setAutoIncrement(Boolean.FALSE);
-
 
                 } else {
                     LOG.debug("primary key not found for id={}", columnName);
@@ -169,7 +178,7 @@ public class H2ParserImpl extends H2ParserBaseListener implements DatabaseParser
             }
         }
 
-        LOG.debug("exitOut_of_line_constraint {}", ctx.getText());
+        //LOG.debug("exitOut_of_line_constraint {}", ctx.getText());
     }
 
     /*
@@ -188,7 +197,7 @@ public class H2ParserImpl extends H2ParserBaseListener implements DatabaseParser
         if (!ctx.constraint_clauses().out_of_line_constraint().isEmpty()) {
             ctx.constraint_clauses().out_of_line_constraint().forEach(constraint -> {
                 String constraintName = constraint.constraint_name().getText();
-                LOG.debug("constraint name={}", constraintName);
+                //LOG.debug("constraint name={}", constraintName);
 
                 if (constraint.foreign_key_clause() != null) {
                     //if we get here we have a clause we can process as a FK

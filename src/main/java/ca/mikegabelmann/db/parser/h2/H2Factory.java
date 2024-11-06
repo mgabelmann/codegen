@@ -1,9 +1,9 @@
-package ca.mikegabelmann.db.oracle;
+package ca.mikegabelmann.db.parser.h2;
 
 import ca.mikegabelmann.db.ColumnMatcher;
-import ca.mikegabelmann.db.DatabaseFactory;
-import ca.mikegabelmann.db.antlr.oracle.PlSqlLexer;
-import ca.mikegabelmann.db.antlr.oracle.PlSqlParser;
+import ca.mikegabelmann.db.parser.DatabaseFactory;
+import ca.mikegabelmann.db.antlr.h2.H2Lexer;
+import ca.mikegabelmann.db.antlr.h2.H2Parser;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -17,22 +17,22 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class OracleFactory implements DatabaseFactory {
+public class H2Factory implements DatabaseFactory {
     /** Logger. */
-    private static final Logger LOG = LogManager.getLogger(OracleFactory.class);
+    private static final Logger LOG = LogManager.getLogger(H2Factory.class);
 
-    private final OracleParserImpl oracleParser;
+    private final H2ParserImpl h2Parser;
 
 
     /** Constructor. */
-    public OracleFactory(final ColumnMatcher columnMatcher) {
-        this.oracleParser = new OracleParserImpl(columnMatcher);
+    public H2Factory(final ColumnMatcher columnMatcher) {
+        this.h2Parser = new H2ParserImpl(columnMatcher);
     }
 
     @Override
     public void parseStream(CharStream cs) throws IOException {
-        PlSqlLexer lexer = new PlSqlLexer(cs);
-        PlSqlParser parser = new PlSqlParser(new CommonTokenStream(lexer));
+        H2Lexer lexer = new H2Lexer(cs);
+        H2Parser parser = new H2Parser(new CommonTokenStream(lexer));
 
         parser.addErrorListener(new BaseErrorListener() {
             @Override
@@ -41,19 +41,18 @@ public class OracleFactory implements DatabaseFactory {
             }
         });
 
-        parser.addParseListener(oracleParser);
+        parser.addParseListener(h2Parser);
 
         parser.sql_script();
     }
 
     @Override
     public List<TableType> getTables() {
-        return oracleParser.getTables();
+        return h2Parser.getTables();
     }
 
     @Override
     public TableType getTable(String tableName) {
-        return oracleParser.getTable(tableName);
+        return h2Parser.getTable(tableName);
     }
-
 }

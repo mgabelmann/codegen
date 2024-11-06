@@ -210,12 +210,12 @@ public class Entity {
             a.add("length", cw.getColumnType().getSize().intValue());
         }
 
-        a.add("columnDefinition", cw.getColumnType().getType().value());
+        //FIXME: do we need this?!?
+        //a.add("columnDefinition", cw.getColumnType().getType().value());
 
         //TODO: sizes
         //TODO: precision/scale,
         //TODO: size
-        //TODO: length
         //TODO: table
 
         return a;

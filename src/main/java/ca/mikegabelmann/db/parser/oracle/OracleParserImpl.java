@@ -1,9 +1,9 @@
-package ca.mikegabelmann.db.oracle;
+package ca.mikegabelmann.db.parser.oracle;
 
 import ca.mikegabelmann.codegen.NamingType;
 import ca.mikegabelmann.codegen.util.NameUtil;
 import ca.mikegabelmann.db.ColumnMatcher;
-import ca.mikegabelmann.db.DatabaseParser;
+import ca.mikegabelmann.db.parser.DatabaseParser;
 import ca.mikegabelmann.db.antlr.oracle.PlSqlParserBaseListener;
 import ca.mikegabelmann.db.antlr.oracle.PlSqlParser;
 import ca.mikegabelmann.db.mapping.Mapping;

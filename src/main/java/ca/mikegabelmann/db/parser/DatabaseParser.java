@@ -1,4 +1,4 @@
-package ca.mikegabelmann.db;
+package ca.mikegabelmann.db.parser;
 
 import org.apache.torque.TableType;
 

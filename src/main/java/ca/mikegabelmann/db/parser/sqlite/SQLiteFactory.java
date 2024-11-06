@@ -1,7 +1,7 @@
-package ca.mikegabelmann.db.sqlite;
+package ca.mikegabelmann.db.parser.sqlite;
 
 import ca.mikegabelmann.db.ColumnMatcher;
-import ca.mikegabelmann.db.DatabaseFactory;
+import ca.mikegabelmann.db.parser.DatabaseFactory;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteLexer;
 import ca.mikegabelmann.db.antlr.sqlite.SQLiteParser;
 import org.antlr.v4.runtime.BaseErrorListener;

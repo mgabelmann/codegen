@@ -516,6 +516,13 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="definition" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    Column definition, used by JPA.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="domain" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
