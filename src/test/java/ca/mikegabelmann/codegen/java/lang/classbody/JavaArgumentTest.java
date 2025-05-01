@@ -1,7 +1,11 @@
 package ca.mikegabelmann.codegen.java.lang.classbody;
 
+import ca.mikegabelmann.codegen.java.lang.JavaPrimitive;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 /**
  *
@@ -9,6 +13,7 @@ import org.junit.jupiter.api.Test;
  */
 class JavaArgumentTest {
 
+    @DisplayName("constructor - String, not required")
     @Test
     void test1_constructor1() {
         JavaArgument argument = new JavaArgument("type", "name", false);
@@ -18,6 +23,7 @@ class JavaArgumentTest {
         Assertions.assertFalse(argument.isRequired());
     }
 
+    @DisplayName("constructor - String, required")
     @Test
     void test2_constructor1() {
         JavaArgument argument = new JavaArgument("type", "name", true);
@@ -26,6 +32,22 @@ class JavaArgumentTest {
         Assertions.assertEquals("name", argument.getName());
         Assertions.assertTrue(argument.isRequired());
     }
+
+    @DisplayName("constructor - JavaPrimitive")
+    @ParameterizedTest
+    @EnumSource
+    void test3_constructor(final JavaPrimitive type) {
+        JavaArgument o = new JavaArgument(type, "name", true);
+        Assertions.assertEquals("JavaArgument{type='" + type.getType().trim() + "', name='name', annotations=[], required=true}", o.toString());
+    }
+
+    @DisplayName("constructor - Class")
+    @Test
+    void test4_constructor() {
+        JavaArgument o = new JavaArgument(StringBuilder.class, "name", true);
+        Assertions.assertEquals("JavaArgument{type='java.lang.StringBuilder', name='name', annotations=[], required=true}", o.toString());
+    }
+
 
     @Test
     void test1_getAnnotations() {

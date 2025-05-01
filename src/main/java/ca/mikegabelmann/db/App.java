@@ -291,6 +291,7 @@ public class App {
                 //does this table require a composite id?
 
                 if (tw.getLocalKey().isCompositeKey()) {
+                    //create file/class for composite key
                     LocalKeyWrapper lkw = new LocalKeyWrapper(tw.getLocalKey().getTableName(), tw.getLocalKey().getColumns());
                     lkw.setPackageName("ca.mgabelmann.persistence.model");
 
@@ -335,7 +336,6 @@ public class App {
             writer.write(contents);
             LOG.debug("created file: {}", fileName);
         }
-
     }
 
     /**

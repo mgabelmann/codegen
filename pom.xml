@@ -56,11 +56,21 @@
             <scope>compile</scope>
         </dependency>
 
+<!--        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>compile</scope>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <scope>compile</scope>
         </dependency>
+<!--        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <scope>compile</scope>
+        </dependency>-->
 
         <!-- old library
         <dependency>
@@ -215,6 +225,14 @@
                 <version>${spotbugs-maven-plugin.version}</version>
                 <configuration>
                     <excludeFilterFile>ignore.xml</excludeFilterFile>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>16</source>
+                    <target>16</target>
                 </configuration>
             </plugin>
         </plugins>

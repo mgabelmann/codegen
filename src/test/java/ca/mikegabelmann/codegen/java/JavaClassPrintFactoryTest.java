@@ -325,7 +325,7 @@ class JavaClassPrintFactoryTest {
         f1.addModifier(JavaFieldModifier.PUBLIC);
 
         JavaClass clazz = new JavaClass("Person", "person", new JavaPackage("a.b.c"));
-        clazz.addJavaImport("java.io.IOException");
+        clazz.addJavaImport(new JavaImport("java.io.IOException"));
         clazz.addJavaClassModifier(JavaClassModifier.PUBLIC);
         clazz.addConstructor(con);
         clazz.addAnnotation(new JavaAnnotation("A"));

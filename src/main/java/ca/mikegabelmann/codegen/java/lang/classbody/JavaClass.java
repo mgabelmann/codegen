@@ -11,11 +11,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 
 public class JavaClass extends AbstractJavaTypeAnnotated implements JavaOrderedModifier<JavaClassModifier> {
     private final JavaPackage javaPackage;
-    private final Set<String> javaImports;
+    private final Set<JavaImport> javaImports;
     private final Set<JavaClassModifier> javaModifiers;
     private final Set<JavaField> javaFields;
     private final Set<JavaConstructor> constructors;
@@ -62,7 +63,7 @@ public class JavaClass extends AbstractJavaTypeAnnotated implements JavaOrderedM
         return javaFields;
     }
 
-    public Set<String> getJavaImports() {
+    public Set<JavaImport> getJavaImports() {
         return javaImports;
     }
 
@@ -78,7 +79,7 @@ public class JavaClass extends AbstractJavaTypeAnnotated implements JavaOrderedM
         return methods;
     }
 
-    public void addJavaImport(@NotNull final String javaImport) {
+    public void addJavaImport(@NotNull final JavaImport javaImport) {
         this.javaImports.add(javaImport);
     }
 
@@ -98,10 +99,14 @@ public class JavaClass extends AbstractJavaTypeAnnotated implements JavaOrderedM
         this.methods.add(javaMethod);
     }
 
+    /**
+     * Get all Java imports.
+     * @return
+     */
     public Set<String> getAllImports() {
         Set<String> imports = new TreeSet<>();
 
-        imports.addAll(javaImports);
+        imports.addAll(javaImports.stream().map(JavaImport::getCanonicalName).toList());
 
         imports.addAll(javaFields.stream().map(JavaField::getCanonicalName).toList());
 

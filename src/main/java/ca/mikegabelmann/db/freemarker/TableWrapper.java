@@ -177,9 +177,9 @@ public class TableWrapper extends AbstractWrapper {
     public List<AbstractWrapper> getAllColumns() {
         ArrayList<AbstractWrapper> allColumns = new ArrayList<>();
         allColumns.add(localKey);
-        allColumns.addAll(columns.values().stream().sorted(Comparator.comparing(ColumnWrapper::getName)).toList());
-        allColumns.addAll(columnsFk.values());
-        allColumns.addAll(bidirectionals.values());
+        allColumns.addAll(columns.values().stream().sorted(Comparator.comparing(AbstractWrapper::getName)).toList());
+        allColumns.addAll(columnsFk.values().stream().sorted(Comparator.comparing(AbstractWrapper::getName)).toList());
+        allColumns.addAll(bidirectionals.values().stream().sorted(Comparator.comparing(AbstractWrapper::getName)).toList());
 
         return allColumns;
     }
