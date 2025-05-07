@@ -111,8 +111,8 @@ public class JavaClass extends AbstractJavaTypeAnnotated implements JavaOrderedM
         imports.addAll(javaFields.stream().map(JavaField::getCanonicalName).toList());
 
         for (JavaConstructor javaConstructor : constructors) {
-            imports.addAll(javaConstructor.getJavaArguments().stream().map(JavaArgument::getCanonicalName).toList());
-            imports.addAll(javaConstructor.getJavaThrows().stream().toList());
+            imports.addAll(javaConstructor.getArguments().stream().map(JavaArgument::getCanonicalName).toList());
+            imports.addAll(javaConstructor.getThrows().stream().toList());
         }
 
         for (JavaMethod javaMethod : methods) {

@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class JavaPackage extends AbstractJavaType {
 
-
     public JavaPackage(@NotNull final String name) {
         super("", name);
     }

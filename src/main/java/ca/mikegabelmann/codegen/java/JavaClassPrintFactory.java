@@ -151,14 +151,14 @@ public class JavaClassPrintFactory extends AbstractJavaPrintFactory {
         sb.append(constructor.getName());
         sb.append(JavaTokens.BRACKET_LEFT);
 
-        Set<JavaArgument> arguments = constructor.getJavaArguments();
+        Set<JavaArgument> arguments = constructor.getArguments();
         String argumentList = arguments.stream().map(this::printArgument).collect(Collectors.joining(JavaTokens.DELIMITER));
         sb.append(argumentList);
 
         sb.append(JavaTokens.BRACKET_RIGHT);
         sb.append(JavaTokens.SPACE);
 
-        Set<String> javaThrows = constructor.getJavaThrows();
+        Set<String> javaThrows = constructor.getThrows();
         if (!javaThrows.isEmpty()) {
             sb.append(JavaKeywords.THROWS);
             String exceptions = javaThrows.stream().map(Object::toString).collect(Collectors.joining(JavaTokens.DELIMITER));
